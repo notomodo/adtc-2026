@@ -1,0 +1,9 @@
+# Ingestion — the only hard runtime dependency
+pdfplumber==0.11.9
+
+# Benchmarking only (NOT shipped — see DECISIONS.md D7:
+# benchmark on sentence-transformers, ship on ONNX Runtime)
+sentence-transformers>=3.0.0
+
+# Tests
+pytest>=8.0.0

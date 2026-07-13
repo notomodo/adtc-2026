@@ -1,0 +1,174 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "created": "2026-07-13",
+    "corpus": "MTN-Uganda-H1-24-Interim-results.pdf",
+    "extractor": "extract_v3.py (v3.1, multi-row header stack)",
+    "chunk_dump": "chunk_dump_interim_annual_report.txt",
+    "n_chunks_in_corpus": 18,
+    "purpose": "Grade RETRIEVAL IN ISOLATION (Recall@k, MRR). NOT end-to-end answer accuracy.",
+    "why_isolation": [
+      "End-to-end grading conflates retrieval quality with generation quality.",
+      "A weak embedder can be rescued by a 3B model filling gaps from parametric",
+      "knowledge - the exact failure mode the grounding architecture exists to",
+      "prevent. Grade the retriever, not the pipeline.",
+      "",
+      "IMPORTANT: gold_chunks are IDs from OUR OWN chunker's output, not page",
+      "numbers. Ground truth must match what the index actually contains, or",
+      "Recall@k is unmeasurable."
+    ],
+    "strata": {
+      "exact_fact": "Question wording closely matches the chunk. Baseline - any embedder should get these.",
+      "paraphrase": "Question wording differs from document wording. This is what actually stresses an embedder.",
+      "multi_chunk": "Answer requires >1 chunk. Tests whether both land in top-k.",
+      "near_miss": "A plausible-looking wrong chunk exists. This is where embedders separate.",
+      "prose": "Answer is in narrative text, not a table."
+    },
+    "provenance": "All facts hand-verified against the source PDF page images.",
+    "caveat": "Single-document question set. PRELIMINARY ranking only - do NOT lock a model on this alone. Re-run when the SME corpus lands."
+  },
+
+  "questions": [
+    {
+      "id": "Q01",
+      "question": "What was MTN Uganda's service revenue in H1 2024?",
+      "gold_chunks": [4],
+      "answer": "1,505,398 million Ush (Ush 1,505.4 billion)",
+      "stratum": "exact_fact",
+      "notes": "The canonical case. Under v1 this chunk was an unlabelled digit-wall and was unretrievable."
+    },
+    {
+      "id": "Q02",
+      "question": "How much total revenue did MTN Uganda report for the first half of 2024?",
+      "gold_chunks": [4],
+      "answer": "1,522,676 million Ush",
+      "stratum": "paraphrase",
+      "notes": "'first half of 2024' vs the chunk's 'H1 2024'. Tests period-alias matching."
+    },
+    {
+      "id": "Q03",
+      "question": "What was the EBITDA margin in H1 2024?",
+      "gold_chunks": [4],
+      "answer": "51.5%",
+      "stratum": "exact_fact"
+    },
+    {
+      "id": "Q04",
+      "question": "How many mobile subscribers did MTN Uganda have?",
+      "gold_chunks": [4, 1],
+      "answer": "20.7 million (up 14.6% YoY)",
+      "stratum": "multi_chunk",
+      "notes": "Appears in the table (chunk 4) AND the salient-features prose (chunk 1). Both should surface."
+    },
+    {
+      "id": "Q05",
+      "question": "What was profit after tax for the six months ended 30 June 2024?",
+      "gold_chunks": [4],
+      "answer": "295,740 million Ush (PAT), up 29.7% YoY",
+      "stratum": "paraphrase",
+      "notes": "Question uses the formal period phrasing; chunk uses 'H1 2024' and the abbreviation 'PAT'."
+    },
+    {
+      "id": "Q06",
+      "question": "By how much did data revenue grow year on year?",
+      "gold_chunks": [4],
+      "answer": "28.6%",
+      "stratum": "exact_fact",
+      "notes": "NEAR-MISS RISK: chunk 4 also contains 'Data subscribers ... YoY: 26.8%'. A weak retriever may confuse revenue growth with subscriber growth. Both are in the same chunk, so this tests row-level discrimination WITHIN a retrieved chunk - relevant to whether we need a reranker."
+    },
+    {
+      "id": "Q07",
+      "question": "What dividend per share did the directors propose?",
+      "gold_chunks": [9],
+      "answer": "Ush 6.6 per share (Ush 147,767,692,977 total)",
+      "stratum": "prose"
+    },
+    {
+      "id": "Q08",
+      "question": "How many ordinary shares are in issue?",
+      "gold_chunks": [9],
+      "answer": "22,389,044,239",
+      "stratum": "prose",
+      "notes": "A bare large number in narrative text. Tests whether prose chunks retrieve on numeric queries."
+    },
+    {
+      "id": "Q09",
+      "question": "When is the ex-dividend date?",
+      "gold_chunks": [9],
+      "answer": "Wednesday, 28 August 2024",
+      "stratum": "prose",
+      "notes": "NEAR-MISS: chunk 8 is a dividend-DATES table (payment date, etc.). It looks like the right chunk and is not. This is the strongest discriminator in the set."
+    },
+    {
+      "id": "Q10",
+      "question": "Who is MTN Uganda's Chief Executive Officer?",
+      "gold_chunks": [2],
+      "answer": "Sylvia Mulinge",
+      "stratum": "prose",
+      "notes": "Pure entity lookup, no numbers. Tests non-numeric retrieval."
+    },
+    {
+      "id": "Q11",
+      "question": "How long is MTN Uganda's fibre network?",
+      "gold_chunks": [6],
+      "answer": "12,102 km (up 54.2% YoY)",
+      "stratum": "paraphrase",
+      "notes": "Question says 'fibre'; the document says 'fiber'. Tests orthographic robustness - a lexical retriever (BM25) will MISS this, a good embedder should not. Deliberately included to show where embeddings beat keyword search."
+    },
+    {
+      "id": "Q12",
+      "question": "What is MTN Uganda's net debt to EBITDA ratio?",
+      "gold_chunks": [7],
+      "answer": "0.1x",
+      "stratum": "prose",
+      "notes": "NEAR-MISS: chunk 4 contains many EBITDA rows and will look attractive. The answer is only in the narrative."
+    },
+    {
+      "id": "Q13",
+      "question": "What proportion of service revenue came from data?",
+      "gold_chunks": [6],
+      "answer": "24.8% (H1 23: 23.2%)",
+      "stratum": "paraphrase",
+      "notes": "NEAR-MISS: the table (chunk 4) has data revenue and service revenue as separate rows, so a retriever may fetch it and let the LLM compute. But Workload A is RETRIEVE STATED FACTS, not compute across them - the stated figure is in chunk 6. Tests whether the retriever finds the stated fact rather than its ingredients."
+    },
+    {
+      "id": "Q14",
+      "question": "Why did finance costs increase?",
+      "gold_chunks": [7],
+      "answer": "Increased interest expense on lease liabilities, driven by accelerated investment in the period.",
+      "stratum": "prose",
+      "notes": "Causal 'why' question - no numeric anchor at all. Purely semantic retrieval."
+    },
+    {
+      "id": "Q15",
+      "question": "How did mobile money perform?",
+      "gold_chunks": [6, 4],
+      "answer": "Grew 25.7% YoY (H1 2024: 430,787 million Ush)",
+      "stratum": "multi_chunk",
+      "notes": "Vague, natural phrasing - the kind a real SME user types. Answer is split across the narrative (chunk 6) and the table (chunk 4)."
+    },
+    {
+      "id": "Q16",
+      "question": "What was capex excluding leases?",
+      "gold_chunks": [4],
+      "answer": "219,071 million Ush (up 8.6% YoY)",
+      "stratum": "exact_fact",
+      "notes": "NEAR-MISS WITHIN CHUNK: 'Capex (IFRS 16)' is 364,399 - a different figure in the same table. Distinguishing them requires reading the row label, not just retrieving the chunk."
+    },
+    {
+      "id": "Q17",
+      "question": "What was the earnings per share?",
+      "gold_chunks": [4],
+      "answer": "13.2 Ush (H1 2024)",
+      "stratum": "exact_fact"
+    },
+    {
+      "id": "Q18",
+      "question": "On what date were the results announced?",
+      "gold_chunks": [1],
+      "answer": "Monday, 5 August 2024 (Kampala, Uganda)",
+      "stratum": "prose",
+      "notes": "NEAR-MISS: chunk 8 is a table of DATES (dividend payment dates). It is date-dense and semantically adjacent. The answer is in the announcement header."
+    }
+  ]
+}
