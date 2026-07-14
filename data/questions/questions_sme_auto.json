@@ -1,0 +1,269 @@
+{
+  "_meta": {
+    "version": "1.0-draft",
+    "corpus": "Kibuga SME corpus (5 PDFs, 22 pages, prose-only)",
+    "chunk_dump": "chunks_sme.txt",
+    "WARNING": "gold_chunks are UNVERIFIED PLACEHOLDERS. Run label_questions.py and hand-verify EVERY one before benchmarking. Auto-labelling invalidated the previous question set.",
+    "strata": {
+      "exact_fact": "wording close to doc",
+      "paraphrase": "wording differs - stresses the embedder",
+      "near_miss": "a plausible wrong chunk exists",
+      "prose": "narrative/legal text",
+      "multi_chunk": "answer spans >1 chunk"
+    },
+    "labelled": "AUTO-LABELLED BY PROOF (verbatim span or rare anchor). Questions with no provable anchor were ABSTAINED, not guessed.",
+    "n_chunks_in_corpus": 47,
+    "n_abstained": 3,
+    "corpus_fingerprint": "c7f23f29b738b08d"
+  },
+  "questions": [
+    {
+      "id": "Q01",
+      "question": "What is Kibuga's returns window?",
+      "answer": "Two (2) days free returns policy",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        36
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "two 2 days free returns policy"
+      }
+    },
+    {
+      "id": "Q02",
+      "question": "What is the minimum age to register on the marketplace?",
+      "answer": "18 years of age",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        2
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "18 years of age"
+      }
+    },
+    {
+      "id": "Q03",
+      "question": "What is Kibuga's customer support phone number?",
+      "answer": "+256200959991 / +256740063330",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        39
+      ],
+      "_evidence": {
+        "tier": "ANCHOR",
+        "matched": "+256200959991"
+      }
+    },
+    {
+      "id": "Q04",
+      "question": "Where are Kibuga's headquarters?",
+      "answer": "Muganzirwazza Commercial Plaza, Lubiri Road, Plot 1446 Bulange - Mengo, Kampala",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        39
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "muganzirwazza commercial plaza lubiri road plot 1446 bulange mengo"
+      }
+    },
+    {
+      "id": "Q05",
+      "question": "What is the customer support email address?",
+      "answer": "support@kibuga.com",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        39
+      ],
+      "_evidence": {
+        "tier": "ANCHOR",
+        "matched": "support@kibuga.com"
+      }
+    },
+    {
+      "id": "Q06",
+      "question": "How many pick-up attempts will Kibuga make for a return?",
+      "answer": "3 attempts within 2 working days",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        37
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "3 attempts within 2 working days"
+      }
+    },
+    {
+      "id": "Q07",
+      "question": "How long do I have to send something back?",
+      "answer": "2 days from delivery date",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        36
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "2 days from delivery date"
+      }
+    },
+    {
+      "id": "Q08",
+      "question": "Can a teenager open an account?",
+      "answer": "No - you may not register if under 18 years of age",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        2
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "under 18 years of age"
+      }
+    },
+    {
+      "id": "Q09",
+      "question": "What paperwork do I need to bring back a purchase?",
+      "answer": "Proof of purchase, original packaging, any free promotional items",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        36
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "packaging any free promotional items"
+      }
+    },
+    {
+      "id": "Q10",
+      "question": "Which goods can't be sent back?",
+      "answer": "Innerwear, swimsuits, gym wear, sleep wear, perfumes, jewelry, health & wellness products, adult toys",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        36
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "innerwear swimsuits gym wear sleep wear perfumes jewelry health wellness products adult toys"
+      }
+    },
+    {
+      "id": "Q12",
+      "question": "How do I get in touch if something goes wrong?",
+      "answer": "Customer Service Call Center 0742511381/0742511394, or support@kibuga.com",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        36,
+        37
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "customer service call center"
+      }
+    },
+    {
+      "id": "Q13",
+      "question": "How long does a refund take to process?",
+      "answer": "The process may take up to 2 days from when the return request was submitted",
+      "stratum": "near_miss",
+      "gold_chunks": [
+        36
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "the process may take up to 2 days from when"
+      }
+    },
+    {
+      "id": "Q14",
+      "question": "What happens if my return claim is rejected?",
+      "answer": "If the claim is invalid the item will be sent back to you",
+      "stratum": "near_miss",
+      "gold_chunks": [
+        36
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "if the claim is invalid the item will be sent back to you"
+      }
+    },
+    {
+      "id": "Q15",
+      "question": "What kinds of content am I forbidden from posting?",
+      "answer": "Offensive, obscene, indecent, pornographic, lewd, suggestive, sexually explicit; violence; blasphemous or hateful content",
+      "stratum": "prose",
+      "gold_chunks": [
+        5
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "offensive obscene indecent pornographic lewd suggestive"
+      }
+    },
+    {
+      "id": "Q16",
+      "question": "What personal data does Kibuga collect?",
+      "answer": "Personal data collected when you visit the website or mobile applications",
+      "stratum": "prose",
+      "gold_chunks": [
+        23
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "website or mobile applications"
+      }
+    },
+    {
+      "id": "Q17",
+      "question": "What warranty does a seller give about the products?",
+      "answer": "Seller warrants good title, sole legal and beneficial owner, no third-party rights or restrictions",
+      "stratum": "prose",
+      "gold_chunks": [
+        3
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "sole legal and beneficial owner"
+      }
+    },
+    {
+      "id": "Q19",
+      "question": "Can Kibuga suspend my account without telling me?",
+      "answer": "We may suspend or cancel your account at any time in our sole discretion and without notice or explanation",
+      "stratum": "prose",
+      "gold_chunks": [
+        2
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "at any time in our sole discretion and without notice or explanation"
+      }
+    },
+    {
+      "id": "Q21",
+      "question": "What is the full returns procedure from request to refund?",
+      "answer": "Contact call centre, 3 pickup attempts in 2 working days, quality check, refund per requested method within 2 days",
+      "stratum": "multi_chunk",
+      "gold_chunks": [
+        37
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "in 2 working days"
+      }
+    },
+    {
+      "id": "Q22",
+      "question": "What are all the ways Kibuga can refund me?",
+      "answer": "Store credits, wallet refunds, vouchers, mobile money transfer, bank transfers",
+      "stratum": "multi_chunk",
+      "gold_chunks": [
+        4
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "store credits wallet refunds vouchers mobile money transfer bank transfers"
+      }
+    }
+  ]
+}

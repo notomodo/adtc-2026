@@ -1,0 +1,89 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+==============================================================================
+HYBRID RETRIEVER — does BM25 + dense beat BM25 alone?
+2026-07-14 10:48 UTC | python 3.13.5 | Linux x86_64
+corpus: 47 chunks | questions: 19 | RRF k=60.0
+==============================================================================
+
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights:  13%|█▎        | 26/199 [00:00<00:00, 259.50it/s]Loading weights:  34%|███▎      | 67/199 [00:00<00:00, 344.63it/s]Loading weights:  57%|█████▋    | 113/199 [00:00<00:00, 387.12it/s]Loading weights:  76%|███████▋  | 152/199 [00:00<00:00, 386.61it/s]Loading weights:  96%|█████████▌| 191/199 [00:00<00:00, 371.46it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 381.03it/s]
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights:  18%|█▊        | 36/199 [00:00<00:00, 322.06it/s]Loading weights:  40%|████      | 80/199 [00:00<00:00, 364.90it/s]Loading weights:  59%|█████▉    | 118/199 [00:00<00:00, 306.93it/s]Loading weights:  75%|███████▌  | 150/199 [00:00<00:00, 223.32it/s]Loading weights:  90%|████████▉ | 179/199 [00:00<00:00, 233.17it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 282.61it/s]
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights:  19%|█▉        | 38/199 [00:00<00:00, 341.19it/s]Loading weights:  45%|████▌     | 90/199 [00:00<00:00, 407.60it/s]Loading weights:  70%|███████   | 140/199 [00:00<00:00, 433.45it/s]Loading weights:  92%|█████████▏| 184/199 [00:00<00:00, 433.39it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 422.98it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:  33%|███▎      | 34/103 [00:00<00:00, 332.20it/s]Loading weights:  73%|███████▎  | 75/103 [00:00<00:00, 336.13it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 372.56it/s]
+RETRIEVER                                R@1   R@3   R@5  R@10     MRR    ms/q
+------------------------------------------------------------------------------
+BM25 only                               53%   79%   89%   95%   0.664     1.1
+dense: e5-small-v2                      42%   79%   79%   95%   0.601    35.8
+HYBRID: BM25+e5-small-v2                63%   79%   84%  100%   0.717    33.2
+dense: bge-small-en-v1.5                47%   74%   89%   95%   0.636    35.9
+HYBRID: BM25+bge-small-en-v1.5          58%   84%   89%   95%   0.703    39.9
+dense: gte-small                        47%   79%   89%   95%   0.637    68.7
+HYBRID: BM25+gte-small                  58%   79%   89%   95%   0.687    58.3
+dense: all-MiniLM-L6-v2                 42%   74%   79%   89%   0.580    17.6
+HYBRID: BM25+all-MiniLM-L6-v2           63%   74%   89%   89%   0.712    19.3
+
+PER-STRATUM RECALL@5                    exact_fac  multi_chu  near_miss  paraphras      prose
+------------------------------------------------------------------------------
+BM25 only                                   100%        50%       100%       100%        75% 
+dense: e5-small-v2                          100%       100%       100%        60%        50% 
+HYBRID: BM25+e5-small-v2                    100%        50%       100%       100%        50% 
+dense: bge-small-en-v1.5                    100%       100%       100%       100%        50% 
+HYBRID: BM25+bge-small-en-v1.5              100%        50%       100%       100%        75% 
+dense: gte-small                            100%       100%       100%       100%        50% 
+HYBRID: BM25+gte-small                      100%        50%       100%       100%        75% 
+dense: all-MiniLM-L6-v2                      67%       100%       100%       100%        50% 
+HYBRID: BM25+all-MiniLM-L6-v2                83%        50%       100%       100%       100% 
+
+FAILURES (gold chunk NOT in top-5)
+------------------------------------------------------------------------------
+
+  BM25 only
+    Q15 [prose      ] rank 6      What kinds of content am I forbidden from po
+    Q22 [multi_chunk] rank miss   What are all the ways Kibuga can refund me?
+
+  dense: e5-small-v2
+    Q10 [paraphrase ] rank 6      Which goods can't be sent back?
+    Q12 [paraphrase ] rank 7      How do I get in touch if something goes wron
+    Q17 [prose      ] rank 10     What warranty does a seller give about the p
+    Q19 [prose      ] rank miss   Can Kibuga suspend my account without tellin
+
+  HYBRID: BM25+e5-small-v2
+    Q17 [prose      ] rank 6      What warranty does a seller give about the p
+    Q19 [prose      ] rank 10     Can Kibuga suspend my account without tellin
+    Q22 [multi_chunk] rank 9      What are all the ways Kibuga can refund me?
+
+  dense: bge-small-en-v1.5
+    Q17 [prose      ] rank 6      What warranty does a seller give about the p
+    Q19 [prose      ] rank miss   Can Kibuga suspend my account without tellin
+
+  HYBRID: BM25+bge-small-en-v1.5
+    Q19 [prose      ] rank miss   Can Kibuga suspend my account without tellin
+    Q22 [multi_chunk] rank 10     What are all the ways Kibuga can refund me?
+
+  dense: gte-small
+    Q17 [prose      ] rank 10     What warranty does a seller give about the p
+    Q19 [prose      ] rank miss   Can Kibuga suspend my account without tellin
+
+  HYBRID: BM25+gte-small
+    Q19 [prose      ] rank miss   Can Kibuga suspend my account without tellin
+    Q22 [multi_chunk] rank 10     What are all the ways Kibuga can refund me?
+
+  dense: all-MiniLM-L6-v2
+    Q01 [exact_fact ] rank miss   What is Kibuga's returns window?
+    Q04 [exact_fact ] rank 7      Where are Kibuga's headquarters?
+    Q17 [prose      ] rank 8      What warranty does a seller give about the p
+    Q19 [prose      ] rank miss   Can Kibuga suspend my account without tellin
+
+  HYBRID: BM25+all-MiniLM-L6-v2
+    Q01 [exact_fact ] rank miss   What is Kibuga's returns window?
+    Q22 [multi_chunk] rank miss   What are all the ways Kibuga can refund me?
+
+==============================================================================
+VERDICT  best hybrid: HYBRID: BM25+all-MiniLM-L6-v2
+         R@5  89% -> 89%  (+0%)
+         MRR  0.664 -> 0.712  (+0.048)
+         Hybrid does NOT beat BM25 on this corpus.
+         Do not ship the dense half on this evidence alone —
+         but note n=18, single doc. Re-run on the SME corpus
+         before discarding. A null result here is not a
+         verdict on hybrid, it is a verdict on THIS corpus.
+==============================================================================

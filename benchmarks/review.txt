@@ -1,0 +1,55 @@
+QUESTIONS THE AUTO-LABELLER REFUSED TO GUESS
+==========================================================================
+No verbatim span and no rare anchor. These need a human.
+Read the chunk, decide, then add gold_chunks to the JSON by hand.
+
+==========================================================================
+Q11  [paraphrase]  Who decides whether a refund is granted?
+  expected answer: Kibuga - acceptance of returns and refunds is at our discretion
+--------------------------------------------------------------------------
+  [4] General_Terms_for_Sellers_and_ p2 / 4. Returns and refunds
+        Returns of products by buyers and acceptance of returned products by sellers shall be managed by us in accordance with the returns page on the marketplace, as may be amen
+  [45] Sellers_Terms_and_Conditions.p p1 / Sellers Terms and Conditions
+        We shall collect payments from buyers in respect of each product purchased from the marketplace, and we shall deduct from the same our commissions and, as may be applicab
+  [41] Sellers_Terms_and_Conditions.p p1 / Sellers Terms and Conditions
+        Product listings a. You shall be responsible for listing your products on the marketplace by uploading to the Seller Centre a completed product page which shall include p
+  [40] Sellers_Terms_and_Conditions.p p1 / Sellers Terms and Conditions
+        Sellers Terms and Conditions Introduction Kibuga Investment operates an e-commerce platform consisting of a website and mobile application (“marketplace”), together with 
+  [36] Return_Policy.pdf p1 / Return Policy
+        Return Policy What are the conditions for returning an item? Two (2) days free returns policy, subject to Terms and conditions. Requirement for a valid procedure • Proof 
+
+  gold_chunks: ______
+
+==========================================================================
+Q18  [prose]  Which law governs the agreement?
+  expected answer: Law and jurisdiction section
+--------------------------------------------------------------------------
+  [20] General_Terms_for_Sellers_and_ p10 / 5. Law and jurisdiction
+        These general terms and conditions shall be governed by and construed in accordance with the laws of the territory. ● Any disputes relating to these general terms and con
+  [13] General_Terms_for_Sellers_and_ p8 / 1. Limitations and exclusions of lia
+        Nothing in these general terms and conditions will: limit any liabilities in any way that is not permitted under applicable law; or Exclude any liabilities or statutory r
+  [12] General_Terms_for_Sellers_and_ p7 / 4. Data privacy
+        ● We do not warrant or represent: ● The completeness or accuracy of the information published on our marketplace. That the material on the marketplace is up to date. That
+  [5] General_Terms_for_Sellers_and_ p3 / 5. Rules about your content
+        In these general terms and conditions, "your content" means: All works and materials (including without limitation text, graphics, images, audio material, video material,
+  [43] Sellers_Terms_and_Conditions.p p1 / Sellers Terms and Conditions
+        Upon receipt of a confirmation of sale from Kibuga, you shall: ● Process the order by packing and labeling the product(s) in accordance with the Packaging Guidelines; and
+
+  gold_chunks: ______
+
+==========================================================================
+Q20  [prose]  What are Kibuga's company details?
+  expected answer: Kibuga Investment, e-commerce marketplace operator
+--------------------------------------------------------------------------
+  [40] Sellers_Terms_and_Conditions.p p1 / Sellers Terms and Conditions
+        Sellers Terms and Conditions Introduction Kibuga Investment operates an e-commerce platform consisting of a website and mobile application (“marketplace”), together with 
+  [1] General_Terms_for_Sellers_and_ p1 / 1. Introduction
+        Kibuga Investment operates an e-commerce platform consisting of a website and mobile application (“marketplace”), together with supporting logistics and payment infrastru
+  [24] Privacy_Policy.pdf p1 / 2. Who
+        We Are Kibuga is an e-commerce platform in Uganda. Our platform includes our marketplace, logistics service, and payment service, connecting sellers with consumers and fa
+  [46] Sellers_Terms_and_Conditions.p p1 / Sellers Terms and Conditions
+        If we reasonably determine that you have breached these seller terms and conditions, our general terms and conditions, or any Kibuga codes, policies or guidelines, we may
+  [45] Sellers_Terms_and_Conditions.p p1 / Sellers Terms and Conditions
+        We shall collect payments from buyers in respect of each product purchased from the marketplace, and we shall deduct from the same our commissions and, as may be applicab
+
+  gold_chunks: ______

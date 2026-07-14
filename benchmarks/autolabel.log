@@ -1,0 +1,30 @@
+47 chunks | 22 questions
+
+QID  TIER      GOLD        EVIDENCE
+--------------------------------------------------------------------------
+Q01  VERBATIM  [36]        'two 2 days free returns policy'
+Q02  VERBATIM  [2]         '18 years of age'
+Q03  ANCHOR    [39]        '+256200959991'
+Q04  VERBATIM  [39]        'muganzirwazza commercial plaza lubiri '
+Q05  ANCHOR    [39]        'support@kibuga.com'
+Q06  VERBATIM  [37]        '3 attempts within 2 working days'
+Q07  VERBATIM  [36]        '2 days from delivery date'
+Q08  VERBATIM  [2]         'under 18 years of age'
+Q09  VERBATIM  [36]        'packaging any free promotional items'
+Q10  VERBATIM  [36]        'innerwear swimsuits gym wear sleep wea'
+Q11  ABSTAIN   —           no provable anchor — HUMAN REVIEW
+Q12  VERBATIM  [36, 37]    'customer service call center'
+Q13  VERBATIM  [36]        'the process may take up to 2 days from'
+Q14  VERBATIM  [36]        'if the claim is invalid the item will '
+Q15  VERBATIM  [5]         'offensive obscene indecent pornographi'
+Q16  VERBATIM  [23]        'website or mobile applications'
+Q17  VERBATIM  [3]         'sole legal and beneficial owner'
+Q18  ABSTAIN   —           no provable anchor — HUMAN REVIEW
+Q19  VERBATIM  [2]         'at any time in our sole discretion and'
+Q20  ABSTAIN   —           no provable anchor — HUMAN REVIEW
+Q21  VERBATIM  [37]        'in 2 working days'
+Q22  VERBATIM  [4]         'store credits wallet refunds vouchers '
+--------------------------------------------------------------------------
+
+PROVEN   : 19/22 -> questions_sme_auto.json
+ABSTAINED: 3/22 -> review.txt  (human required)
