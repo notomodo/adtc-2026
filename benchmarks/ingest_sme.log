@@ -1,0 +1,7 @@
+47 chunks from 5 docs -> chunks_sme.txt
+tokens: max=400 mean=203 (budget 400)
+  General_Terms_for_Sellers_and_Buyers.pdf: 22 chunks
+  Privacy_Policy.pdf: 14 chunks
+  Return_Policy.pdf: 3 chunks
+  Seek_Support.pdf: 1 chunks
+  Sellers_Terms_and_Conditions.pdf: 7 chunks

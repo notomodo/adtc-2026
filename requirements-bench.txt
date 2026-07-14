@@ -1,0 +1,3 @@
+-r requirements.txt
+# Benchmarking only. Ships nothing. The production encoder is ONNX (see docs/CONCEPTS.md).
+sentence-transformers==3.3.1
