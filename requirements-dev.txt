@@ -1,0 +1,5 @@
+# Test/dev dependencies. Kept SEPARATE from the pinned runtime (requirements.txt)
+# and the benchmark stack (requirements-bench.txt) — pytest is neither shipped nor
+# needed to run the pipeline.
+-r requirements.txt
+pytest==8.3.5
