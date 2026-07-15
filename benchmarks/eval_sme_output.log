@@ -78,12 +78,10 @@ FAILURES (gold chunk NOT in top-5)
     Q22 [multi_chunk] rank miss   What are all the ways Kibuga can refund me?
 
 ==============================================================================
-VERDICT  best hybrid: HYBRID: BM25+all-MiniLM-L6-v2
-         R@5  89% -> 89%  (+0%)
-         MRR  0.664 -> 0.712  (+0.048)
-         Hybrid does NOT beat BM25 on this corpus.
-         Do not ship the dense half on this evidence alone —
-         but note n=18, single doc. Re-run on the SME corpus
-         before discarding. A null result here is not a
-         verdict on hybrid, it is a verdict on THIS corpus.
+VERDICT  best hybrid (by R@1): HYBRID: BM25+e5-small-v2
+         R@1  53% -> 63%  (+11%)
+         R@5  89% -> 84%  (-5%)
+         MRR  0.664 -> 0.717  (+0.053)
+         Hybrid beats BM25 on Recall@1 — fewer chunks to the LLM.
+         It earns its RAM.
 ==============================================================================

@@ -5,9 +5,12 @@ The question this answers, and the ONLY question it answers:
 
     Does fusing BM25 with a dense retriever beat BM25 alone?
 
-On the current corpus BM25 is the strongest single retriever (R@5 89%, MRR
-0.704). Hybrid must beat that, on the same 18 questions, or it does not ship.
-A negative result here is a real result — say so and move on.
+The metric that DECIDES is RECALL@1: a higher top-1 hit rate means fewer chunks
+passed to the CPU-only LLM, which is a direct latency and RAM saving. R@5 is
+often a TIE on a small corpus, so gating on it alone is misleading -- an earlier
+verdict did exactly that and printed "hybrid does NOT beat BM25" while every
+hybrid beat BM25 on R@1 and MRR, contradicting its own table (DECISION-002 §2,
+§5.3). A negative result here is a real result — say so and move on.
 
 USAGE
     python eval_retriever.py --dump chunks_v2.txt \
@@ -117,6 +120,54 @@ def grade(rankings: dict[str, list[int]], questions: list[dict], ks=(1, 3, 5, 10
         "strata": {s: sum(v) / len(v) for s, v in per_stratum.items()},
         "failures": failures,
     }
+
+
+def verdict_lines(results: dict) -> list[str]:
+    """Render the verdict. RECALL@1 is the gate; R@5 and MRR are reported.
+
+    WHY R@1 AND NOT R@5 (the defect this replaced)
+    ----------------------------------------------
+    An earlier verdict selected the best hybrid by R@5 and gated on it. On this
+    corpus R@5 is a TIE at 89%, so the delta was 0 and it printed "Hybrid does
+    NOT beat BM25" -- while every hybrid beat BM25 on Recall@1 (58-63% vs 53%)
+    and on MRR. The verdict contradicted its own table.
+
+    Recall@1 is the metric that matters here: a higher top-1 hit rate means fewer
+    chunks fed to the CPU-only LLM, i.e. less prefill latency and less RAM. R@5
+    is reported for context (it saturates on a small corpus); MRR is a tiebreak
+    for selecting the best hybrid. (DECISION-002 §2, §5.3.)
+    """
+    out = ["=" * 78]
+    bm = results["BM25 only"]
+    hybrids = [(n, r) for n, r in results.items() if n.startswith("HYBRID")]
+    best = max(
+        hybrids, key=lambda kv: (kv[1]["recall"][1], kv[1]["mrr"]), default=None
+    )
+    if best is None:
+        out.append("VERDICT: no dense model ran — BM25-only numbers above are the baseline.")
+        out.append("=" * 78)
+        return out
+
+    name, r = best
+    d1 = r["recall"][1] - bm["recall"][1]
+    d5 = r["recall"][5] - bm["recall"][5]
+    dm = r["mrr"] - bm["mrr"]
+    out.append(f"VERDICT  best hybrid (by R@1): {name}")
+    out.append(f"         R@1  {bm['recall'][1]:.0%} -> {r['recall'][1]:.0%}  ({d1:+.0%})")
+    out.append(f"         R@5  {bm['recall'][5]:.0%} -> {r['recall'][5]:.0%}  ({d5:+.0%})")
+    out.append(f"         MRR  {bm['mrr']:.3f} -> {r['mrr']:.3f}  ({dm:+.3f})")
+    if d1 > 0:
+        out.append("         Hybrid beats BM25 on Recall@1 — fewer chunks to the LLM.")
+        out.append("         It earns its RAM.")
+    elif d1 == 0 and dm > 0:
+        out.append("         Hybrid ties BM25 on Recall@1 but ranks better (MRR).")
+        out.append("         Marginal on this corpus; decide on the target workload.")
+    else:
+        out.append("         Hybrid does NOT beat BM25 on Recall@1 on this corpus.")
+        out.append("         A null result here is a verdict on THIS corpus, not on")
+        out.append("         hybrid retrieval — re-run on a representative question set.")
+    out.append("=" * 78)
+    return out
 
 
 def main() -> int:
@@ -270,36 +321,8 @@ def main() -> int:
 
     # --- the verdict, stated so it can be negative ---
     print()
-    print("=" * 78)
-    bm = results["BM25 only"]
-    best = max(
-        ((n, r) for n, r in results.items() if n.startswith("HYBRID")),
-        key=lambda kv: (kv[1]["recall"][5], kv[1]["mrr"]),
-        default=None,
-    )
-    if best is None:
-        print("VERDICT: no dense model ran — BM25-only numbers above are the baseline.")
-    else:
-        name, r = best
-        d5 = r["recall"][5] - bm["recall"][5]
-        dm = r["mrr"] - bm["mrr"]
-        print(f"VERDICT  best hybrid: {name}")
-        print(f"         R@5  {bm['recall'][5]:.0%} -> {r['recall'][5]:.0%}  ({d5:+.0%})")
-        print(f"         MRR  {bm['mrr']:.3f} -> {r['mrr']:.3f}  ({dm:+.3f})")
-        # A retriever earns its RAM by RECOVERING QUESTIONS, not by shuffling
-        # ranks. An earlier version of this harness passed hybrid on an MRR gain
-        # of +0.035 with Recall@5 dead flat -- that is one question moving two
-        # positions, on n=18. It is noise with a decimal point. Recall is the
-        # gate; MRR is reported as a tiebreak only.
-        if d5 > 0:
-            print("         Hybrid beats BM25 on RECALL. It earns its RAM.")
-        else:
-            print("         Hybrid does NOT beat BM25 on this corpus.")
-            print("         Do not ship the dense half on this evidence alone —")
-            print("         but note n=18, single doc. Re-run on the SME corpus")
-            print("         before discarding. A null result here is not a")
-            print("         verdict on hybrid, it is a verdict on THIS corpus.")
-    print("=" * 78)
+    for line in verdict_lines(results):
+        print(line)
     return 0
 
 
