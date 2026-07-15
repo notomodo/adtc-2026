@@ -56,6 +56,7 @@ import math
 import re
 from collections import Counter
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Iterable, Protocol, Sequence
 
 import numpy as np
@@ -242,22 +243,64 @@ class SentenceTransformerEncoder:
         ).astype(np.float32)
 
 
+#: The vendored tokenizer that ships with the repo, committed alongside this
+#: module. Loading it is what keeps the shipping path OFFLINE.
+VENDORED_TOKENIZER = Path(__file__).parent / "tokenizer.json"
+
+
+def _load_vendored_tokenizer(tokenizer_path: str | Path | None = None):
+    """Load the tokenizer for the SHIPPING path from a vendored file — OFFLINE.
+
+    The headline guarantee of this project is "no API calls, no network at
+    runtime". `Tokenizer.from_pretrained()` reaches the Hugging Face Hub, so it
+    must NEVER be on the shipping path; we load a committed `tokenizer.json`
+    instead (the same file `ingest_sme.py` uses).
+
+    CRITICAL — this deliberately has NO Hub fallback. `ingest_sme.py` warns and
+    falls back to `from_pretrained()` when the vendored file is missing; for the
+    shipping encoder that fallback IS the offline violation we are eliminating.
+    A missing vendored file is a hard error, not a silent network fetch. Fail
+    hard; do not degrade.
+    """
+    path = Path(tokenizer_path) if tokenizer_path is not None else VENDORED_TOKENIZER
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Vendored tokenizer not found at {path}. The shipping encoder is "
+            f"offline by contract and will NOT fetch from the Hugging Face Hub. "
+            f"Run `python scripts/vendor_tokenizer.py` to vendor it, then commit "
+            f"the resulting src/tokenizer.json."
+        )
+    from tokenizers import Tokenizer  # local import: optional dep, no torch
+
+    return Tokenizer.from_file(str(path))
+
+
 class OnnxEncoder:
     """Shipping encoder. onnxruntime + tokenizers only — no torch.
 
     Mean-pools the last hidden state over the attention mask, then L2-normalises.
     That is what sentence-transformers does for every model in the shortlist;
     reproducing it here is what lets us drop torch entirely.
+
+    OFFLINE by contract: the tokenizer is loaded from the vendored
+    `tokenizer.json`, never `from_pretrained()` (which hits the Hub). See
+    `_load_vendored_tokenizer`. `tokenizer_name` is retained purely to select the
+    model's asymmetric query/passage prefixes; it no longer triggers a download.
     """
 
-    def __init__(self, onnx_path: str, tokenizer_name: str, model_name: str = "") -> None:
+    def __init__(
+        self,
+        onnx_path: str,
+        tokenizer_name: str,
+        model_name: str = "",
+        tokenizer_path: str | Path | None = None,
+    ) -> None:
         import onnxruntime as ort
-        from tokenizers import Tokenizer
 
         self.session = ort.InferenceSession(
             onnx_path, providers=["CPUExecutionProvider"]
         )
-        self.tok = Tokenizer.from_pretrained(tokenizer_name)
+        self.tok = _load_vendored_tokenizer(tokenizer_path)
         self.q_prefix, self.p_prefix = _prefix_for(model_name or tokenizer_name)
         self._inputs = {i.name for i in self.session.get_inputs()}
 
