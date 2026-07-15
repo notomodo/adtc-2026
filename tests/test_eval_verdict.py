@@ -36,13 +36,33 @@ def test_verdict_does_not_contradict_its_table():
     """R@5 is tied at 89%, but hybrids win on R@1 — the verdict must say so."""
     text = "\n".join(verdict_lines(SME))
     assert "does NOT beat" not in text
-    assert "beats BM25 on Recall@1" in text
+    assert "Beats BM25 on Recall@1 and never regresses" in text
 
 
-def test_best_hybrid_selected_by_r1_then_mrr():
-    """e5 and MiniLM tie on R@1 (12/19); e5 wins on the MRR tiebreak."""
+def test_selection_prefers_non_regressing_hybrid():
+    """Selection is 'non-negative on every metric', not raw R@1.
+
+    e5 and MiniLM have the top R@1 (12/19) but each regress somewhere (e5 loses
+    R@5, MiniLM loses R@3), so they are excluded. bge and gte both never
+    regress; bge wins the R@1->MRR tiebreak. This is the DECISION-002 choice.
+    """
     text = "\n".join(verdict_lines(SME))
-    assert "best hybrid (by R@1): HYBRID: BM25+e5-small-v2" in text
+    assert "best hybrid (non-negative on every metric): HYBRID: BM25+bge-small-en-v1.5" in text
+    # the higher-R@1 but regressing models must NOT be selected
+    assert "e5-small-v2" not in text
+    assert "all-MiniLM-L6-v2" not in text
+
+
+def test_falls_back_to_best_r1_when_all_hybrids_regress():
+    """If no hybrid is clean, report the best-by-R@1 and flag the regression."""
+    res = {
+        "BM25 only": _res(10 / 19, 15 / 19, 17 / 19, 18 / 19, 0.664),
+        # beats R@1 but loses R@5 -> not clean
+        "HYBRID: BM25+risky": _res(12 / 19, 15 / 19, 15 / 19, 18 / 19, 0.70),
+    }
+    text = "\n".join(verdict_lines(res))
+    assert "best R@1 — regresses elsewhere" in text
+    assert "weigh the trade-off" in text
 
 
 def test_verdict_can_still_fire_negative():

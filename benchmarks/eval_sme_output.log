@@ -78,10 +78,9 @@ FAILURES (gold chunk NOT in top-5)
     Q22 [multi_chunk] rank miss   What are all the ways Kibuga can refund me?
 
 ==============================================================================
-VERDICT  best hybrid (by R@1): HYBRID: BM25+e5-small-v2
-         R@1  53% -> 63%  (+11%)
-         R@5  89% -> 84%  (-5%)
-         MRR  0.664 -> 0.717  (+0.053)
-         Hybrid beats BM25 on Recall@1 — fewer chunks to the LLM.
-         It earns its RAM.
+VERDICT  best hybrid (non-negative on every metric): HYBRID: BM25+bge-small-en-v1.5
+         R@1  53% -> 58%  (+5%)
+         R@5  89% -> 89%  (+0%)
+         MRR  0.664 -> 0.703  (+0.039)
+         Beats BM25 on Recall@1 and never regresses. It earns its RAM.
 ==============================================================================

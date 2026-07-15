@@ -122,46 +122,60 @@ def grade(rankings: dict[str, list[int]], questions: list[dict], ks=(1, 3, 5, 10
     }
 
 
+def _non_negative_everywhere(r: dict, bm: dict) -> bool:
+    """True if a hybrid beats OR TIES BM25 on every metric (no regression)."""
+    return all(r["recall"][k] >= bm["recall"][k] for k in bm["recall"]) and \
+        r["mrr"] >= bm["mrr"]
+
+
 def verdict_lines(results: dict) -> list[str]:
-    """Render the verdict. RECALL@1 is the gate; R@5 and MRR are reported.
+    """Render the verdict. SELECT the best hybrid by non-regression, then rank.
 
-    WHY R@1 AND NOT R@5 (the defect this replaced)
+    SELECTION CRITERION (DECISION-002 §1, §2)
+    -----------------------------------------
+    A hybrid earns its RAM only if it does not make retrieval WORSE on any axis.
+    So the candidate set is the hybrids that beat-or-tie BM25 on EVERY metric
+    (R@1, R@3, R@5, R@10, MRR). Among those we take the best by Recall@1, then
+    MRR — R@1 is the deploy-relevant metric (a higher top-1 hit rate means fewer
+    chunks fed to the CPU-only LLM, i.e. less prefill latency and RAM).
+
+    WHY NOT GATE ON R@5 (the defect this replaced)
     ----------------------------------------------
-    An earlier verdict selected the best hybrid by R@5 and gated on it. On this
-    corpus R@5 is a TIE at 89%, so the delta was 0 and it printed "Hybrid does
-    NOT beat BM25" -- while every hybrid beat BM25 on Recall@1 (58-63% vs 53%)
-    and on MRR. The verdict contradicted its own table.
+    An earlier verdict selected by R@5 and gated on it. On this corpus R@5 is a
+    TIE at 89%, so the delta was 0 and it printed "Hybrid does NOT beat BM25" --
+    while every hybrid beat BM25 on Recall@1 and MRR. The verdict contradicted
+    its own table. (DECISION-002 §5.3.)
 
-    Recall@1 is the metric that matters here: a higher top-1 hit rate means fewer
-    chunks fed to the CPU-only LLM, i.e. less prefill latency and less RAM. R@5
-    is reported for context (it saturates on a small corpus); MRR is a tiebreak
-    for selecting the best hybrid. (DECISION-002 §2, §5.3.)
+    If NO hybrid is non-negative everywhere, we fall back to the best by R@1 and
+    say so plainly, so a real regression is never hidden.
     """
     out = ["=" * 78]
     bm = results["BM25 only"]
     hybrids = [(n, r) for n, r in results.items() if n.startswith("HYBRID")]
-    best = max(
-        hybrids, key=lambda kv: (kv[1]["recall"][1], kv[1]["mrr"]), default=None
-    )
-    if best is None:
+    if not hybrids:
         out.append("VERDICT: no dense model ran — BM25-only numbers above are the baseline.")
         out.append("=" * 78)
         return out
 
-    name, r = best
+    clean = [(n, r) for n, r in hybrids if _non_negative_everywhere(r, bm)]
+    pool = clean or hybrids
+    name, r = max(pool, key=lambda kv: (kv[1]["recall"][1], kv[1]["mrr"]))
+
     d1 = r["recall"][1] - bm["recall"][1]
     d5 = r["recall"][5] - bm["recall"][5]
     dm = r["mrr"] - bm["mrr"]
-    out.append(f"VERDICT  best hybrid (by R@1): {name}")
+    basis = "non-negative on every metric" if clean else "best R@1 — regresses elsewhere"
+    out.append(f"VERDICT  best hybrid ({basis}): {name}")
     out.append(f"         R@1  {bm['recall'][1]:.0%} -> {r['recall'][1]:.0%}  ({d1:+.0%})")
     out.append(f"         R@5  {bm['recall'][5]:.0%} -> {r['recall'][5]:.0%}  ({d5:+.0%})")
     out.append(f"         MRR  {bm['mrr']:.3f} -> {r['mrr']:.3f}  ({dm:+.3f})")
-    if d1 > 0:
-        out.append("         Hybrid beats BM25 on Recall@1 — fewer chunks to the LLM.")
-        out.append("         It earns its RAM.")
-    elif d1 == 0 and dm > 0:
-        out.append("         Hybrid ties BM25 on Recall@1 but ranks better (MRR).")
-        out.append("         Marginal on this corpus; decide on the target workload.")
+    if clean and d1 > 0:
+        out.append("         Beats BM25 on Recall@1 and never regresses. It earns its RAM.")
+    elif clean:
+        out.append("         Ties BM25 on Recall@1 and never regresses — marginal but safe.")
+    elif d1 > 0:
+        out.append("         Beats BM25 on Recall@1 but regresses on another metric —")
+        out.append("         weigh the trade-off before shipping.")
     else:
         out.append("         Hybrid does NOT beat BM25 on Recall@1 on this corpus.")
         out.append("         A null result here is a verdict on THIS corpus, not on")
