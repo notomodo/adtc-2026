@@ -405,7 +405,7 @@ misses.
 | R2 | Accuracy-prompt evaluation mechanics unknown. How the competition's accuracy prompts are scored (pass/fail vs partial credit; human vs automated vs LLM judge) determines what we should optimise. Open since 6 July. | Open |
 | R3 | v3.1 has never been tested against a real SME document. The corpus that justifies every extraction decision is still MTN's investor-relations material. | **Resolved** — Kibuga (5 PDFs, 47 chunks) is now the working corpus for retrieval (D2) and generation (D13) |
 | R4 | Model licences. Qwen2.5 and the BGE/GTE/E5 families each carry **their own terms**, distinct from the library licences. A common and avoidable audit failure. | Unverified |
-| R5 | Layer A (D13) is a token-overlap heuristic, not a truth oracle. The 71.4% v3 pass rate has not been hand-validated against the actual answer text. **Blocking** before that figure is quoted as accuracy anywhere. | Open |
+| R5 | Layer A (D13) is a token-overlap heuristic, not a truth oracle. The 71.4% v3 pass rate has not been hand-validated against the actual answer text. **Blocking** before that figure is quoted as accuracy anywhere. Review material is prepared and awaiting adjudication: [`benchmarks/generation/R5_review_packet.md`](benchmarks/generation/R5_review_packet.md) (13-item sample, unfilled) + `src/r5_tabulate.py` (tabulator, not yet run — no verdicts exist yet). | Open |
 
 ---
 

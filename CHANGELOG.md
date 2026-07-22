@@ -9,6 +9,14 @@ source of truth.
 ## [Unreleased]
 
 ### Added
+- **R5 hand-validation review packet.** `benchmarks/generation/R5_review_packet.md` samples
+  13 of the 25 v3 Layer A PASSes (weighted toward multi_chunk/prose, the strata where token
+  overlap is least reliable, plus 2 exact_fact controls and the 3 WEAK borderline cases),
+  including the confirmed Q19 false-positive (gold chunk never in context, scored PASS
+  anyway). `src/r5_tabulate.py` will tabulate the human's verdicts once the packet is filled
+  in and compute the implied precision of Layer A's PASS verdict as a lower bound. Risk R5 in
+  `DECISIONS.md` stays **Open** — no verdicts exist yet, this only prepares the material, and
+  the 71.4% figure is unchanged pending that adjudication.
 - **Reranker decision: not shipped in v1.** `docs/DECISION-005-reranker-reopen.md`'s
   ship/no-ship call is now made: the n=35 evidence (R@3 80%→86%, prose R@5 62%→75%) is not
   enough to justify the reranker against its k=3 regression (Q31 drops out of the context
