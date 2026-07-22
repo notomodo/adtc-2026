@@ -76,11 +76,10 @@ wrong in either direction.
 
 ```
   [ ] CORRECT      — answer is accurate and supported by the passages shown
-  [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
+  [*] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
-```
+  Notes: the model's answer is right but the reasoning to come to that conclusion is wrong.
 
 ---
 
@@ -133,11 +132,11 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [*] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
+  Notes: the model got it right, combining the context from the two gold label chunks
 ```
 
 ### Q37 — multi_chunk
@@ -187,11 +186,11 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [*] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
+  Notes: the answer is correct; it seems the model generated it's output only from chunk 44 and not chunk 46 whose content is unrelated
 ```
 
 ### Q38 — multi_chunk
@@ -256,11 +255,11 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [*] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
+  Notes: spot on, the answer is right
 ```
 
 ---
@@ -309,11 +308,11 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [*] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
+  Notes: model obtained answers from chunk 5
 ```
 
 ### Q32 — prose
@@ -358,11 +357,11 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [*] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
+  Notes: model obtained answers from chunk 46 whose content is similar to that of the gld label chunk
 ```
 
 ### Q33 — prose
@@ -407,11 +406,11 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [*] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
+  Notes: correct, great response
 ```
 
 ### Q34 — prose
@@ -456,11 +455,11 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [*] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
+  Notes: correct response
 ```
 
 ---
@@ -509,11 +508,11 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [*] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
+  Notes: correct answer
 ```
 
 ### Q05 — exact_fact
@@ -558,11 +557,11 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [*] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
+  Notes: distinguishing this from all the other emails is great to see.
 ```
 
 ---
@@ -611,11 +610,11 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [*] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
+  Notes: all the three retrieved chunks contained the answer to the question
 ```
 
 ### Q14 — near_miss
@@ -660,12 +659,11 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [*] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
-```
+  Notes: answer is correct, answer is contained in the chunk 37
 
 ### Q21 — multi_chunk
 
@@ -729,9 +727,9 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [*] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
+  Notes: both chunk 37 and 36 contained answers to the question.
 ```
