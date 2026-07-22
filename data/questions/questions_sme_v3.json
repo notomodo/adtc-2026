@@ -1,0 +1,460 @@
+{
+  "_meta": {
+    "built": "2026-07-16 v3",
+    "total": 35,
+    "old_auto_v2": 19,
+    "new_claude_v3": 16,
+    "corpus": "Kibuga SME (47 chunks, 5 PDFs)",
+    "WARNING": "claude_v3 gold labels are single-annotator, read against chunks_sme.txt, NOT verified against source PDFs. Spot-check before trusting as gold.",
+    "corpus_fingerprint": "c7f23f29b738b08d"
+  },
+  "questions": [
+    {
+      "id": "Q01",
+      "question": "What is Kibuga's returns window?",
+      "answer": "Two (2) days free returns policy",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        36
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "two 2 days free returns policy"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q02",
+      "question": "What is the minimum age to register on the marketplace?",
+      "answer": "18 years of age",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        2
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "18 years of age"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q03",
+      "question": "What is Kibuga's customer support phone number?",
+      "answer": "+256200959991 / +256740063330",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        39
+      ],
+      "_evidence": {
+        "tier": "ANCHOR",
+        "matched": "+256200959991"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q04",
+      "question": "Where are Kibuga's headquarters?",
+      "answer": "Muganzirwazza Commercial Plaza, Lubiri Road, Plot 1446 Bulange - Mengo, Kampala",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        39
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "muganzirwazza commercial plaza lubiri road plot 1446 bulange mengo"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q05",
+      "question": "What is the customer support email address?",
+      "answer": "support@kibuga.com",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        39
+      ],
+      "_evidence": {
+        "tier": "ANCHOR",
+        "matched": "support@kibuga.com"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q06",
+      "question": "How many pick-up attempts will Kibuga make for a return?",
+      "answer": "3 attempts within 2 working days",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        37
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "3 attempts within 2 working days"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q07",
+      "question": "How long do I have to send something back?",
+      "answer": "2 days from delivery date",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        36
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "2 days from delivery date"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q08",
+      "question": "Can a teenager open an account?",
+      "answer": "No - you may not register if under 18 years of age",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        2
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "under 18 years of age"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q09",
+      "question": "What paperwork do I need to bring back a purchase?",
+      "answer": "Proof of purchase, original packaging, any free promotional items",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        36
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "packaging any free promotional items"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q10",
+      "question": "Which goods can't be sent back?",
+      "answer": "Innerwear, swimsuits, gym wear, sleep wear, perfumes, jewelry, health & wellness products, adult toys",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        36
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "innerwear swimsuits gym wear sleep wear perfumes jewelry health wellness products adult toys"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q12",
+      "question": "How do I get in touch if something goes wrong?",
+      "answer": "Customer Service Call Center 0742511381/0742511394, or support@kibuga.com",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        36,
+        37
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "customer service call center"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q13",
+      "question": "How long does a refund take to process?",
+      "answer": "The process may take up to 2 days from when the return request was submitted",
+      "stratum": "near_miss",
+      "gold_chunks": [
+        36
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "the process may take up to 2 days from when"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q14",
+      "question": "What happens if my return claim is rejected?",
+      "answer": "If the claim is invalid the item will be sent back to you",
+      "stratum": "near_miss",
+      "gold_chunks": [
+        36
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "if the claim is invalid the item will be sent back to you"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q15",
+      "question": "What kinds of content am I forbidden from posting?",
+      "answer": "Offensive, obscene, indecent, pornographic, lewd, suggestive, sexually explicit; violence; blasphemous or hateful content",
+      "stratum": "prose",
+      "gold_chunks": [
+        5
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "offensive obscene indecent pornographic lewd suggestive"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q16",
+      "question": "What personal data does Kibuga collect?",
+      "answer": "Personal data collected when you visit the website or mobile applications",
+      "stratum": "prose",
+      "gold_chunks": [
+        23
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "website or mobile applications"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q17",
+      "question": "What warranty does a seller give about the products?",
+      "answer": "Seller warrants good title, sole legal and beneficial owner, no third-party rights or restrictions",
+      "stratum": "prose",
+      "gold_chunks": [
+        3
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "sole legal and beneficial owner"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q19",
+      "question": "Can Kibuga suspend my account without telling me?",
+      "answer": "We may suspend or cancel your account at any time in our sole discretion and without notice or explanation",
+      "stratum": "prose",
+      "gold_chunks": [
+        2
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "at any time in our sole discretion and without notice or explanation"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q21",
+      "question": "What is the full returns procedure from request to refund?",
+      "answer": "Contact call centre, 3 pickup attempts in 2 working days, quality check, refund per requested method within 2 days",
+      "stratum": "multi_chunk",
+      "gold_chunks": [
+        37
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "in 2 working days"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q22",
+      "question": "What are all the ways Kibuga can refund me?",
+      "answer": "Store credits, wallet refunds, vouchers, mobile money transfer, bank transfers",
+      "stratum": "multi_chunk",
+      "gold_chunks": [
+        4
+      ],
+      "_evidence": {
+        "tier": "VERBATIM",
+        "matched": "store credits wallet refunds vouchers mobile money transfer bank transfers"
+      },
+      "origin": "auto_v2"
+    },
+    {
+      "id": "Q23",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        21
+      ],
+      "question": "Where is Kibuga's registered office located?",
+      "answer": "Muganzirwaza Commercial building plaza, Lubiri ring road (registered in Uganda).",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q24",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        38
+      ],
+      "question": "Do I pay shipping charges when returning a product to Kibuga?",
+      "answer": "No, there are no charges for shipping a product back to Kibuga.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q25",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        34
+      ],
+      "question": "Who do I contact to exercise my data privacy rights?",
+      "answer": "The Data Privacy Officer at support@kibuga.com.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q26",
+      "stratum": "exact_fact",
+      "gold_chunks": [
+        8
+      ],
+      "question": "Am I allowed to print pages from Kibuga's website?",
+      "answer": "Yes, for your own personal and non-commercial use, provided printing is not systematic or excessive.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q27",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        31
+      ],
+      "question": "How long does Kibuga hang on to my information?",
+      "answer": "As long as necessary for the purposes in the Privacy Notice; it is deleted or anonymized when no longer needed.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q28",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        42
+      ],
+      "question": "What sorts of goods are sellers banned from listing?",
+      "answer": "Products that breach laws/regulations, infringe IP or other rights, contravene content rules, or relate to prohibited categories such as drugs.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q29",
+      "stratum": "paraphrase",
+      "gold_chunks": [
+        33
+      ],
+      "question": "Can I ask Kibuga to delete everything they know about me?",
+      "answer": "Yes \u2014 your legal rights include erasing your personal data, plus access, correction, restriction, portability and unsubscribing.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q30",
+      "stratum": "near_miss",
+      "gold_chunks": [
+        44
+      ],
+      "question": "Are the prices shown on the marketplace inclusive of VAT?",
+      "answer": "Yes \u2014 all amounts stated on the marketplace are inclusive of VAT and any other applicable taxes.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q31",
+      "stratum": "near_miss",
+      "gold_chunks": [
+        30
+      ],
+      "question": "Can Kibuga move my data to another country?",
+      "answer": "Yes, where permissible by law, with measures to ensure a similar level of protection as the country of origin.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q32",
+      "stratum": "prose",
+      "gold_chunks": [
+        15
+      ],
+      "question": "What can Kibuga do to me if I break the rules?",
+      "answer": "Temporarily suspend or permanently prohibit access, block your IP, and ask your ISPs to block your access.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q33",
+      "stratum": "prose",
+      "gold_chunks": [
+        29
+      ],
+      "question": "Which outside parties might see my personal data?",
+      "answer": "Third-party sellers, service providers (fulfilment, payment, marketing), parties in business transfers, and fraud/compliance bodies.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q34",
+      "stratum": "prose",
+      "gold_chunks": [
+        25
+      ],
+      "question": "Does Kibuga use my data for advertising?",
+      "answer": "Yes \u2014 data is collected for marketing/optimization and Kibuga uses Google Digital Marketing for targeted offers.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q35",
+      "stratum": "prose",
+      "gold_chunks": [
+        20
+      ],
+      "question": "If I have a legal dispute with Kibuga, whose courts decide it?",
+      "answer": "The courts of the territory (Uganda) have exclusive jurisdiction; the terms are governed by the laws of the territory.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q36",
+      "stratum": "multi_chunk",
+      "gold_chunks": [
+        15,
+        46
+      ],
+      "question": "Across all the policies, what enforcement actions can Kibuga take against a seller who breaches the terms?",
+      "answer": "Formal warnings, suspension/prohibition/blocking of access, IP blocking, penalties under the Seller Penalty Policy, and legal action.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q37",
+      "stratum": "multi_chunk",
+      "gold_chunks": [
+        45,
+        44
+      ],
+      "question": "How does Kibuga handle a seller's money \u2014 what gets deducted and what's left?",
+      "answer": "Kibuga collects buyer payments, deducts commissions (a % of VAT-inclusive selling price), fees, taxes, penalties, refunds and other owed amounts, then remits the remainder.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "Q38",
+      "stratum": "multi_chunk",
+      "gold_chunks": [
+        36,
+        37,
+        38
+      ],
+      "question": "Walk me through everything I need to know to return an item and get my money back.",
+      "answer": "Notify within 2 days by calling Customer Service with proof of purchase and original packaging; Kibuga makes 3 pickup attempts in 2 working days; no shipping charge; no returns after 2 days; gifts must be returned.",
+      "origin": "claude_v3",
+      "label_status": "single_annotator_unverified"
+    }
+  ]
+}
