@@ -4,7 +4,7 @@
 **Date:** 2026-07-19
 **Supersedes:** none
 **Related:** DECISION-002 (retrieval architecture), DECISION-003 (reranker rejected, n=19),
-DECISION-005 (reranker reopened, n=35 evidence, ship/no-ship open)
+DECISION-005 (reranker reopened on n=35 evidence, decided: not shipped in v1)
 **Scope:** the `SYSTEM_PROMPT` used by the answer pass (`gen_answer.py`) — i.e. how the
 local LLM is instructed to use retrieved chunks. Does **not** change retrieval, chunking,
 `k`, or the model.
@@ -147,9 +147,9 @@ as the baseline — not v1/v2 — specifically for whether it reproduces the att
 - The general-knowledge fallback is gone. Users get a bare abstention with no helpful aside.
 - Q08 ("Can a teenager open an account?") abstains despite the gold chunk being retrieved at
   rank 1 — an unexplained single-case generation failure, documented not fixed.
-- Prose/legal-inference questions still fail, but at the **retrieval** layer (DECISION-005's
-  reopened reranker evidence is the lever, not the prompt; DECISION-003 rejected reranking
-  outright on n=19 and did not consider a selective variant).
+- Prose/legal-inference questions still fail, but at the **retrieval** layer, not the prompt.
+  DECISION-005 weighed a reranker against this gap on n=35 evidence and decided not to ship
+  it in v1 (thin margin, k=3 regression); selective reranking remains an untested v2 lever.
 
 ---
 
@@ -173,7 +173,9 @@ as the baseline — not v1/v2 — specifically for whether it reproduces the att
 
 1. Hand-read ~8–10 of the 25 v3 passes to validate Layer A's verdicts. **Blocking** before the
    71.4% figure is quoted as accuracy in the report or defense.
-2. Decide selective reranking (DECISION-005) — the lever for the prose retrieval gap.
+2. Reranker not shipped in v1 (DECISION-005). Selective reranking — firing the cross-encoder
+   only on low-confidence queries — remains the untested lever for the prose retrieval gap
+   if it becomes the binding constraint for v2.
 3. Optional: re-introduce a general-knowledge note and re-test against the v3 baseline.
 4. Optional: fix the LLM judge (constrained decoding to its four labels) if automated grading
    at scale is later needed.

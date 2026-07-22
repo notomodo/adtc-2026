@@ -9,6 +9,13 @@ source of truth.
 ## [Unreleased]
 
 ### Added
+- **Reranker decision: not shipped in v1.** `docs/DECISION-005-reranker-reopen.md`'s
+  ship/no-ship call is now made: the n=35 evidence (R@3 80%→86%, prose R@5 62%→75%) is not
+  enough to justify the reranker against its k=3 regression (Q31 drops out of the context
+  window) and the three prose misses it cannot reach at any N. The corrected latency framing
+  (~2-3% of end-to-end time, not 25-50×) was considered and was not the deciding factor. Not
+  reversed, deferred — selective reranking remains untested as a v2 lever. `README.md`,
+  `DECISIONS.md` (D10, D14) updated to stop describing this as open.
 - **Retrieval re-run at n=35 and reranker reopened.** The locked retriever (unchanged)
   re-run against the expanded 35-question set
   (`data/questions/questions_sme_v3.json`), plus a cross-encoder reranker study

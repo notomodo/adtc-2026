@@ -92,7 +92,7 @@ truth oracle; hand-read validation of passing answers is outstanding) in
 | Retrieval, locked config | 19 | R@1 58% / R@5 89% / MRR 0.703 | [DECISION-002](docs/DECISION-002-retrieval-architecture.md) |
 | Retrieval, same config, bigger set | 35 | R@1 60% / R@5 83% / MRR 0.704; prose R@5 62% | [`benchmarks/retrieval_n35/`](benchmarks/retrieval_n35/README.md) |
 | Reranker (rejected on n=19) | 19 | rejected — no failure shape it can fix | [DECISION-003](docs/DECISION-003-reranker.md) |
-| Reranker (reopened on n=35) | 35 | R@5 83%→89%, prose 62%→75%, 2 regressions — **open, ship/no-ship pending** | [DECISION-005](docs/DECISION-005-reranker-reopen.md) |
+| Reranker (reopened on n=35) | 35 | R@5 83%→89%, prose 62%→75%, 2 regressions — **decided: not shipped in v1** | [DECISION-005](docs/DECISION-005-reranker-reopen.md) |
 | Generation (grounding prompt) | 35 + 6 probes | v3 locked: 71.4% pass, 27/28 (96%) conditioned on retrieval, 0 fabrications | [DECISION-004](docs/DECISION-004-grounding-prompt.md) |
 
 ## Quickstart

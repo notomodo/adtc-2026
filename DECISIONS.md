@@ -258,12 +258,13 @@ directly. Target SME documents are in English.
 
 ## D10 — Reranker
 
-**Status:** **DEFERRED**, then **RESOLVED**, then **REOPENED** (evidence only, ship/no-ship
-open) · deferred 11 July 2026 → resolved 15 July 2026 → reopened on n=35 evidence 16 July
-2026 — see [`docs/DECISION-003-reranker.md`](docs/DECISION-003-reranker.md) (the n=19
-rejection, still correct on its own evidence) and
+**Status:** **DEFERRED**, then **RESOLVED**, then **REOPENED**, then **DECIDED** (not
+shipped in v1) · deferred 11 July 2026 → resolved 15 July 2026 → reopened on n=35 evidence
+16 July 2026 → decided 22 July 2026 — see
+[`docs/DECISION-003-reranker.md`](docs/DECISION-003-reranker.md) (the n=19 rejection, still
+correct on its own evidence) and
 [`docs/DECISION-005-reranker-reopen.md`](docs/DECISION-005-reranker-reopen.md) (the
-reopening; see also D14 below)
+reopening and final decision; see also D14 below)
 
 **Why deferred (original entry).** The reranker decision depends on a number we did not yet
 have: the chosen embedder's Recall@5.
@@ -358,13 +359,17 @@ as an accuracy figure.
 
 ---
 
-## D14 — Reranker reopened on n=35 evidence (ship/no-ship open)
+## D14 — Reranker reopened on n=35 evidence, decided: not shipped in v1
 
-**Status:** Open — evidence recorded, ship/no-ship pending owner decision · evidence
-16 July 2026, recorded 22 July 2026
+**Status:** Accepted · evidence 16 July 2026, decided 22 July 2026
 
-**Decision.** None yet. This reopens D10/DECISION-003 (which rejected a reranker on n=19)
-with a larger evidence base, and deliberately does not make the ship call.
+**Decision.** **Do not ship the cross-encoder reranker in v1.** This reopens D10/DECISION-003
+(which rejected a reranker on n=19) with a larger evidence base, weighs it, and confirms the
+same outcome. The gain at `k=3` (R@3 80%→86%, roughly +2 questions) is offset by a regression
+(Q31 drops out of the context window) and three prose misses unreachable by reranking at any
+N tested. This was decided with the corrected latency framing in hand (below) — latency was
+not the deciding factor. **Not reversed, deferred:** if the prose gap becomes the binding
+constraint for v2, the untested selective-reranking variant is the next experiment.
 
 **Why reopened.** The locked retriever, re-run unmodified on the expanded 35-question set,
 shows prose R@5 dropping to 62% (from 75% on n=19) — a failure shape DECISION-003 did not
@@ -386,8 +391,9 @@ binding constraint on end-to-end accuracy.
 deep prose misses remain unreachable at any N):**
 [`docs/DECISION-005-reranker-reopen.md`](docs/DECISION-005-reranker-reopen.md).
 
-**Would resolve this:** an owner decision weighing the corrected cost against the
-regressions and modest net gain — see DECISION-005 §8.
+**Would reopen this:** see DECISION-005 §9 — chiefly, the selective-reranking variant
+clearing the k=3 regression, or new evidence changing the shape of the unreachable prose
+misses.
 
 ---
 

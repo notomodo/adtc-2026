@@ -1,13 +1,15 @@
 # DECISION-005 — Cross-Encoder Reranker Reopened on n=35 Evidence
 
-**Status:** Open — evidence recorded, ship/no-ship pending owner decision
-**Date:** evidence produced 2026-07-16 · recorded as a decision record 2026-07-22
+**Status:** Accepted — rejected for v1, reranker not shipped
+**Date:** evidence produced 2026-07-16 · recorded as a decision record 2026-07-22 · decided 2026-07-22
 **Revisits:** DECISION-003 (rejected a reranker for v1, n=19). **Does not delete, rewrite,
 or reverse DECISION-003** — that record stands as correct on its own evidence base. This
-record adds a larger evidence base (n=35) that changes the picture and leaves the ship
-call open.
+record adds a larger evidence base (n=35), weighs it, and confirms the same outcome
+(reranker not shipped) on the larger evidence.
 **Depends on:** DECISION-002 (retrieval architecture), DECISION-004 (generation eval — the
 27/28=96% conditioned-generation figure that sharpens the case for revisiting this)
+**Decision:** **Do not ship the cross-encoder reranker in v1.** The measured gain at the
+shipped configuration is thin and offset by a k=3 regression; see §2.
 
 ---
 
@@ -27,7 +29,36 @@ and `benchmarks/retrieval_n35/REPORT_reranker.md` (reranker study).
 
 ---
 
-## 2. The evidence (n=35, `cross-encoder/ms-marco-MiniLM-L6-v2`, N swept {10,15,20})
+## 2. Decision and rationale
+
+**Decision: do not ship the cross-encoder reranker in v1.**
+
+The measured gain is thin at the shipped configuration. At `k=3`, reranking moves R@3 from
+80% to 86% — a net of roughly two questions. Against that: Q31 regresses from rank 1 to
+rank 4, which pushes a previously-correct chunk out of the `k=3` context window entirely,
+and the deepest prose misses (Q19, Q29, Q35) are unreachable by reranking at any N because
+the cross-encoder scores those gold chunks *lower* than their distractors. The additional
+model, dependency and resident-memory cost is not justified by that margin on an 8 GB target.
+
+**This decision was made with the corrected latency framing in hand, and latency was not the
+deciding factor.** Earlier analysis compared the reranker's ~1.3–2.7 s against retrieval's
+~86 ms and characterised it as a 25–50× cost. That used the wrong denominator. Measured
+generation latency is 65–105 s/question on the same hardware, so the reranker adds roughly
+**2–3% to end-to-end query time** — not a material objection. The decision rests on the thin
+accuracy margin and the k=3 regression, not on speed.
+
+**Secondary benefit:** not shipping the reranker removes ~80 MB of model weights and one
+resident model from the memory budget, which is relevant to the open risk R1 (co-resident
+memory fit on the 8 GB reference machine remains unmeasured).
+
+**Not reversed, deferred.** The n=35 evidence stands and is committed. If the prose
+retrieval gap becomes the binding constraint for v2, the selective-reranking variant
+(fire the cross-encoder only on low-confidence queries, so most queries pay nothing)
+is the natural next experiment and has never been tested.
+
+---
+
+## 3. The evidence (n=35, `cross-encoder/ms-marco-MiniLM-L6-v2`, N swept {10,15,20})
 
 Best config, N=10:
 
@@ -47,7 +78,7 @@ the regression/rescue audit are in `benchmarks/retrieval_n35/REPORT_reranker.md`
 
 ---
 
-## 3. Corrected cost framing
+## 4. Corrected cost framing
 
 DECISION-003's cost argument compared reranker latency against **retrieval** latency alone
 (~40 ms) and called the added cost prohibitive. That comparison used the wrong denominator.
@@ -63,7 +94,7 @@ the terms the question should be weighed in.
 
 ---
 
-## 4. The counterweight, stated honestly
+## 5. The counterweight, stated honestly
 
 The corrected cost framing is not a case for shipping without qualification:
 
@@ -82,7 +113,7 @@ The corrected cost framing is not a case for shipping without qualification:
 
 ---
 
-## 5. The sharpened case *for* revisiting this
+## 6. The sharpened case *for* revisiting this
 
 DECISION-004's generation evaluation found that, conditioned on retrieval actually
 supplying the gold chunk, generation answers correctly on **27/28 (96%)**. That is close to
@@ -92,21 +123,21 @@ re-examining, even at a real (if now-corrected) latency cost.
 
 ---
 
-## 6. What this record does NOT do
+## 7. What this record does NOT do
 
-- It does not decide to ship a reranker.
 - It does not reverse or edit DECISION-003, which remains correct on its own (n=19)
   evidence.
-- It does not choose a specific reranking strategy (e.g. "selective" reranking — firing the
-  cross-encoder only on low-confidence queries so most queries pay no latency — is named in
-  DECISION-004's follow-ups as the outstanding idea, but it was not tested here; only a
-  blanket rerank-every-query N-sweep was measured).
+- It does not choose a specific reranking strategy for a future revisit (e.g. "selective"
+  reranking — firing the cross-encoder only on low-confidence queries so most queries pay
+  no latency — is named in DECISION-004's follow-ups as the outstanding idea, but it was
+  not tested here; only a blanket rerank-every-query N-sweep was measured).
+- It does not delete or discount the n=35 evidence — see §9 for what would reopen this.
 
-**Status stays open until the owner weighs §3 against §4 and makes the ship/no-ship call.**
+**Decided 2026-07-22: reranker not shipped in v1.** See §2.
 
 ---
 
-## 7. Known limitations of this evidence
+## 8. Known limitations of this evidence
 
 - **n = 35 is still thin.** One question ≈ 2.9pp.
 - The 16 new (`claude_v3`) gold labels are single-annotator, unverified against the source
@@ -118,10 +149,15 @@ re-examining, even at a real (if now-corrected) latency cost.
 
 ---
 
-## 8. What would resolve this
+## 9. What would reopen this
 
-A ship decision requires weighing: +2 questions of R@3 recall and the prose-stratum gain,
-against a real (if small, ~2-3%) latency cost and two concrete regressions, one of which
-(Q31) removes a previously-correct answer from the context window. That weighing is an
-owner judgement call, not a further measurement — the evidence needed to make it is now
-recorded here and in `benchmarks/retrieval_n35/`.
+This decision is **not reversed, deferred** (§2). It would be worth revisiting if:
+
+- The prose retrieval gap becomes the binding constraint for v2 and the untested
+  selective-reranking variant (fire the cross-encoder only on low-confidence queries) is
+  measured and found to clear the k=3 regression that blocks blanket reranking here.
+- The 8 GB reference machine (R1) turns out to have headroom the dev-floor measurements
+  did not anticipate, changing the resident-memory cost side of §2.
+- A larger evidence base changes the shape of the prose misses (§6) — Q19, Q29, Q35 are
+  currently unreachable by reranking at any N tested; a different result on more data would
+  change that.
