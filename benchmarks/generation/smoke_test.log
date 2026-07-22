@@ -1,0 +1,45 @@
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 4267.76it/s]
+  [ 1/41] Q01    3.7s   What is Kibuga's returns window?
+  [ 2/41] Q02    4.4s   What is the minimum age to register on the marke
+  [ 3/41] Q03   17.3s   What is Kibuga's customer support phone number?
+  [ 4/41] Q04   30.6s   Where are Kibuga's headquarters?
+  [ 5/41] Q05   29.6s   What is the customer support email address?
+  [ 6/41] Q06   71.7s   How many pick-up attempts will Kibuga make for a
+  [ 7/41] Q07   55.4s   How long do I have to send something back?
+  [ 8/41] Q08   20.0s   Can a teenager open an account?
+  [ 9/41] Q09   47.1s   What paperwork do I need to bring back a purchas
+  [10/41] Q10   69.2s   Which goods can't be sent back?
+  [11/41] Q12   52.3s   How do I get in touch if something goes wrong?
+  [12/41] Q13    6.1s   How long does a refund take to process?
+  [13/41] Q14   28.2s   What happens if my return claim is rejected?
+  [14/41] Q15   83.2s   What kinds of content am I forbidden from postin
+  [15/41] Q16   53.8s   What personal data does Kibuga collect?
+  [16/41] Q17   31.4s   What warranty does a seller give about the produ
+  [17/41] Q19   77.3s   Can Kibuga suspend my account without telling me
+  [18/41] Q21  172.9s   What is the full returns procedure from request 
+  [19/41] Q22   67.4s   What are all the ways Kibuga can refund me?
+  [20/41] Q23   52.0s   Where is Kibuga's registered office located?
+  [21/41] Q24  121.8s   Do I pay shipping charges when returning a produ
+  [22/41] Q25   45.7s   Who do I contact to exercise my data privacy rig
+  [23/41] Q26  134.2s   Am I allowed to print pages from Kibuga's websit
+  [24/41] Q27   32.3s   How long does Kibuga hang on to my information?
+  [25/41] Q28  179.5s   What sorts of goods are sellers banned from list
+  [26/41] Q29   93.8s   Can I ask Kibuga to delete everything they know 
+  [27/41] Q30  133.0s   Are the prices shown on the marketplace inclusiv
+  [28/41] Q31   58.9s   Can Kibuga move my data to another country?
+  [29/41] Q32   66.8s   What can Kibuga do to me if I break the rules?
+  [30/41] Q33   82.0s   Which outside parties might see my personal data
+  [31/41] Q34   52.3s   Does Kibuga use my data for advertising?
+  [32/41] Q35   80.0s   If I have a legal dispute with Kibuga, whose cou
+  [33/41] Q36   83.0s   Across all the policies, what enforcement action
+  [34/41] Q37   68.0s   How does Kibuga handle a seller's money — what g
+  [35/41] Q38  101.8s   Walk me through everything I need to know to ret
+  [36/41] U01   63.8s  ABSTAIN? Does Kibuga ship internationally to Kenya, and w
+  [37/41] U02  105.4s  ABSTAIN? Can I pay for my order in instalments or with ca
+  [38/41] U03   60.9s  ABSTAIN? What is the warranty period in months on electro
+  [39/41] U04   50.1s  ABSTAIN? Does Kibuga have a physical store I can visit in
+  [40/41] U05  121.5s  ABSTAIN? What loyalty points or discount codes does Kibug
+  [41/41] U06    5.8s  ABSTAIN? How many days does delivery take after I place a
+
+DONE. generation time this run: 45.2 min (66s/q avg)
+answers -> answers.v3.jsonl

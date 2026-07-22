@@ -1,0 +1,289 @@
+[
+  {
+    "id": "Q01",
+    "stratum": "exact_fact",
+    "a": "PASS",
+    "abstained": false,
+    "reason": "gold-overlap ratio 1.00 (12/12 distinctive toks)"
+  },
+  {
+    "id": "Q02",
+    "stratum": "exact_fact",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q03",
+    "stratum": "exact_fact",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q04",
+    "stratum": "exact_fact",
+    "a": "PASS",
+    "abstained": false,
+    "reason": "gold-overlap ratio 0.80 (12/15 distinctive toks)"
+  },
+  {
+    "id": "Q05",
+    "stratum": "exact_fact",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q06",
+    "stratum": "exact_fact",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q07",
+    "stratum": "paraphrase",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q08",
+    "stratum": "paraphrase",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q09",
+    "stratum": "paraphrase",
+    "a": "PASS",
+    "abstained": false,
+    "reason": "gold-overlap ratio 1.00 (23/23 distinctive toks)"
+  },
+  {
+    "id": "Q10",
+    "stratum": "paraphrase",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q12",
+    "stratum": "paraphrase",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q13",
+    "stratum": "near_miss",
+    "a": "PASS",
+    "abstained": false,
+    "reason": "gold-overlap ratio 1.00 (21/21 distinctive toks)"
+  },
+  {
+    "id": "Q14",
+    "stratum": "near_miss",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q15",
+    "stratum": "prose",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q16",
+    "stratum": "prose",
+    "a": "FAIL",
+    "abstained": false,
+    "reason": "gold-overlap ratio 0.09 (6/70 distinctive toks)"
+  },
+  {
+    "id": "Q17",
+    "stratum": "prose",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q19",
+    "stratum": "prose",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q21",
+    "stratum": "multi_chunk",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q22",
+    "stratum": "multi_chunk",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q23",
+    "stratum": "exact_fact",
+    "a": "PASS",
+    "abstained": false,
+    "reason": "gold-overlap ratio 1.00 (10/10 distinctive toks)"
+  },
+  {
+    "id": "Q24",
+    "stratum": "exact_fact",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q25",
+    "stratum": "exact_fact",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q26",
+    "stratum": "exact_fact",
+    "a": "PASS",
+    "abstained": false,
+    "reason": "gold-overlap ratio 1.00 (13/13 distinctive toks)"
+  },
+  {
+    "id": "Q27",
+    "stratum": "paraphrase",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q28",
+    "stratum": "paraphrase",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q29",
+    "stratum": "paraphrase",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q30",
+    "stratum": "near_miss",
+    "a": "WEAK",
+    "abstained": false,
+    "reason": "gold-overlap ratio 0.47 (8/17 distinctive toks)"
+  },
+  {
+    "id": "Q31",
+    "stratum": "near_miss",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q32",
+    "stratum": "prose",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q33",
+    "stratum": "prose",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q34",
+    "stratum": "prose",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q35",
+    "stratum": "prose",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q36",
+    "stratum": "multi_chunk",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q37",
+    "stratum": "multi_chunk",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "Q38",
+    "stratum": "multi_chunk",
+    "a": "FAIL",
+    "abstained": true,
+    "reason": "abstained on an answerable question"
+  },
+  {
+    "id": "U01",
+    "stratum": "unanswerable",
+    "a": "PASS",
+    "abstained": true,
+    "reason": "abstained"
+  },
+  {
+    "id": "U02",
+    "stratum": "unanswerable",
+    "a": "PASS",
+    "abstained": true,
+    "reason": "abstained (+labelled GK note)"
+  },
+  {
+    "id": "U03",
+    "stratum": "unanswerable",
+    "a": "PASS",
+    "abstained": true,
+    "reason": "abstained"
+  },
+  {
+    "id": "U04",
+    "stratum": "unanswerable",
+    "a": "PASS",
+    "abstained": true,
+    "reason": "abstained (+labelled GK note)"
+  },
+  {
+    "id": "U05",
+    "stratum": "unanswerable",
+    "a": "PASS",
+    "abstained": true,
+    "reason": "abstained"
+  },
+  {
+    "id": "U06",
+    "stratum": "unanswerable",
+    "a": "PASS",
+    "abstained": true,
+    "reason": "abstained"
+  }
+]

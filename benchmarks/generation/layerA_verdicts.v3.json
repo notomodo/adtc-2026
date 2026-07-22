@@ -1,0 +1,1710 @@
+{
+  "summary": {
+    "v1": {
+      "answerable_total": 35,
+      "answerable_pass": 16,
+      "answerable_pass_pct": 45.7,
+      "answerable_abstained": 14,
+      "per_stratum": {
+        "exact_fact": {
+          "pass": 4,
+          "total": 10
+        },
+        "paraphrase": {
+          "pass": 4,
+          "total": 8
+        },
+        "near_miss": {
+          "pass": 2,
+          "total": 4
+        },
+        "prose": {
+          "pass": 3,
+          "total": 8
+        },
+        "multi_chunk": {
+          "pass": 3,
+          "total": 5
+        }
+      },
+      "laundered_abstention_count": 19,
+      "gk_label_count": 15,
+      "unanswerable_total": 6,
+      "unanswerable_probes_correct": 6,
+      "probe_detail": {
+        "U01": "PASS",
+        "U02": "PASS",
+        "U03": "PASS",
+        "U04": "PASS",
+        "U05": "PASS",
+        "U06": "PASS"
+      }
+    },
+    "v2": {
+      "answerable_total": 35,
+      "answerable_pass": 6,
+      "answerable_pass_pct": 17.1,
+      "answerable_abstained": 27,
+      "per_stratum": {
+        "exact_fact": {
+          "pass": 4,
+          "total": 10
+        },
+        "paraphrase": {
+          "pass": 1,
+          "total": 8
+        },
+        "near_miss": {
+          "pass": 1,
+          "total": 4
+        },
+        "prose": {
+          "pass": 0,
+          "total": 8
+        },
+        "multi_chunk": {
+          "pass": 0,
+          "total": 5
+        }
+      },
+      "laundered_abstention_count": 23,
+      "gk_label_count": 23,
+      "unanswerable_total": 6,
+      "unanswerable_probes_correct": 6,
+      "probe_detail": {
+        "U01": "PASS",
+        "U02": "PASS",
+        "U03": "PASS",
+        "U04": "PASS",
+        "U05": "PASS",
+        "U06": "PASS"
+      }
+    },
+    "v3": {
+      "answerable_total": 35,
+      "answerable_pass": 25,
+      "answerable_pass_pct": 71.4,
+      "answerable_abstained": 5,
+      "per_stratum": {
+        "exact_fact": {
+          "pass": 10,
+          "total": 10
+        },
+        "paraphrase": {
+          "pass": 4,
+          "total": 8
+        },
+        "near_miss": {
+          "pass": 3,
+          "total": 4
+        },
+        "prose": {
+          "pass": 5,
+          "total": 8
+        },
+        "multi_chunk": {
+          "pass": 3,
+          "total": 5
+        }
+      },
+      "laundered_abstention_count": 0,
+      "gk_label_count": 0,
+      "unanswerable_total": 6,
+      "unanswerable_probes_correct": 6,
+      "probe_detail": {
+        "U01": "PASS",
+        "U02": "PASS",
+        "U03": "PASS",
+        "U04": "PASS",
+        "U05": "PASS",
+        "U06": "PASS"
+      }
+    }
+  },
+  "verdicts": {
+    "v1": [
+      {
+        "id": "Q01",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga's returns window is 2 days from the delivery date of an item. This can be found in both [36] Return Policy and [4] Returns and refunds passages.",
+        "a_verdict": "WEAK",
+        "a_reason": "gold-overlap ratio 0.44 (8/18 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q02",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          2
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — not from the documents]: The minimum age to register on the marketplace is 18 years old.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q03",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          39
+        ],
+        "is_unanswerable": false,
+        "answer": "Phone: +256740063330 Phone: +256200959991",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 1.00 (3/3 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q04",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          39
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga's headquarters are located at Muganzirwazza Commercial Plaza, Lubiri Road, Plot 1446 Bulange - Mengo, P.O BOX 163315, Kampala, Uganda.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.80 (12/15 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q05",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          39
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\nCustomer Support Email: support@kibuga.com",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q06",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          37
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[37] states that We will make 3 attempts within 2 working days to pick-up the returning item after you submit the return request.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q07",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[37] states that you have 2 days to notify us of your return by calling Customer Service, from the day you received your purchase. Additionally, [36] Return Policy mentions a two (2) days free returns policy, subject to Terms and conditions. Therefore, based on the information provided, you have up to 2 days to send something back to Kibuga.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q08",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          2
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — from external sources]: The provided context does not explicitly state whether teenagers can register for an account or not; it only states that registration is restricted to individuals who are at least 18 years old.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q09",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "To return a purchase, you need to bring the following paperwork:\n\n1. Proof of purchase – this is the document handed over to you together with the product on delivery.\n2. Original packaging – the manufacturer's packaging that came with the item.\n3. Any free promotional items such as gifts or accessories delivered with the purchased item.\n\nThese are the requirements for a valid return procedure according to Kibuga's Return Policy.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.64 (25/39 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q10",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "Innerwear, swimsuits, gym wear, sleep wear  \nPerfumes, jewelry, health & wellness products, adult toys",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 1.00 (11/11 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q12",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          36,
+          37
+        ],
+        "is_unanswerable": false,
+        "answer": "You can contact our Customer Service Call Center at 0742511381 / 0742511394 if something goes wrong with your return process. They will assist you in resolving any issues related to returns.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.52 (11/21 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q13",
+        "stratum": "near_miss",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "The process may take up to 2 days from when your return request was submitted.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 1.00 (10/10 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q14",
+        "stratum": "near_miss",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "If your return claim is rejected, we will call you to explain the issue and send the item(s) back to you. We will arrange the delivery of the item. Note that we will make two (2) attempts to return the product to you at no cost. However, after two (2) failed attempts, we will cancel the return process and store the product at our warehouse for up to seven (7) days awaiting your collection. If you do not collect the product within these seven (7) days, it will be deemed as forfeited and we will dispose off in accordance with the Ugandan law.",
+        "a_verdict": "WEAK",
+        "a_reason": "gold-overlap ratio 0.36 (16/44 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q15",
+        "stratum": "prose",
+        "gold_chunks": [
+          5
+        ],
+        "is_unanswerable": false,
+        "answer": "You are forbidden from posting content that is offensive, obscene, indecent, pornographic, lewd, suggestive, sexually explicit, depicts violence in an explicit, graphic or gratuitous manner, blasphemous, discriminatory, inflammatory, causes annoyance, inconvenience or needless anxiety to any person, constitutes spam, illegal, infringes on any person's legal rights, or gives rise to legal action against any person. Your content must not infringe or breach any copyright, moral right, database right, trademark right, design right, right in passing off, or other intellectual property right; any right of confidence, right of privacy, or right under data protection legislation; any contractual obligation owed to any person; or any court order.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.81 (51/63 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q16",
+        "stratum": "prose",
+        "gold_chunks": [
+          23
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga collects various types of personal data including:\n- Contact details such as Name, postal addresses, phone numbers, and email addresses.\n- Demographic information like Date of birth, age, and gender.\n- Online registration information such as Passwords and authentication information.\n- Payment information including Credit card information and billing address.\n- Survey responses for customer satisfaction surveys and market research.\n- Competition entries and submissions.\n- Marketing preferences.\n\nAdditionally, Kibuga collects automatically collected data or from third parties like:\n- Device information such as PC, tablet, mobile device, operating system, browser, IP address.\n- Usage information including Searches, views, downloads, purchases, web pages visited.\n- User-generated content such as Blogs and social media postings.\n- Social media data like Username or ID, profile photo, followers.",
+        "a_verdict": "FAIL",
+        "a_reason": "gold-overlap ratio 0.08 (6/75 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q17",
+        "stratum": "prose",
+        "gold_chunks": [
+          3
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The provided context does not specify any warranty given by sellers to their products.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q19",
+        "stratum": "prose",
+        "gold_chunks": [
+          2
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: In the provided contexts, there is no explicit mention of Kibuga suspending an account without prior notification. The general terms and conditions outline various actions that can be taken upon suspicion or confirmed breach of agreements, but they do not specify a scenario where suspension would occur without notice.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q21",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          37
+        ],
+        "is_unanswerable": false,
+        "answer": "The full returns procedure from request to refund involves several steps:\n\n1. **Notification**: You must notify Kibuga within 2 days of receiving your purchase by calling Customer Service at 0742511381/0742511394.\n\n2. **Return Request Submission**: Submit a return request through the notification process, which includes providing proof of purchase (the document handed over to you together with the product on delivery), original packaging, and any free promotional items delivered with the purchased item.\n\n3. **Pick-Up Attempts**: Kibuga will make 3 attempts within 2 working days to pick up your returned item after submitting the return request. If the package is found damaged during these attempts, it will be rejected by the rider or sent back for quality check. After 3 pick-up attempts, if you still do not provide the item, Kibuga will cancel the return procedure and store the product at their warehouse for up to seven (7) days awaiting your collection.\n\n4. **Refund Process**: If all conditions are met and the claim is valid, Kibuga will perform a quality check on the returned item. Upon confirmation of validity, they will refund you according to your requested method: Payments in respect of the product price, shipping fees as stated on the refunds page, store credits, wallet refunds, vouchers, mobile money transfer, bank transfers or such other method as determined from time to time.\n\n5. **Invalid Claims**: If the claim is invalid, Kibuga will send the item back to you after two (2) attempts at no cost. After two failed attempts, they will cancel the return process and store the product at their warehouse for up to seven (7) days awaiting your collection. If not collected within these seven (7) days, it will be disposed off in accordance with Ugandan law.\n\n6. **Customer Communication**: Throughout this process, Kibuga keeps you updated by email and SMS about the status of your return. For any inquiries, contact their Customer Service Call Center at 0742511381/0742511394.\n\nCustomers with unjustified or invalid returns may be denied the right to return items in the future.",
+        "a_verdict": "WEAK",
+        "a_reason": "gold-overlap ratio 0.44 (65/147 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q22",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          4
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga can refund you according to your requested refund method after performing a careful quality check of the returned item. If the claim is valid, we will refund you based on the method you choose. The process may take up to 2 days from when your return request was submitted. If the claim is invalid, the item will be sent back to you.",
+        "a_verdict": "FAIL",
+        "a_reason": "gold-overlap ratio 0.12 (4/32 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q23",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          21
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[21] passage states that Kibuga business ventures' registered office is at Muganzirwaza Commercial building plaza Lubiri ring road.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q24",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          38
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — not from the documents]: The relevant information about whether shipping charges are paid for returns is found in Passage 38, which states \"There are no charges for shipping a product back to Kibuga.\"",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q25",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          34
+        ],
+        "is_unanswerable": false,
+        "answer": "Data Privacy Officer at support@kibuga.com. We will respond to complaints within prescribed timelines. You can also close your account or contact us to exercise these rights.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.72 (13/18 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q26",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          8
+        ],
+        "is_unanswerable": false,
+        "answer": "You may print pages from our website for your own personal and noncommercial use, providing that such printing is not systematic or excessive. This permission is subject to the other provisions of these general terms and conditions.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.95 (21/22 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q27",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          31
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — not from the documents]: The provided policy excerpts do not specify how long Kibuga hangs onto customer information.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q28",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          42
+        ],
+        "is_unanswerable": false,
+        "answer": "Sellers are banned from listing goods that:\n- Breach any laws or regulations or infringe any person's intellectual property rights or other rights, in any jurisdiction under any applicable law.\n- Consist of or contain material that would contravene the rules on content in the general terms and conditions if published on our marketplace by them.\n- Are drugs, narcotics, steroids, or controlled substances.\n- Are pornography.\n- Are obscene, indecent, or sexually explicit materials.\n- Are swords, firearms, or other weapons.\n- Contain ammunition for any weapon.\n- Are otherwise prohibited pursuant to the Prohibited and restricted Products Policy, as may be amended from time to times, or any applicable law.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.77 (44/57 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q29",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          33
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — not from the documents]: The provided privacy notice does not explicitly mention a request to delete all personal data.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q30",
+        "stratum": "near_miss",
+        "gold_chunks": [
+          44
+        ],
+        "is_unanswerable": false,
+        "answer": "The prices shown on the marketplace are stated inclusive of VAT and any other taxes applicable to the transaction. This is explicitly mentioned in the Sellers Terms and Conditions (44).",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.69 (11/16 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q31",
+        "stratum": "near_miss",
+        "gold_chunks": [
+          30
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — not from the documents]: The relevant passage states that personal data may be transferred to other countries where permissible by law, provided necessary measures are taken to protect the data and ensure a similar level of protection as in the country of origin.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q32",
+        "stratum": "prose",
+        "gold_chunks": [
+          15
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga can take several actions if they reasonably determine that you have breached these seller terms and conditions, our general terms and conditions, or any Kibuga codes, policies, or guidelines. These actions include sending you one or more formal warnings, suspending, prohibiting, or blocking your access to the marketplace as provided in the general terms and conditions, applying penalties for breach as provided in the Seller Penalty Policy, or commencing legal action against you whether for breach of contract or otherwise.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.57 (24/42 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q33",
+        "stratum": "prose",
+        "gold_chunks": [
+          29
+        ],
+        "is_unanswerable": false,
+        "answer": "Third-party sellers, service providers for functions like order fulfillment, payment processing, and marketing assistance, and in business transactions are mentioned as outside parties that might see your personal data. Additionally, Google Digital Marketing may access your data for targeted offers.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.57 (17/30 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q34",
+        "stratum": "prose",
+        "gold_chunks": [
+          25
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — not from the documents]: While the exact details are not explicitly stated, the context mentions that Kibuga uses Google Digital Marketing for targeted offers, which implies they do use data for advertising purposes.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q35",
+        "stratum": "prose",
+        "gold_chunks": [
+          20
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The specific jurisdiction for legal disputes involving Kibuga Investment is not provided in the given context passages.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q36",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          15,
+          46
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga can take several enforcement actions against a seller who breaches the terms. These include:\n1. Sending formal warnings.\n2. Suspending, prohibiting or blocking access to the marketplace as per the general terms and conditions.\n3. Applying penalties for breach as provided in the Seller Penalty Policy.\n4. Commencing legal action against the seller, whether for breach of contract or otherwise.\n\nThese actions are detailed across different sections of the policies, including Sellers Terms and Conditions, Confidentiality and Data Privacy, and Limitations and Exclusions of Liability.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.65 (34/52 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q37",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          45,
+          44
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga may make tax-related deductions to payments processed by us on your behalf and remit such deducted amounts to the relevant government or tax authority. Therefore, any taxes applicable to the transactions entered into on the marketplace with buyers, including VAT, are handled through these deductions. The amount of the commission is automatically adjusted in case of an upwards revision in the rate of VAT or other applicable taxes, ensuring that Kibuga's net revenues remain constant. This means that after all necessary tax-related deductions, what remains is the seller's net revenue from the transaction.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.81 (43/53 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q38",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          36,
+          37,
+          38
+        ],
+        "is_unanswerable": false,
+        "answer": "To return an item and receive your money back as per Kibuga's Return Policy:\n\n1. **Notification**: You have 2 days from receiving the purchase to notify Kibuga of a return by calling Customer Service at either 0742511381 or 0742511394.\n\n2. **Condition for Valid Return**:\n   - Proof of Purchase: The document you received with your product.\n   - Original Packaging: Manufacturer packaging.\n   - Any Free Promotional Items: Gifts or accessories delivered with the purchased item.\n   - Valid Reason: If the Item is Faulty, as stated in the policy.\n\n3. **Items Not Acceptable for Return**:\n   - Innerwear, swimsuits, gym wear, sleep wear\n   - Perfumes, jewelry, health & wellness products, adult toys\n\n4. **Returning an Item**:\n   - You can send your item to Kibuga by calling Customer Service or dropping it off at their offices/Warehouse.\n   - If the item is damaged during transit, it will be rejected by the rider and sent back for quality check.\n\n5. **Tracking Your Return Status**:\n   - Kibuga will keep you updated via email and SMS about your return status.\n   - You can contact Customer Service Call Center at 0742511381/0742511394 for any inquiries or to fill out the form.\n\n6. **Return Process**:\n   - Kibuga will perform a quality check on your returned item.\n   - If the claim is valid, you will receive a refund according to your requested method within 2 days from when your return request was submitted.\n   - If the claim is invalid, the item will be sent back to you.\n\n7. **Additional Information**:\n   - Kibuga may store any returned items at their warehouse for up to seven (7) days if not collected and dispose of them in accordance with Ugandan law after this period.\n   - Customers who have unjustified or invalid returns may lose the right to return future items or shop on Kibuga.\n\n8. **Gifts**:\n   - Any gift included with your purchase must also be returned along with the product.\n\n9. **Shipping Charges**:\n   - There are no charges for shipping a product back to Kibuga.\n\n10. **After 2-Day Timeline**:\n    - Returns after the 2-day timeline are not possible, as stated in the policy.\n\nBy following these steps and adhering to the conditions outlined, you can return your item and receive a refund from Kibuga.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.75 (112/150 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "U01",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "PASS",
+        "a_reason": "abstained",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "U02",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — not from the documents]: The provided passages do not contain any information regarding payment options such as installment payments or cash on delivery.",
+        "a_verdict": "PASS",
+        "a_reason": "abstained (+labelled GK note)",
+        "a_abstained": true,
+        "a_gk_labelled": true
+      },
+      {
+        "id": "U03",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The provided return policies do not specify any warranty periods for electronics or other products purchased from Kibuga.",
+        "a_verdict": "PASS",
+        "a_reason": "abstained (+labelled GK note)",
+        "a_abstained": true,
+        "a_gk_labelled": true
+      },
+      {
+        "id": "U04",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — not from the documents]: The provided information does not mention any physical stores or locations where one could visit in Kampala.",
+        "a_verdict": "PASS",
+        "a_reason": "abstained (+labelled GK note)",
+        "a_abstained": true,
+        "a_gk_labelled": true
+      },
+      {
+        "id": "U05",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The provided passages do not contain any information about loyalty points or discount codes offered by Kibuga to its repeat buyers.",
+        "a_verdict": "PASS",
+        "a_reason": "abstained (+labelled GK note)",
+        "a_abstained": true,
+        "a_gk_labelled": true
+      },
+      {
+        "id": "U06",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The provided return policy passages do not contain information about the time it takes for delivery after placing an order.",
+        "a_verdict": "PASS",
+        "a_reason": "abstained (+labelled GK note)",
+        "a_abstained": true,
+        "a_gk_labelled": true
+      }
+    ],
+    "v2": [
+      {
+        "id": "Q01",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "ALL ITEMS SOLD ON KIBUGA IF FAULTY CAN BE RETURNED WITHIN A PERIOD OF 2 DAYS FROM DELIVERY DATE.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 1.00 (12/12 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q02",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          2
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q03",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          39
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The provided passages do not contain any specific customer support phone numbers other than the general ones mentioned in [39], which are +256200959991 and +256740063330.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q04",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          39
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga's headquarters are located at Muganzirwazza Commercial Plaza, Lubiri Road, Plot 1446 Bulange - Mengo, P.O BOX 163315, Kampala, Uganda.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.80 (12/15 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q05",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          39
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — not from the documents]: The customer support email address for Kibuga is support@kibuga.com.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q06",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          37
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The document does not specify exactly how many pick-up attempts Kibuga will make for a return. It states that they will make 3 attempts within 2 working days to pick up the returning item after receiving a return request, but it does not confirm if this is the maximum number of attempts or if there are any additional attempts beyond these three.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q07",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The passages mention that you have 2 days to notify Kibuga of your return by calling Customer Service after receiving your purchase. However, they do not specify how long it takes for the actual sending back of the product.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q08",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          2
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The passages do not contain any information regarding whether teenagers can open accounts or if they are allowed to register with the marketplace.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q09",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "Requirement for a valid procedure • Proof of purchase – the document handed over to you together with the product, on delivery. • Original packaging – the manufacturer packaging • Any free promotional items – gifts or accessories delivered with the purchased item",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 1.00 (23/23 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q10",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: Innerwear, swimsuits, gym wear, sleep wear; Perfumes, jewelry, health & wellness products, adult toys. These goods cannot be sent back as per the policy.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q12",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          36,
+          37
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: This information is not present in the provided document snippets.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q13",
+        "stratum": "near_miss",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "We will perform a careful quality check and if the claim is valid, we will refund you according to your requested refund method. The process may take up to 2 days from when your return request was submitted.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 1.00 (21/21 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q14",
+        "stratum": "near_miss",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: If your return claim is rejected, the item will be sent back to you.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q15",
+        "stratum": "prose",
+        "gold_chunks": [
+          5
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — not from the documents]: The provided passages do not specify what kinds of content are explicitly forbidden from being posted. They outline guidelines for appropriate and inappropriate content but do not list specific prohibitions.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q16",
+        "stratum": "prose",
+        "gold_chunks": [
+          23
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga collects various types of personal data including:\n- Contact details such as Name, postal addresses, phone numbers, and email addresses.\n- Demographic information like Date of birth, age, and gender.\n- Online registration information such as Passwords and authentication information.\n- Payment information including Credit card information and billing address.\n- Survey responses for customer satisfaction surveys and market research.\n- Competition entries and submissions.\n- Marketing preferences.\n- Device information such as PC, tablet, mobile device, operating system, browser, IP address.\n- Usage information like Searches, views, downloads, purchases, web pages visited.\n- User-generated content from Blogs and social media postings.\n- Social media data including Username or ID, profile photo, followers.",
+        "a_verdict": "FAIL",
+        "a_reason": "gold-overlap ratio 0.09 (6/70 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q17",
+        "stratum": "prose",
+        "gold_chunks": [
+          3
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q19",
+        "stratum": "prose",
+        "gold_chunks": [
+          2
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: Kibuga may temporarily suspend your access to our marketplace as provided in the general terms and conditions without prior notice.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q21",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          37
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The full returns procedure from request to refund involves several steps as outlined in the Return Policy document. Here's a concise summary:\n\n1. **Requesting a Return**: Customers must notify Kibuga within 2 days of receiving their purchase by calling Customer Service at 0742511381/0742511394 and filling out a form.\n\n2. **Sending the Product for Return**:\n   - Kibuga will make up to 3 attempts within 2 working days to pick up the returned item after receiving the return request.\n   - If the customer drops off the product, they must ensure it is in good condition with no damage.\n   - Any package found damaged during collection or quality check will be rejected.\n\n3. **Tracking Status**: Customers are kept updated on their return status via email and SMS from Customer Service Call Center at 0742511381/0742511394.\n\n4. **Refund Process**:\n   - If the claim is valid, Kibuga will refund according to the requested method (payment in respect of product price, shipping fees, store credits, wallet refunds, vouchers, mobile money transfer, bank transfers).\n   - The process may take up to 2 days from when the return request was submitted.\n   - If the claim is invalid, the item will be sent back to the customer.\n\n5. **Invalid Returns**: For items not validated for refund, Kibuga will call the customer to explain and send the item(s) back at no cost. After two failed attempts, if the product isn't collected within seven days, it will be disposed of in accordance with Ugandan law.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q22",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          4
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The passages do not provide specific information on all the ways Kibuga can refund you.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q23",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          21
+        ],
+        "is_unanswerable": false,
+        "answer": "The registered office of Kibuga is at Muganzirwaza Commercial building plaza Lubiri ring road.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 1.00 (10/10 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q24",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          38
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The answer is NOT present in the provided document passages.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q25",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          34
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — not from the documents]: The Data Privacy Officer can be contacted at support@kibuga.com to exercise your data privacy rights.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q26",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          8
+        ],
+        "is_unanswerable": false,
+        "answer": "You may print pages from our website for your own personal and noncommercial use, providing that such printing is not systematic or excessive.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 1.00 (13/13 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q27",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          31
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q28",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          42
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: Sellers are banned from advertising, buying, selling or supplying through the marketplace any product that breaches laws or regulations, infringes intellectual property rights, gives rise to a cause of action against anyone in any jurisdiction under any applicable law. Such products may also include drugs, narcotics, steroids, controlled substances, pornography, obscene, indecent or sexually explicit materials, swords, firearms or other weapons, ammunition for any weapon, and items prohibited by the Prohibited and Restricted Products Policy or applicable laws.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q29",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          33
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q30",
+        "stratum": "near_miss",
+        "gold_chunks": [
+          44
+        ],
+        "is_unanswerable": false,
+        "answer": "ALL prices of products shall be stated inclusive of VAT and any other tax applicable to the transaction and in the currency of the territory. According to [44] Sellers Terms and Conditions, answer is YES.",
+        "a_verdict": "WEAK",
+        "a_reason": "gold-overlap ratio 0.47 (8/17 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q31",
+        "stratum": "near_miss",
+        "gold_chunks": [
+          30
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q32",
+        "stratum": "prose",
+        "gold_chunks": [
+          15
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: Kibuga may send formal warnings, suspend, prohibit or block access to their marketplace, apply penalties for breach as provided in their Seller Penalty Policy, and commence legal action against you for breach of contract or otherwise if they reasonably determine that you have breached these seller terms and conditions.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q33",
+        "stratum": "prose",
+        "gold_chunks": [
+          29
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n[GENERAL KNOWLEDGE — not from the documents]: Kibuga may share your personal data with third-party sellers for product and service delivery purposes. They may also share it with service providers for functions like order fulfillment, payment processing, and marketing assistance. In business transactions, customer information might be transferred. For fraud detection, they may share your data with others as well.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q34",
+        "stratum": "prose",
+        "gold_chunks": [
+          25
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: Kibuga may use personal data collected through their website and mobile applications for direct marketing activities which could include email marketing, SMS marketing, telemarketing, and direct mailing. However, this information is not explicitly stated as advertising in the provided context passages.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q35",
+        "stratum": "prose",
+        "gold_chunks": [
+          20
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q36",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          15,
+          46
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: Kibuga can enforce several actions against a seller who breaches the terms including: sending formal warnings, suspending or permanently prohibiting access to the marketplace, applying penalties for breach as provided in the Seller Penalty Policy, and commencing legal action. Additionally, they have the right to block computers using the seller's IP address from accessing the marketplace, contact internet service providers to block access, suspend or delete the seller’s account on the marketplace, and take other actions to prevent circumvention of such measures.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q37",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          45,
+          44
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: Kibuga may make tax-related deductions to payments processed by them on behalf of sellers and remit such amounts to relevant government or tax authorities. Any amount deducted would be for taxes applicable to the transactions, including VAT and other taxes. The exact breakdown of what gets deducted is not specified in the given terms and conditions passages.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q38",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          36,
+          37,
+          38
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: This document does not provide specific steps for getting your money back after a valid return request is made. The process involves contacting Customer Service Call Center at 0742511381/0742511394, filling out a form, and having a valid reason for the return such as item being faulty. If the claim is valid, you will receive your refund according to your requested method within up to two days from when your request was submitted.",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "U01",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "PASS",
+        "a_reason": "abstained",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "U02",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: The provided document passages do not contain any information regarding payment methods such as installment payments or cash on delivery.",
+        "a_verdict": "PASS",
+        "a_reason": "abstained (+labelled GK note)",
+        "a_abstained": true,
+        "a_gk_labelled": true
+      },
+      {
+        "id": "U03",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "PASS",
+        "a_reason": "abstained",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "U04",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS\n\n[GENERAL KNOWLEDGE — not from the documents]: Kibuga does not operate a physical store that visitors can visit in Kampala. Their operations are conducted through their e-commerce platform and customer support channels.",
+        "a_verdict": "PASS",
+        "a_reason": "abstained (+labelled GK note)",
+        "a_abstained": true,
+        "a_gk_labelled": true
+      },
+      {
+        "id": "U05",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "PASS",
+        "a_reason": "abstained",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "U06",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "PASS",
+        "a_reason": "abstained",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      }
+    ],
+    "v3": [
+      {
+        "id": "Q01",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga's returns window is 2 days from the delivery date.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.88 (7/8 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q02",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          2
+        ],
+        "is_unanswerable": false,
+        "answer": "You may not register with our marketplace if you are under 18 years of age.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.86 (6/7 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q03",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          39
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga's customer support phone numbers are +256200959991 and +256740063330.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.57 (4/7 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q04",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          39
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga's headquarters are at Muganzirwazza Commercial Plaza, Lubiri Road, Plot 1446 Bulange - Mengo, P.O BOX 163315, Kampala, Uganda.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.86 (12/14 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q05",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          39
+        ],
+        "is_unanswerable": false,
+        "answer": "The customer support email address for Kibuga is support@kibuga.com.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.50 (3/6 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q06",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          37
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga will make 3 attempts within 2 working days to pick up the returning item after you submit the return request.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.94 (15/16 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q07",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "You have 2 days to notify us of your return by calling Customer Service, from the day you received your purchase. If the product has a warranty, you should also contact the manufacturer. After that, we will make 3 attempts within 2 working days to pick-up the returning item. If after these attempts it is not picked up, the return procedure will be canceled and the product cannot be returned anymore.",
+        "a_verdict": "WEAK",
+        "a_reason": "gold-overlap ratio 0.44 (16/36 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q08",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          2
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q09",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "To return a purchase, you need to bring Proof of Purchase, the original packaging, any free promotional items (gifts or accessories), and valid reason for return such as if the item is faulty.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.82 (14/17 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q10",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "Innerwear, swimsuits, gym wear, sleep wear, Perfumes, jewelry, health & wellness products, adult toys.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.91 (10/11 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q12",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          36,
+          37
+        ],
+        "is_unanswerable": false,
+        "answer": "If something goes wrong with your order or return process, you can contact our Customer Service Call Center at 0742511381/0742511394 for any inquiries or issues. They will assist you in resolving any problems that arise during the return procedure.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.58 (15/26 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q13",
+        "stratum": "near_miss",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "The process may take up to 2 days from when your return request was submitted.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 1.00 (10/10 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q14",
+        "stratum": "near_miss",
+        "gold_chunks": [
+          36
+        ],
+        "is_unanswerable": false,
+        "answer": "If your return claim is invalid, we will call you to explain the issue and send the item(s) back to you. We will arrange the delivery of the item. Note that we will make two (2) attempts to return the product to you at no cost. However, after two (2) failed attempts, we will cancel the return process and store the product at our warehouse for up to seven (7) days awaiting your collection. If you do not collect the product within these seven (7) days, it will be deemed as forfeited and we will dispose off in accordance with the Ugandan law.",
+        "a_verdict": "WEAK",
+        "a_reason": "gold-overlap ratio 0.39 (17/44 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q15",
+        "stratum": "prose",
+        "gold_chunks": [
+          5
+        ],
+        "is_unanswerable": false,
+        "answer": "You are forbidden from posting offensive, obscene, indecent, pornographic, lewd, suggestive, sexually explicit, violent in an explicit, graphic or gratuitous manner, blasphemous, racially or religiously discriminatory, deceptive, fraudulent, threatening, abusive, harassing, anti-social, hateful, discriminatory, inflammatory, annoying, causing inconvenience or needless anxiety, spam, illegal, infringing on copyrights, moral rights, database rights, trademark rights, design rights, right in passing off, or any other intellectual property right, breaching contractual obligations, or giving rise to legal action.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.72 (39/54 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q16",
+        "stratum": "prose",
+        "gold_chunks": [
+          23
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga collects various types of personal data including contact details such as name, postal addresses, phone numbers, and email addresses; demographic information like date of birth, age, gender; online registration information like passwords and authentication details; payment information such as credit card information and billing address; survey responses for customer satisfaction and market research; competition entries and submissions; marketing preferences; device information including operating system, browser, IP address; usage information from searches, views, downloads, purchases, web pages visited; user-generated content from blogs and social media postings; and social media data like usernames or IDs, profile photos, and followers.",
+        "a_verdict": "FAIL",
+        "a_reason": "gold-overlap ratio 0.08 (5/65 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q17",
+        "stratum": "prose",
+        "gold_chunks": [
+          3
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q19",
+        "stratum": "prose",
+        "gold_chunks": [
+          2
+        ],
+        "is_unanswerable": false,
+        "answer": "Sellers Terms and Conditions state that if we reasonably determine that you have breached these seller terms and conditions or any Kibuga codes, policies or guidelines, we may suspend, prohibit or block your access to our marketplace as provided in the general terms and conditions. This implies that Kibuga can suspend my account without telling me.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.52 (15/29 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q21",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          37
+        ],
+        "is_unanswerable": false,
+        "answer": "The full returns procedure from request to refund involves several steps:\n\n1. **Notification**: Notify Kibuga within 2 days of receiving the purchase by calling Customer Service at 0742511381/0742511394.\n\n2. **Return Request Submission**: Submit a return request through the notification process, which includes providing proof of purchase (document handed over to you together with the product on delivery), original packaging, and any free promotional items delivered with the purchased item.\n\n3. **Quality Check**: Kibuga will perform a quality check on the returned item(s).\n\n4. **Validation of Claim**: If the claim is valid, Kibuga will issue a refund according to the requested method (store credits, wallet refunds, vouchers, mobile money transfer, bank transfers, or other methods as determined by Kibuga from time to time). The process may take up to 2 days.\n\n5. **Invalid Claims**: If the claim is invalid, the item(s) will be sent back to you. Kibuga keeps track of all return requests for improvement and customer profiling purposes.\n\n6. **Warranty Check**: For defective items, advise contacting the manufacturer if the product has a warranty.\n\n7. **Shipping**: Returned products are accepted by Kibuga on behalf of the seller. Shipping fees (as stated on the refunds page) will be managed in accordance with the marketplace's refund policies.\n\n8. **Tracking Status**: Customers can track their return status through updates via email and SMS, or contact Customer Service Call Center at 0742511381/0742511394 for inquiries.\n\n9. **Warranty Information**: Check the warranty page for more information about Kibuga's warranty policy.\n\n10. **Invalid Returns Handling**: If a return is invalid, Kibuga will call to explain and send the item back at no cost. After two attempts, if not collected within seven days, the product will be disposed of in accordance with Ugandan law.",
+        "a_verdict": "WEAK",
+        "a_reason": "gold-overlap ratio 0.40 (56/140 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q22",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          4
+        ],
+        "is_unanswerable": false,
+        "answer": "For a valid return request, Kibuga will refund you according to your requested refund method after performing a careful quality check. If the claim is invalid, the item will be sent back to you. There are no charges for shipping a product back to Kibuga.",
+        "a_verdict": "FAIL",
+        "a_reason": "gold-overlap ratio 0.15 (4/26 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q23",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          21
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga's registered office is located at Muganzirwaza Commercial building plaza Lubiri ring road.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.91 (10/11 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q24",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          38
+        ],
+        "is_unanswerable": false,
+        "answer": "There are no charges for shipping a product back to Kibuga.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 1.00 (6/6 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q25",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          34
+        ],
+        "is_unanswerable": false,
+        "answer": "You should contact our Data Privacy Officer at support@kibuga.com to exercise your data privacy rights.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.67 (6/9 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q26",
+        "stratum": "exact_fact",
+        "gold_chunks": [
+          8
+        ],
+        "is_unanswerable": false,
+        "answer": "You may print pages from our website for your own personal and noncommercial use, providing that such printing is not systematic or excessive.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 1.00 (13/13 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q27",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          31
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q28",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          42
+        ],
+        "is_unanswerable": false,
+        "answer": "Sellers are banned from advertising, buying, or supplying through our marketplace any product that breaches any laws or regulations, infringes any person's intellectual property rights or other rights, gives rise to a cause of action against any person in any jurisdiction and under any applicable law. It also includes products consisting of or containing material that would contravene the rules on content in the general terms and conditions; drugs, narcotics, steroids or controlled substances; pornography; obscene, indecent or sexually explicit materials; swords, firearms or other weapons; ammunition for any weapon; or items prohibited pursuant to the Prohibited and restricted Products Policy.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.85 (53/62 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q29",
+        "stratum": "paraphrase",
+        "gold_chunks": [
+          33
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q30",
+        "stratum": "near_miss",
+        "gold_chunks": [
+          44
+        ],
+        "is_unanswerable": false,
+        "answer": "All prices of products shall be stated inclusive of VAT and any other tax applicable to the transaction. This is stated in Sellers Terms and Conditions [42].",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.77 (10/13 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q31",
+        "stratum": "near_miss",
+        "gold_chunks": [
+          30
+        ],
+        "is_unanswerable": false,
+        "answer": "Yes, Kibuga can move your data to another country as long as it implements necessary measures to protect your data and ensures a similar level of protection as in the country of origin, respecting your legal rights.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.68 (13/19 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q32",
+        "stratum": "prose",
+        "gold_chunks": [
+          15
+        ],
+        "is_unanswerable": false,
+        "answer": "If you reasonably determine that you have breached these seller terms and conditions, our general terms and conditions, or any Kibuga codes, policies or guidelines, Kibuga may send you one or more formal warnings. They may also suspend, prohibit or block your access to our marketplace as provided in the general terms and conditions. Additionally, they can apply penalties for breach as provided in our Seller Penalty Policy; and/or commence legal action against you, whether for breach of contract or otherwise.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.66 (27/41 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q33",
+        "stratum": "prose",
+        "gold_chunks": [
+          29
+        ],
+        "is_unanswerable": false,
+        "answer": "Third-party sellers, service providers for functions like order fulfillment, payment processing, and marketing assistance, as well as business transfers in transactions, may see your personal data. Additionally, there is a possibility that fraud detection entities might access your data to ensure compliance with laws and protect against fraud.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.62 (23/37 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q34",
+        "stratum": "prose",
+        "gold_chunks": [
+          25
+        ],
+        "is_unanswerable": false,
+        "answer": "Yes, Kibuga uses your data for advertising purposes as stated in the document which mentions they may collect and use various types of personal data including payment information, survey responses, marketing preferences, and automatically collected data from third parties for targeted offers through Google Digital Marketing.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.70 (23/33 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q35",
+        "stratum": "prose",
+        "gold_chunks": [
+          20
+        ],
+        "is_unanswerable": false,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "FAIL",
+        "a_reason": "abstained on an answerable question",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q36",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          15,
+          46
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga can enforce several actions against a seller who breaches the terms of their agreements. These include sending formal warnings, suspending or permanently prohibiting access to the marketplace, blocking computers using the seller's IP address from accessing the marketplace, contacting any or all of the seller's internet service providers to block their access to the marketplace, suspending or deleting the seller's account on the marketplace, and commencing legal action against the seller.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.62 (23/37 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q37",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          45,
+          44
+        ],
+        "is_unanswerable": false,
+        "answer": "Kibuga may make tax-related deductions to payments processed by us on your behalf and remit such deducted amounts to the relevant government or tax authority. Therefore, taxes applicable to the transactions entered into on the marketplace with buyers, including VAT, are handled by Kibuga through these deductions. The amount of the commission is automatically adjusted in case of any upwards revision in the rate of VAT or other applicable taxes, ensuring that Kibuga's net revenues remain constant.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.88 (38/43 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "Q38",
+        "stratum": "multi_chunk",
+        "gold_chunks": [
+          36,
+          37,
+          38
+        ],
+        "is_unanswerable": false,
+        "answer": "To initiate the return process, you must notify Customer Service within 2 days of receiving your purchase by calling them at either 0742511381 or 0742511394. You need to provide proof of purchase and original packaging for a valid procedure.\n\nFor defective items, contact the manufacturer if there is a warranty. If you choose to send your item back, ensure it is in good condition as any damaged package will be rejected by the rider during collection or sent back after quality check is done. \n\nOnce you have submitted your return request and all necessary documents are provided, Kibuga will perform a careful quality check. If the claim is valid, you will receive a refund according to your requested method within 2 days from when your return was submitted. However, if the claim is invalid, the item will be sent back to you.\n\nKibuga keeps track of all return requests for improvement and customer profiling purposes. Customers with unjustified or invalid returns may lose their right to return items in the future.\n\nIf a product is not under warranty, Kibuga advises checking our warranty page for more information about our policy. For missing items or damaged products, especially broken screens, you should check with our riders during delivery and reject on the spot if necessary.\n\nThere are no shipping charges when returning a product to Kibuga. If you have any gifts included in your purchase, they must also be returned.",
+        "a_verdict": "PASS",
+        "a_reason": "gold-overlap ratio 0.79 (92/117 distinctive toks)",
+        "a_abstained": false,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "U01",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "PASS",
+        "a_reason": "abstained",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "U02",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "PASS",
+        "a_reason": "abstained",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "U03",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "PASS",
+        "a_reason": "abstained",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "U04",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "PASS",
+        "a_reason": "abstained",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "U05",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "PASS",
+        "a_reason": "abstained",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      },
+      {
+        "id": "U06",
+        "stratum": "unanswerable",
+        "gold_chunks": [],
+        "is_unanswerable": true,
+        "answer": "NOT_IN_DOCUMENTS",
+        "a_verdict": "PASS",
+        "a_reason": "abstained",
+        "a_abstained": true,
+        "a_gk_labelled": false
+      }
+    ]
+  }
+}
