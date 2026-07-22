@@ -1,0 +1,69 @@
+{
+  "_meta": {
+    "purpose": "abstention probes; gold_chunks empty by design",
+    "n": 6,
+    "corpus_fingerprint": "592a602f845dce20"
+  },
+  "questions": [
+    {
+      "id": "U01",
+      "stratum": "unanswerable",
+      "question": "Does Kibuga ship internationally to Kenya, and what are the rates?",
+      "why_absent": "Corpus covers returns/privacy/seller terms; no international shipping clause. 'International' appears only re: data transfers.",
+      "gold_chunks": [],
+      "answer": "NOT_IN_CORPUS",
+      "origin": "claude_unans_v1",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "U02",
+      "stratum": "unanswerable",
+      "question": "Can I pay for my order in instalments or with cash on delivery?",
+      "why_absent": "No payment-method or instalment/COD clause anywhere in the 5 documents.",
+      "gold_chunks": [],
+      "answer": "NOT_IN_CORPUS",
+      "origin": "claude_unans_v1",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "U03",
+      "stratum": "unanswerable",
+      "question": "What is the warranty period in months on electronics bought from Kibuga?",
+      "why_absent": "Sellers give a warranty (Q17) but no PERIOD/duration in months is stated.",
+      "gold_chunks": [],
+      "answer": "NOT_IN_CORPUS",
+      "origin": "claude_unans_v1",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "U04",
+      "stratum": "unanswerable",
+      "question": "Does Kibuga have a physical store I can visit in Kampala?",
+      "why_absent": "Registered office address exists (Q23) but no retail/physical-store clause.",
+      "gold_chunks": [],
+      "answer": "NOT_IN_CORPUS",
+      "origin": "claude_unans_v1",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "U05",
+      "stratum": "unanswerable",
+      "question": "What loyalty points or discount codes does Kibuga offer repeat buyers?",
+      "why_absent": "No loyalty/rewards/discount-code content in corpus.",
+      "gold_chunks": [],
+      "answer": "NOT_IN_CORPUS",
+      "origin": "claude_unans_v1",
+      "label_status": "single_annotator_unverified"
+    },
+    {
+      "id": "U06",
+      "stratum": "unanswerable",
+      "question": "How many days does delivery take after I place an order?",
+      "why_absent": "Return pickup is 2 working days (Q06); outbound DELIVERY time is never stated.",
+      "gold_chunks": [],
+      "answer": "NOT_IN_CORPUS",
+      "origin": "claude_unans_v1",
+      "label_status": "single_annotator_unverified"
+    }
+  ]
+}
