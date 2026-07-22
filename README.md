@@ -56,7 +56,10 @@ per-stratum results and the methodological caveats are in
 [`docs/DECISION-002-retrieval-architecture.md`](docs/DECISION-002-retrieval-architecture.md).
 
 `n = 19 questions` — thin. The result rests on **consistency across four independently
-trained models**, not the size of any single gap.
+trained models**, not the size of any single gap. A later re-run of this same locked
+config against an expanded 35-question set is in
+[`benchmarks/retrieval_n35/README.md`](benchmarks/retrieval_n35/README.md) — numbers
+above are unrevised n=19; do not conflate them with the n=35 figures.
 
 ## Generation result
 
@@ -81,6 +84,16 @@ evaluations). **[DECISION-004](docs/DECISION-004-grounding-prompt.md) locks the 
 Full method, per-stratum breakdown, and stated limitations (Layer A is a heuristic, not a
 truth oracle; hand-read validation of passing answers is outstanding) in
 [`benchmarks/generation/README.md`](benchmarks/generation/README.md).
+
+## Evaluation evidence, at a glance
+
+| Study | n | Headline | Record |
+|---|---|---|---|
+| Retrieval, locked config | 19 | R@1 58% / R@5 89% / MRR 0.703 | [DECISION-002](docs/DECISION-002-retrieval-architecture.md) |
+| Retrieval, same config, bigger set | 35 | R@1 60% / R@5 83% / MRR 0.704; prose R@5 62% | [`benchmarks/retrieval_n35/`](benchmarks/retrieval_n35/README.md) |
+| Reranker (rejected on n=19) | 19 | rejected — no failure shape it can fix | [DECISION-003](docs/DECISION-003-reranker.md) |
+| Reranker (reopened on n=35) | 35 | R@5 83%→89%, prose 62%→75%, 2 regressions — **open, ship/no-ship pending** | [DECISION-005](docs/DECISION-005-reranker-reopen.md) |
+| Generation (grounding prompt) | 35 + 6 probes | v3 locked: 71.4% pass, 27/28 (96%) conditioned on retrieval, 0 fabrications | [DECISION-004](docs/DECISION-004-grounding-prompt.md) |
 
 ## Quickstart
 
@@ -125,14 +138,16 @@ and abstaining gold labels.
 ## Layout
 
 ```
-src/          retriever, chunker, autolabeller, eval harnesses (retrieval + generation),
-              extraction/
+src/          retriever, chunker, autolabeller, eval harnesses (retrieval n=19/n=35,
+              reranker, generation), extraction/
 scripts/      tokenizer vendoring + reproducibility gate
-data/         raw/ (source PDFs) and questions/ (draft + gold sets, incl. abstention probes)
-benchmarks/   chunk dumps, result logs, review files; generation/ holds the v1-v3
-              generation-eval results
-docs/         DECISION-002 (retrieval), DECISION-003 (reranker), DECISION-004
-              (grounding prompt) + CONCEPTS explainer + session reports
+data/         raw/ (source PDFs) and questions/ (draft + gold sets: 19q, 35q, abstention
+              probes)
+benchmarks/   chunk dumps, result logs, review files; generation/ and retrieval_n35/
+              hold the versioned eval results
+docs/         DECISION-002 (retrieval), DECISION-003 (reranker, n=19), DECISION-004
+              (grounding prompt), DECISION-005 (reranker reopened, n=35) + CONCEPTS
+              explainer + session reports
 tests/        extraction regression suite (pytest)
 ```
 

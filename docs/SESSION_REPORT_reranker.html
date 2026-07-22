@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADTC 2026 — Session Report: Retrieval Evaluation & Reranker Decision</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root{
+    --ink:#1a1a19; --ink2:#52514e; --muted:#898781; --line:#e1e0d9;
+    --surface:#fcfcfb; --card:#ffffff; --accent:#185fa5; --accentbg:#e6f1fb;
+    --good:#0f6e56; --goodbg:#e1f5ee; --warn:#854f0b; --warnbg:#faeeda;
+    --bad:#a32d2d; --badbg:#fcebeb;
+    --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{font-family:var(--sans);color:var(--ink);background:var(--surface);
+    line-height:1.65;margin:0;padding:0;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:48px 28px 96px}
+  h1{font-size:27px;font-weight:600;line-height:1.25;margin:0 0 6px}
+  h2{font-size:21px;font-weight:600;margin:44px 0 12px;padding-top:20px;border-top:1px solid var(--line)}
+  h3{font-size:17px;font-weight:600;margin:28px 0 8px;color:var(--ink)}
+  p{margin:12px 0}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 4px}
+  .meta{color:var(--ink2);font-size:14px;margin:2px 0}
+  code{font-family:var(--mono);font-size:0.88em;background:#f1efe8;padding:1px 5px;border-radius:4px;color:#3c3489}
+  .lead{font-size:17px;color:var(--ink2)}
+  table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--ink2);font-weight:600;border-bottom:1.5px solid var(--line)}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:13px}
+  tr.hi td{background:var(--accentbg)}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 20px 12px;margin:22px 0}
+  .chartbox .cap{font-size:13px;color:var(--muted);margin:10px 2px 0}
+  .chartwrap{position:relative;width:100%;height:300px}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin:2px 0 0;font-size:12px;color:var(--ink2)}
+  .legend span{display:flex;align-items:center;gap:5px}
+  .sw{width:11px;height:11px;border-radius:2px;display:inline-block}
+  .callout{border-left:3px solid var(--accent);background:var(--accentbg);
+    padding:12px 16px;margin:18px 0;border-radius:0 8px 8px 0;font-size:15px}
+  .callout.good{border-color:var(--good);background:var(--goodbg)}
+  .callout.warn{border-color:var(--warn);background:var(--warnbg)}
+  .callout.bad{border-color:var(--bad);background:var(--badbg)}
+  .callout .lbl{font-weight:600;display:block;margin-bottom:2px;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .kpi .k{font-size:12px;color:var(--muted)}
+  .kpi .v{font-size:23px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:2px}
+  .kpi .d{font-size:12px;color:var(--ink2);margin-top:1px}
+  .up{color:var(--good)} .down{color:var(--bad)}
+  ul{margin:12px 0;padding-left:22px} li{margin:6px 0}
+  .tag{font-family:var(--mono);font-size:11px;padding:1px 6px;border-radius:4px;background:#f1efe8;color:#5f5e5a}
+  .tag.g{background:var(--goodbg);color:var(--good)} .tag.b{background:var(--badbg);color:var(--bad)}
+  .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  @media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}.wrap{padding:32px 18px 64px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<p class="sub">Africa Deep Tech Challenge 2026 · Offline SME RAG Assistant</p>
+<h1>Session Report — Retrieval Evaluation on 35 Questions & the Reranker Decision</h1>
+<p class="meta">Date: 16 July 2026 · Domain: Entrepreneurship / SME productivity · Corpus: Kibuga (5 PDFs, 47 chunks)</p>
+<p class="meta">Locked retriever: BM25 + bge-small-en-v1.5 fused by RRF (k=60) · Repository: github.com/notomodo/adtc-2026</p>
+
+<p class="lead" style="margin-top:22px">This session did three things: expanded the retrieval test set from 19 to 35 questions to
+guard against overfitting; ran the locked retriever against the larger set to settle the
+<code>k=3</code> chunk-count decision; and ran a controlled cross-encoder reranker experiment
+to decide whether to reopen the deferred reranker choice. The headline outcome is a genuine
+engineering trade-off with no free lunch: the reranker measurably improves retrieval quality
+but at a latency cost that may be disqualifying on the target hardware.</p>
+
+<h2>1. Executive summary</h2>
+<div class="kpis">
+  <div class="kpi"><div class="k">Test set</div><div class="v">19 → 35</div><div class="d">+16 grounded questions</div></div>
+  <div class="kpi"><div class="k">Corpus coverage</div><div class="v">9 → 23</div><div class="d">of 47 chunks tested</div></div>
+  <div class="kpi"><div class="k">Baseline R@5</div><div class="v">83%</div><div class="d">locked hybrid, n=35</div></div>
+  <div class="kpi"><div class="k">Reranker R@5</div><div class="v">89%</div><div class="d"><span class="up">+6pp</span> · +2.4 s/query</div></div>
+</div>
+
+<ul>
+  <li><strong>The test-set expansion worked as intended.</strong> Enlarging from 19 to 35
+    questions dropped headline R@5 from 89% to 83% — not a regression, but the removal of an
+    optimistic bias. The original 19 questions probed only 9 of 47 chunks, mostly the easy
+    returns/support clauses. The truer number is 83%.</li>
+  <li><strong><code>k=3</code> is confirmed defensible on the larger set.</strong> Choosing
+    to pass 3 chunks instead of 5 into the LLM costs exactly one question (Q17, a prose
+    question at rank 4). None of the 16 new questions fall in the k=3 loss band.</li>
+  <li><strong>The reranker helps — but only at the smallest candidate window,
+    and at a steep latency price.</strong> At N=10 it lifts R@5 to 89% and MRR to 0.783;
+    widening the window buys nothing and regresses more questions. The cost is ~2.4 seconds
+    of added CPU latency per query, versus ~86 ms for retrieval alone.</li>
+  <li><strong>The deepest weakness is structural, not fixable by reranking.</strong> Three
+    legal-inference questions cannot be rescued by either retrieval stage, because both the
+    embedder and the reranker are small general-purpose models that do not encode legal
+    semantics. This is a documented competence boundary, not a bug.</li>
+</ul>
+
+<h2>2. Test-set expansion (overfitting guard)</h2>
+<p>The prior evaluation used 19 auto-generated questions. Because those questions shared a
+generation distribution and concentrated on a handful of chunks, there was a real risk that
+retrieval quality was being measured on cases the system was always going to pass. We added
+16 new questions, each grounded by reading the actual corpus text, deliberately
+over-weighting the two hard strata (prose-inference and multi-chunk) and spreading across
+previously untested chunks and the under-tested Sellers-Terms and Privacy-Policy documents.</p>
+
+<div class="chartbox">
+  <div class="chartwrap"><canvas id="c_strata" role="img"
+    aria-label="Grouped bars comparing question counts by stratum before and after expansion. Every stratum grew; prose doubled from 4 to 8 and multi-chunk grew from 2 to 5."></canvas></div>
+  <div class="legend">
+    <span><span class="sw" style="background:#898781"></span>v2 set (19)</span>
+    <span><span class="sw" style="background:#2a78d6"></span>v3 set (35)</span>
+  </div>
+  <p class="cap">Figure 1 — Question counts by stratum. Corpus coverage rose from 9 to 23 of 47 chunks
+  (19% → 49%). Hard strata were deliberately over-weighted.</p>
+</div>
+
+<div class="callout"><span class="lbl">Why the number went down, and why that's good</span>
+The original 19 questions reproduce their previous ranks exactly, so every point of the R@5
+drop (89% → 83%) comes from the 16 new questions surfacing failures the narrow set was hiding.
+A technical panel that stress-tests the question set will now find it already stressed.</div>
+
+<h2>3. Baseline retrieval on 35 questions</h2>
+<p>The locked hybrid was run unmodified against the 35-question set. Provenance was verified:
+the committed retriever module was imported (not reimplemented), the run was offline and on
+CPU, a SHA-256 corpus fingerprint gate passed, and the 19 overlapping questions reproduced
+the previous run to the digit — confirming an identical, deterministic pipeline.</p>
+
+<table>
+  <thead><tr><th>Metric</th><th class="num">R@1</th><th class="num">R@3</th><th class="num">R@5</th><th class="num">R@10</th><th class="num">MRR</th><th class="num">ms/q</th></tr></thead>
+  <tbody>
+    <tr><td>Locked hybrid (n=35)</td><td class="num">60%</td><td class="num">80%</td><td class="num">83%</td><td class="num">91%</td><td class="num">0.704</td><td class="num">83</td></tr>
+  </tbody>
+</table>
+
+<div class="chartbox">
+  <div class="chartwrap"><canvas id="c_stratrecall" role="img"
+    aria-label="Horizontal bars of Recall at 5 by stratum: exact_fact 100 percent, near_miss 100 percent, multi_chunk 80 percent, paraphrase 75 percent, prose 62 percent. Prose is clearly the weakest."></canvas></div>
+  <p class="cap">Figure 2 — Baseline Recall@5 by stratum. Everything is strong except prose (62%),
+  which is the system's one localized weakness.</p>
+</div>
+
+<h3>The k=3 decision</h3>
+<p>Passing fewer chunks into the LLM means a smaller, faster prompt and less "lost in the
+middle" dilution, at the risk of dropping the answer. The recall curve knees sharply at k=3
+(R@1 60%, R@3 80%, R@5 83%, R@10 91%): the 1→3 gain is 20 points, 3→5 buys only 3. Reading
+the full rank vector, dropping from k=5 to k=3 costs exactly one question — Q17, an original
+prose question at rank 4. Six questions miss even at k=5, so k has no effect on them.
+<strong>k=3 is confirmed on 35 questions, not just 19.</strong></p>
+
+<h2>4. Reranker experiment</h2>
+<p>A cross-encoder reranker (<code>cross-encoder/ms-marco-MiniLM-L6-v2</code>, ~80 MB) was added
+as a new stage after the locked hybrid. For each question it re-scores the hybrid's top-N
+candidates by reading query and chunk together, then re-sorts them. The candidate window N was
+swept over {10, 15, 20}. The hybrid itself was not modified. Results are deterministic
+(identical across four runs); latency is a noisy single-box CPU measurement.</p>
+
+<table>
+  <thead><tr><th>Config</th><th class="num">R@1</th><th class="num">R@3</th><th class="num">R@5</th><th class="num">R@10</th><th class="num">MRR</th><th class="num">rerank ms/q</th></tr></thead>
+  <tbody>
+    <tr><td>baseline (no rerank)</td><td class="num">60%</td><td class="num">80%</td><td class="num">83%</td><td class="num">91%</td><td class="num">0.704</td><td class="num">0</td></tr>
+    <tr class="hi"><td>+ rerank top-10 &nbsp;<span class="tag g">best</span></td><td class="num">69%</td><td class="num">86%</td><td class="num">89%</td><td class="num">91%</td><td class="num">0.783</td><td class="num">~2354</td></tr>
+    <tr><td>+ rerank top-15</td><td class="num">69%</td><td class="num">86%</td><td class="num">89%</td><td class="num">89%</td><td class="num">0.781</td><td class="num">~3175</td></tr>
+    <tr><td>+ rerank top-20</td><td class="num">69%</td><td class="num">86%</td><td class="num">89%</td><td class="num">89%</td><td class="num">0.780</td><td class="num">~4845</td></tr>
+  </tbody>
+</table>
+
+<div class="chartbox">
+  <div class="chartwrap"><canvas id="c_rerank" role="img"
+    aria-label="Grouped bars of R@3, R@5 and MRR-times-100 for baseline and rerank at N of 10, 15, 20. All three rerank windows give the same recall; N=10 is best on MRR and latency."></canvas></div>
+  <div class="legend">
+    <span><span class="sw" style="background:#888780"></span>baseline</span>
+    <span><span class="sw" style="background:#1baf7a"></span>rerank N=10</span>
+    <span><span class="sw" style="background:#eda100"></span>rerank N=15</span>
+    <span><span class="sw" style="background:#eb6834"></span>rerank N=20</span>
+  </div>
+  <p class="cap">Figure 3 — Recall and MRR across candidate windows. All three windows reach the
+  same recall; widening N past 10 adds only latency and regressions.</p>
+</div>
+
+<div class="callout warn"><span class="lbl">The counterintuitive core finding</span>
+Widening the candidate window does not help — it hurts. The reachability ceiling predicted that
+N=20 could reach all six baseline misses. It reached them and then scored the three hardest
+legal-inference chunks <em>below</em> their distractors, actively demoting them (Q19 12→19,
+Q35 13→17, Q29 stuck at 20). Reaching a chunk is not the same as ranking it correctly; here,
+reaching backfired. The reranker's entire usefulness lives in the top-10.</div>
+
+<h3>Latency: the crux of the decision</h3>
+<div class="chartbox">
+  <div class="chartwrap"><canvas id="c_latency" role="img"
+    aria-label="Bar chart of per-query latency on a log scale: retrieval 86 milliseconds versus reranker 2354 milliseconds at N=10, rising to 4845 at N=20. The reranker is roughly 28 times slower than retrieval."></canvas></div>
+  <p class="cap">Figure 4 — Per-query latency (log scale). Retrieval is ~86 ms; the reranker adds
+  ~2.4 s at N=10 — roughly a 28× increase — measured on the pessimistic i5-4300U floor.</p>
+</div>
+<p>This is the decision. The reranker buys +6pp R@5 and +0.079 MRR, but converts a sub-100 ms
+query into a multi-second one. On the deployment reference machine (8 GB, 10th–12th-gen i5)
+the absolute latency will be lower than on the i5-4300U test floor, but the ~28× <em>ratio</em>
+is a property of the model, not the box. For an interactive SME assistant, a 1–2.5 second wait
+per question before the LLM even begins generating is a material usability cost.</p>
+
+<h2>5. Per-question effects: rescues and regressions</h2>
+<p>Aggregate recall hides the per-question picture. At the best window (N=10) the reranker
+improved 7 questions, worsened 2, and left 26 unchanged — a net of +5. The regression audit
+is essential: a reranker that fixes prose while breaking a working question is a bad trade.</p>
+
+<div class="chartbox">
+  <div class="chartwrap"><canvas id="c_moves" role="img"
+    aria-label="Diverging bars showing rank change per affected question at N=10. Rescues: Q22 from 10 to 2, Q32 from 8 to 1, Q17 from 4 to 1, Q28 from 3 to 1, Q36 from 2 to 1, Q10 from 3 to 2, Q21 from 3 to 2. Regressions: Q31 from 1 to 4, Q27 from 8 to 10."></canvas></div>
+  <p class="cap">Figure 5 — Rank change per affected question at N=10 (green = improved toward
+  rank 1, red = worsened). Two rescues cross the top-5 line (Q22, Q32); one regression demotes
+  a previously-perfect answer (Q31).</p>
+</div>
+
+<table>
+  <thead><tr><th>Question</th><th>Stratum</th><th class="num">base → rerank</th><th>Effect</th></tr></thead>
+  <tbody>
+    <tr><td>Q22 — all refund methods</td><td>multi_chunk</td><td class="num">10 → 2</td><td><span class="tag g">rescued</span></td></tr>
+    <tr><td>Q32 — consequences of breaking rules</td><td>prose</td><td class="num">8 → 1</td><td><span class="tag g">rescued</span></td></tr>
+    <tr><td>Q17 — seller product warranty</td><td>prose</td><td class="num">4 → 1</td><td><span class="tag g">improved</span></td></tr>
+    <tr><td>Q28 — banned goods for sellers</td><td>paraphrase</td><td class="num">3 → 1</td><td><span class="tag g">improved</span></td></tr>
+    <tr><td>Q31 — cross-border data transfer</td><td>near_miss</td><td class="num">1 → 4</td><td><span class="tag b">regressed</span></td></tr>
+    <tr><td>Q27 — data retention period</td><td>paraphrase</td><td class="num">8 → 10</td><td><span class="tag b">regressed</span></td></tr>
+  </tbody>
+</table>
+
+<div class="callout bad"><span class="lbl">The regression that matters</span>
+Q31 was a perfect rank-1 answer and the reranker demoted it to rank 4 — out of the k=3 window.
+This dropped near_miss R@3 from 100% to 75%. It is the concrete instance of the reranker trap:
+improving the hard cases can silently break easy ones. Any ship decision must weigh this, not
+just the aggregate gain.</div>
+
+<h2>6. The structural ceiling on prose</h2>
+<p>Three legal-inference questions resist every lever tried: Q19 (account suspension without
+notice), Q35 (which courts hold jurisdiction), and Q29 (right to data erasure). Their gold
+chunks sit deep in the ranking (12, 13, 20), and when the cross-encoder is finally shown them,
+it scores them below the distractors. The reason is the same for both retrieval stages: the
+bi-encoder (bge-small, 33M params) and the cross-encoder (MiniLM, MS-Marco-trained) are both
+small, general-purpose models. Neither was trained to recognize that "whose courts decide our
+dispute" means the same as a clause headed "Law and jurisdiction." This is a competence
+boundary of small models, not a defect in the architecture.</p>
+
+<div class="callout"><span class="lbl">What this means for the design narrative</span>
+Retrieval is strong across factual and paraphrase queries; the known weak spot is abstract
+legal-inference phrasing. It is documented, measured, and bounded. Owning a measured limitation
+— rather than hiding it behind an averaged number — is the kind of rigor a technical panel
+rewards. The fix (query expansion for legal vocabulary, or a domain-aware embedder) is a v2
+research direction, not a v1 requirement.</div>
+
+<h2>7. Reproducibility & provenance</h2>
+<ul>
+  <li><strong>Committed pipeline reused, not reimplemented</strong> — the retriever module was
+    imported directly (MD5-matched to the repository tarball).</li>
+  <li><strong>Offline &amp; CPU-only</strong> — both the embedder and the reranker loaded from
+    local cache with the model hub disabled; no network access.</li>
+  <li><strong>Deterministic</strong> — ranks and scores reproduced identically across four runs;
+    a SHA-256 corpus fingerprint gate passed before every run.</li>
+  <li><strong>v2 cross-check passed</strong> — the 19 overlapping questions reproduced the
+    previous run exactly, proving the pipeline is unchanged.</li>
+  <li><strong>Environment deviation logged</strong> — the run used <code>sentence-transformers 5.6.0</code>
+    (repo pin is 3.3.1); the embedding math is identical across these versions and the exact v2
+    reproduction confirms ranks are unaffected. For an auditable "pinned stack produces X" claim,
+    one confirming run from a pinned virtualenv is recommended.</li>
+  <li><strong>Labels</strong> — the 16 new gold labels remain single-annotator and unverified
+    against the source PDFs by design; the multi-chunk labels in particular warrant a human
+    spot-check before being treated as final gold.</li>
+</ul>
+
+<h2>8. Decisions & open items</h2>
+<h3>Confirmed this session</h3>
+<ul>
+  <li>Test set expanded to 35 questions with 49% corpus coverage; hard strata over-weighted.</li>
+  <li><code>k=3</code> chunk count confirmed defensible on the larger set (costs one prose question).</li>
+  <li>Prose (legal-inference) identified and measured as the single localized retrieval weakness.</li>
+</ul>
+<h3>Open — requires a human call</h3>
+<ul>
+  <li><strong>Reranker ship / no-ship.</strong> The trade is +6pp R@5 and +0.079 MRR against
+    ~2.4 s/query added latency and one meaningful regression (Q31). This report presents the
+    evidence; it does not make the call. Recommended framing: is a multi-second per-query wait
+    acceptable for the SME use case, and can the Q31-type regression be tolerated or mitigated?</li>
+  <li><strong>Generation layer is still entirely unmeasured.</strong> Every result here concerns
+    retrieval — whether the correct chunk is <em>found</em>. Whether the LLM correctly <em>uses</em>
+    a retrieved chunk to answer is untested, and it is what the human panel actually experiences.
+    This is now the largest unquantified risk in the system.</li>
+  <li><strong>Hand-labelled held-out set</strong> from a person who did not see the corpus — the
+    remaining fix for query-distribution bias.</li>
+  <li><strong>Zero measurements on the deployment reference machine</strong> — all latency figures
+    are from the pessimistic i5-4300U floor.</li>
+</ul>
+
+<h3>Recommendation on the reranker</h3>
+<div class="callout warn">
+Do not ship the reranker as an always-on stage on the strength of these numbers alone. The
+latency cost is severe on the target hardware and it introduces a regression on a previously
+correct answer. A defensible middle path, if the recall gain is wanted: apply the reranker
+<em>selectively</em> — only when the hybrid's top scores are close or low-confidence — so most
+queries pay no latency and only ambiguous ones incur the cost. That is a new experiment, not a
+conclusion of this one. The higher-priority next step is measuring the generation layer, which
+gates the score the panel gives you far more directly than the last 6 points of retrieval recall.
+</div>
+
+<div class="foot">
+  ADTC 2026 · Session report generated 16 July 2026 · Sources: <code>eval_sme_v3_output.log</code>,
+  <code>eval_reranker_output.log</code>, <code>REPORT.md</code>, <code>REPORT_reranker.md</code>.
+  All figures derived from the logged, fingerprint-gated, deterministic runs. Retrieval metrics
+  are verified; latency is a noisy single-box CPU measurement on the i5-4300U floor.
+</div>
+
+</div>
+
+<script>
+const MUTED='#898781', LINE='#e1e0d9', INK2='#52514e';
+const baseOpts=(yMax,yLabel,pct)=>({responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y+(pct?'%':'')}}},
+  scales:{y:{beginAtZero:true,max:yMax,ticks:{color:MUTED,callback:v=>v+(pct?'%':'')},grid:{color:LINE},
+    title:{display:!!yLabel,text:yLabel,color:MUTED,font:{size:12}}},
+    x:{ticks:{color:MUTED,autoSkip:false},grid:{display:false}}}});
+
+new Chart(document.getElementById('c_strata'),{type:'bar',
+  data:{labels:['exact_fact','paraphrase','near_miss','prose','multi_chunk'],
+    datasets:[
+      {label:'v2',data:[6,5,2,4,2],backgroundColor:'#898781',borderRadius:4,barPercentage:.66,categoryPercentage:.72},
+      {label:'v3',data:[10,8,4,8,5],backgroundColor:'#2a78d6',borderRadius:4,barPercentage:.66,categoryPercentage:.72}]},
+  options:baseOpts(12,'questions',false)});
+
+new Chart(document.getElementById('c_stratrecall'),{
+  type:'bar',
+  data:{
+    labels:['exact_fact (10)','near_miss (4)','multi_chunk (5)','paraphrase (8)','prose (8)'],
+    datasets:[{label:'R@5',data:[100,100,80,75,62],
+      backgroundColor:['#1baf7a','#1baf7a','#eda100','#eda100','#e34948'],borderRadius:4,barPercentage:.72}]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'R@5: '+c.parsed.x+'%'}}},
+    scales:{
+      x:{beginAtZero:true,max:100,ticks:{color:MUTED,callback:v=>v+'%'},grid:{color:LINE}},
+      y:{ticks:{color:MUTED},grid:{display:false}}
+    }
+  }
+});
+
+new Chart(document.getElementById('c_rerank'),{type:'bar',
+  data:{labels:['R@3','R@5','MRR ×100'],
+    datasets:[
+      {label:'baseline',data:[80,83,70],backgroundColor:'#888780',borderRadius:4,barPercentage:.8,categoryPercentage:.7},
+      {label:'N=10',data:[86,89,78],backgroundColor:'#1baf7a',borderRadius:4,barPercentage:.8,categoryPercentage:.7},
+      {label:'N=15',data:[86,89,78],backgroundColor:'#eda100',borderRadius:4,barPercentage:.8,categoryPercentage:.7},
+      {label:'N=20',data:[86,89,78],backgroundColor:'#eb6834',borderRadius:4,barPercentage:.8,categoryPercentage:.7}]},
+  options:baseOpts(100,null,false)});
+
+new Chart(document.getElementById('c_latency'),{type:'bar',
+  data:{labels:['retrieval','rerank N=10','rerank N=15','rerank N=20'],
+    datasets:[{label:'ms/query',data:[86,2354,3175,4845],
+      backgroundColor:['#1baf7a','#eda100','#eb6834','#e34948'],borderRadius:4,barPercentage:.6}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y.toLocaleString()+' ms/query'}}},
+    scales:{
+      y:{type:'logarithmic',ticks:{color:MUTED,callback:function(v){
+        if(v===100||v===1000||v===10000||v===86)return v.toLocaleString()+' ms';return null;}},grid:{color:LINE},
+        title:{display:true,text:'ms per query (log scale)',color:MUTED,font:{size:12}}},
+      x:{ticks:{color:MUTED},grid:{display:false}}
+    }
+  }
+});
+
+new Chart(document.getElementById('c_moves'),{type:'bar',
+  data:{labels:['Q22','Q32','Q17','Q28','Q36','Q21','Q10','Q31','Q27'],
+    datasets:[{label:'rank change',
+      data:[8,7,3,2,1,1,1,-3,-2],
+      backgroundColor:['#1baf7a','#1baf7a','#1baf7a','#1baf7a','#1baf7a','#1baf7a','#1baf7a','#e34948','#e34948'],
+      borderRadius:4,barPercentage:.7}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{
+      const map={Q22:'10 → 2',Q32:'8 → 1',Q17:'4 → 1',Q28:'3 → 1',Q36:'2 → 1',Q21:'3 → 2',Q10:'3 → 2',Q31:'1 → 4',Q27:'8 → 10'};
+      return map[c.label]+(c.parsed.y>0?'  (improved)':'  (worsened)');}}}},
+    scales:{
+      y:{ticks:{color:MUTED,callback:v=>v>0?'+'+v:v},grid:{color:LINE},
+        title:{display:true,text:'ranks moved toward #1 (positive = better)',color:MUTED,font:{size:12}}},
+      x:{ticks:{color:MUTED},grid:{display:false}}
+    }
+  }
+});
+</script>
+</body>
+</html>

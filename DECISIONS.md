@@ -258,8 +258,12 @@ directly. Target SME documents are in English.
 
 ## D10 — Reranker
 
-**Status:** **DEFERRED**, then **RESOLVED** · deferred 11 July 2026 → resolved 15 July 2026
-— see [`docs/DECISION-003-reranker.md`](docs/DECISION-003-reranker.md)
+**Status:** **DEFERRED**, then **RESOLVED**, then **REOPENED** (evidence only, ship/no-ship
+open) · deferred 11 July 2026 → resolved 15 July 2026 → reopened on n=35 evidence 16 July
+2026 — see [`docs/DECISION-003-reranker.md`](docs/DECISION-003-reranker.md) (the n=19
+rejection, still correct on its own evidence) and
+[`docs/DECISION-005-reranker-reopen.md`](docs/DECISION-005-reranker-reopen.md) (the
+reopening; see also D14 below)
 
 **Why deferred (original entry).** The reranker decision depends on a number we did not yet
 have: the chosen embedder's Recall@5.
@@ -351,6 +355,39 @@ record, including the v2 regression retained deliberately as part of the record.
 abstention when reintroduced against the v3 baseline; or the outstanding hand-read validation
 of the Layer A passes (see DECISION-004 Open Items) showing the 71.4% figure does not hold up
 as an accuracy figure.
+
+---
+
+## D14 — Reranker reopened on n=35 evidence (ship/no-ship open)
+
+**Status:** Open — evidence recorded, ship/no-ship pending owner decision · evidence
+16 July 2026, recorded 22 July 2026
+
+**Decision.** None yet. This reopens D10/DECISION-003 (which rejected a reranker on n=19)
+with a larger evidence base, and deliberately does not make the ship call.
+
+**Why reopened.** The locked retriever, re-run unmodified on the expanded 35-question set,
+shows prose R@5 dropping to 62% (from 75% on n=19) — a failure shape DECISION-003 did not
+have data on. A cross-encoder reranker (`ms-marco-MiniLM-L6-v2`, top-10) lifts R@5 83%→89%
+and prose R@5 62%→75%, MRR 0.704→0.783, at ~1.3-2.3s/query added latency and two
+regressions (Q31 near_miss rank 1→4, dropping out of the k=3 window; Q27 paraphrase
+rank 8→10).
+
+**Corrected cost framing.** DECISION-003 compared reranker latency to retrieval latency
+alone (~40ms) and called it prohibitive. Generation latency is 65-105s/question
+(DECISION-004/D13) — against that denominator the reranker adds roughly 2-3% to
+end-to-end latency, not 25-50×. This does not decide the question; it corrects the terms.
+
+**Sharpened case for revisiting.** DECISION-004 measured generation at 27/28 (96%)
+conditioned on retrieval supplying the gold chunk — retrieval, not generation, is now the
+binding constraint on end-to-end accuracy.
+
+**Full record, evidence, and the honest counterweight (net gain is modest, ~+2 questions;
+deep prose misses remain unreachable at any N):**
+[`docs/DECISION-005-reranker-reopen.md`](docs/DECISION-005-reranker-reopen.md).
+
+**Would resolve this:** an owner decision weighing the corrected cost against the
+regressions and modest net gain — see DECISION-005 §8.
 
 ---
 

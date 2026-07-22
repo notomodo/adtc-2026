@@ -233,6 +233,13 @@ closes the only real hole in the result. ~30 minutes.
 
 ## 7. Known limitations
 
+> **Pointer, added 2026-07-22:** this record's numbers are all n=19 and are unchanged below
+> — they are not being revised. A later re-run of this same locked config against an
+> expanded 35-question set is recorded separately in
+> [`benchmarks/retrieval_n35/REPORT.md`](../benchmarks/retrieval_n35/REPORT.md) (see also
+> DECISION-005 for the reranker study that re-run enabled). Do not conflate the two: e.g.
+> this document's prose R@5 is 75%; the n=35 re-run's is 62%.
+
 - **n = 19 is thin.** One question = 5.3pp. The +5pp R@1 gaps are *one question each*.
   **What justifies the conclusion is the consistency across four independently-trained
   models, not the magnitude of any single gap.** Do not overclaim.

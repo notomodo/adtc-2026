@@ -9,6 +9,15 @@ source of truth.
 ## [Unreleased]
 
 ### Added
+- **Retrieval re-run at n=35 and reranker reopened.** The locked retriever (unchanged)
+  re-run against the expanded 35-question set
+  (`data/questions/questions_sme_v3.json`), plus a cross-encoder reranker study
+  reopening DECISION-003 on this larger evidence base. Harnesses `src/eval_sme_v3.py`,
+  `src/eval_reranker.py`; results and reports in `benchmarks/retrieval_n35/`. New
+  `docs/DECISION-005-reranker-reopen.md` records the evidence with **no ship/no-ship
+  call made** — status is explicitly open. `docs/DECISION-004-grounding-prompt.md`'s
+  two citations that pointed at DECISION-003 for n=35-only figures are corrected to
+  point at this new evidence instead.
 - **Generation eval harness and results (v1-v3).** First measurement of the generation
   layer: `src/gen_answer.py` (answer pass), `src/gen_judge.py` (Layer A deterministic
   grader; Layer B LLM judge measured unreliable, 46% agreement, and dropped),
