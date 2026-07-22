@@ -1,0 +1,86 @@
+==============================================================================
+LOCKED RETRIEVER — BM25 + bge-small-en-v1.5 fused by RRF (k=60)
+expanded SME question set v3 (19 auto_v2 + 16 claude_v3, hand-grounded)
+2026-07-16 12:03 UTC | python 3.13.5 | Linux x86_64
+corpus: 47 chunks | questions: 35 | RRF k=60.0
+corpus fingerprint (sha256, full file) : 79de8b7eb3937bde23b834c783e6ed6b3637177908c15852b3de7649231bc50b
+corpus fingerprint (canonical, id+text): 592a602f845dce20
+drift gate [fingerprint]: fingerprint gate PASSED — labels 592a602f845dce20 == dump-embedded 592a602f845dce20 == recomputed 592a602f845dce20
+config stamp: sentence-transformers 5.6.0 | torch 2.13.0+cu130 | device cpu | HF_HUB_OFFLINE
+==============================================================================
+
+RETRIEVER                                R@1   R@3   R@5  R@10     MRR    ms/q
+------------------------------------------------------------------------------
+HYBRID: BM25+bge-small-en-v1.5          60%   80%   83%   91%   0.704    83.2
+
+PER-STRATUM RECALL@3                    exact_fac  multi_chu  near_miss  paraphras      prose
+------------------------------------------------------------------------------
+HYBRID: BM25+bge-small-en-v1.5              100%        80%       100%        75%        50% 
+
+PER-STRATUM RECALL@5                    exact_fac  multi_chu  near_miss  paraphras      prose
+------------------------------------------------------------------------------
+HYBRID: BM25+bge-small-en-v1.5              100%        80%       100%        75%        62% 
+
+  (per-stratum n: exact_fact=10, multi_chunk=5, near_miss=4, paraphrase=8, prose=8)
+
+FULL RANK VECTOR  (rank = 1-based position of FIRST gold chunk in the full ranking)
+  id [stratum    ]  rank origin      g@5  question
+------------------------------------------------------------------------------
+ Q01 [exact_fact ]     1 auto_v2       -  What is Kibuga's returns window?
+ Q02 [exact_fact ]     1 auto_v2       -  What is the minimum age to register on the marketpla
+ Q03 [exact_fact ]     1 auto_v2       -  What is Kibuga's customer support phone number?
+ Q04 [exact_fact ]     1 auto_v2       -  Where are Kibuga's headquarters?
+ Q05 [exact_fact ]     1 auto_v2       -  What is the customer support email address?
+ Q06 [exact_fact ]     1 auto_v2       -  How many pick-up attempts will Kibuga make for a ret
+ Q07 [paraphrase ]     3 auto_v2       -  How long do I have to send something back?
+ Q08 [paraphrase ]     1 auto_v2       -  Can a teenager open an account?
+ Q09 [paraphrase ]     1 auto_v2       -  What paperwork do I need to bring back a purchase?
+ Q10 [paraphrase ]     3 auto_v2       -  Which goods can't be sent back?
+ Q12 [paraphrase ]     1 auto_v2     2/2  How do I get in touch if something goes wrong?
+ Q13 [near_miss  ]     1 auto_v2       -  How long does a refund take to process?
+ Q14 [near_miss  ]     1 auto_v2       -  What happens if my return claim is rejected?
+ Q15 [prose      ]     2 auto_v2       -  What kinds of content am I forbidden from posting?
+ Q16 [prose      ]     2 auto_v2       -  What personal data does Kibuga collect?
+ Q17 [prose      ]     4 auto_v2       -  What warranty does a seller give about the products?
+ Q19 [prose      ]    12 auto_v2       -  Can Kibuga suspend my account without telling me?
+ Q21 [multi_chunk]     3 auto_v2       -  What is the full returns procedure from request to r
+ Q22 [multi_chunk]    10 auto_v2       -  What are all the ways Kibuga can refund me?
+ Q23 [exact_fact ]     1 claude_v3     -  Where is Kibuga's registered office located?
+ Q24 [exact_fact ]     1 claude_v3     -  Do I pay shipping charges when returning a product t
+ Q25 [exact_fact ]     1 claude_v3     -  Who do I contact to exercise my data privacy rights?
+ Q26 [exact_fact ]     1 claude_v3     -  Am I allowed to print pages from Kibuga's website?
+ Q27 [paraphrase ]     8 claude_v3     -  How long does Kibuga hang on to my information?
+ Q28 [paraphrase ]     3 claude_v3     -  What sorts of goods are sellers banned from listing?
+ Q29 [paraphrase ]    20 claude_v3     -  Can I ask Kibuga to delete everything they know abou
+ Q30 [near_miss  ]     1 claude_v3     -  Are the prices shown on the marketplace inclusive of
+ Q31 [near_miss  ]     1 claude_v3     -  Can Kibuga move my data to another country?
+ Q32 [prose      ]     8 claude_v3     -  What can Kibuga do to me if I break the rules?
+ Q33 [prose      ]     1 claude_v3     -  Which outside parties might see my personal data?
+ Q34 [prose      ]     1 claude_v3     -  Does Kibuga use my data for advertising?
+ Q35 [prose      ]    13 claude_v3     -  If I have a legal dispute with Kibuga, whose courts 
+ Q36 [multi_chunk]     2 claude_v3   2/2  Across all the policies, what enforcement actions ca
+ Q37 [multi_chunk]     1 claude_v3   1/2  How does Kibuga handle a seller's money — what gets 
+ Q38 [multi_chunk]     1 claude_v3   3/3  Walk me through everything I need to know to return 
+
+==============================================================================
+k=3 STRESS TEST — questions PRESENT at k=5 but LOST at k=3 (rank 4 or 5): 1
+  (this is the exact recall cost of choosing k=3 over k=5)
+------------------------------------------------------------------------------
+  Q17 [prose      ] rank 4  origin=auto_v2
+
+already MISS at k=5 (k=3 costs nothing extra on these): 6
+  Q19 [prose      ] origin=auto_v2
+  Q22 [multi_chunk] origin=auto_v2
+  Q27 [paraphrase ] origin=claude_v3
+  Q29 [paraphrase ] origin=claude_v3
+  Q32 [prose      ] origin=claude_v3
+  Q35 [prose      ] origin=claude_v3
+
+==============================================================================
+LABEL_REVIEW — gold labels to hand-adjudicate (NOT auto-corrected)
+  claude_v3 labels are flagged single_annotator_unverified by design.
+------------------------------------------------------------------------------
+  (no gold label is provably wrong against chunks_sme.txt by the checks run:
+   auto_v2 evidence-span presence + claude_v3 distinctive-term presence)
+
+==============================================================================

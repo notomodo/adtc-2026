@@ -1,0 +1,13 @@
+$ HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 CUDA_VISIBLE_DEVICES='' \
+    python eval_sme_v3.py --dump inputs/chunks_sme.fp.txt \
+      --questions inputs/questions_sme_v3.fp.json --out eval_sme_v3_output.log
+# env: /home/omodo/ml/.venv/bin/python  (offline, CPU)
+# ----------------------------------------------------------------------------
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 4003.37it/s]
+n=35  |  R@1=60%  R@3=80%  R@5=83%  R@10=91%  |  MRR=0.704  |  83.2 ms/q
+k=3 vs k=5: 1 question(s) lost by choosing k=3 (0 of them origin=claude_v3)
+   lost: Q17(r4)
+MISS at k=5: 6  ->  Q19, Q22, Q27, Q29, Q32, Q35
+LABEL_REVIEW flags: 0
+log written: /home/omodo/Desktop/newfiles/v3_eval/eval_sme_v3_output.log
+# exit code: 0

@@ -1,0 +1,5 @@
+n=35 | baseline R@3=80% R@5=83% MRR=0.704
+best N=10: R@3=86% R@5=89% MRR=0.783 | +2354.1 ms/q rerank (total 2439.9 ms/q)
+rescued(>5->=<5)=2  improved=7  worsened=2  NET(improved-worsened)=+5
+prose R@5: 62% -> 75%
+log written: eval_reranker_output.log

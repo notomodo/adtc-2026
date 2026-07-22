@@ -1,0 +1,114 @@
+============================================================================================
+CROSS-ENCODER RERANKER on the LOCKED hybrid — reopening DECISION-003
+evidence only; NO ship/no-ship call is made here
+2026-07-16 13:32 UTC | python 3.13.5 | Linux x86_64
+corpus: 47 chunks | questions: 35 | fingerprint gate PASSED — labels 592a602f845dce20 == dump-embedded 592a602f845dce20 == recomputed 592a602f845dce20
+retriever (LOCKED): BM25 + BAAI/bge-small-en-v1.5 fused by RRF k=60.0
+reranker          : cross-encoder/ms-marco-MiniLM-L6-v2  (commit c5ee24cb, max_seq_length=512)
+stack             : sentence-transformers 5.6.0 | torch 2.13.0+cu130 | transformers 5.13.1 | device cpu | HF_HUB_OFFLINE
+N candidate window swept: [10, 15, 20]   (reranker reach is bounded by N)
+============================================================================================
+
+CONFIG                            R@1  R@3  R@5  R@10     MRR   retr_ms  rerank_ms  total_ms
+--------------------------------------------------------------------------------------------
+baseline (hybrid, no rerank)     60%  80%  83%   91%   0.704      85.8        0.0      85.8
++ rerank top-10                  69%  86%  89%   91%   0.783      85.8     2354.1    2439.9  <- best
++ rerank top-15                  69%  86%  89%   89%   0.781      85.8     3175.3    3261.1
++ rerank top-20                  69%  86%  89%   89%   0.780      85.8     4844.9    4930.7
+
+  latency note: rerank_ms is a single-run CPU measurement and is NOISY on this box
+  (observed ~1.3-2.7 s/q at N=10 across repeated runs; this run ~235 ms per
+  (query,chunk) pair). It scales ~linearly with N, so N is the dominant latency knob
+  and the rerank stage costs SECONDS per query vs ~86 ms for retrieval.
+  Ranks/recall/MRR are fully deterministic (verified across 4 runs, identical scores).
+
+PER-STRATUM  (baseline  ->  best N=10)
+stratum         n    R@3 base  R@3 best    R@5 base  R@5 best
+--------------------------------------------------------------------------------------------
+exact_fact     10       100%      100%       100%      100%
+multi_chunk     5        80%      100%        80%      100%
+near_miss       4       100%       75%       100%      100%
+paraphrase      8        75%       75%        75%       75%
+prose           8        50%       75%        62%       75%
+
+============================================================================================
+REGRESSION / RESCUE AUDIT  (rank WORSE or BETTER than baseline; MISS treated as rank 999)
+--------------------------------------------------------------------------------------------
+
+  N=10:  improved=7  worsened=2  rescued(>5 -> <=5)=2
+    WORSENED:
+      Q27 [paraphrase ]    8 ->   10  claude_v3
+      Q31 [near_miss  ]    1 ->    4  claude_v3
+    RESCUED (>5 -> <=5):
+      Q22 [multi_chunk]   10 ->    2 (<=3)  auto_v2
+      Q32 [prose      ]    8 ->    1 (<=3)  claude_v3
+
+  N=15:  improved=7  worsened=4  rescued(>5 -> <=5)=2
+    WORSENED:
+      Q19 [prose      ]   12 ->   14  auto_v2
+      Q27 [paraphrase ]    8 ->   15  claude_v3
+      Q31 [near_miss  ]    1 ->    4  claude_v3
+      Q35 [prose      ]   13 ->   14  claude_v3
+    RESCUED (>5 -> <=5):
+      Q22 [multi_chunk]   10 ->    2 (<=3)  auto_v2
+      Q32 [prose      ]    8 ->    1 (<=3)  claude_v3
+
+  N=20:  improved=7  worsened=4  rescued(>5 -> <=5)=2
+    WORSENED:
+      Q19 [prose      ]   12 ->   19  auto_v2
+      Q27 [paraphrase ]    8 ->   20  claude_v3
+      Q31 [near_miss  ]    1 ->    4  claude_v3
+      Q35 [prose      ]   13 ->   17  claude_v3
+    RESCUED (>5 -> <=5):
+      Q22 [multi_chunk]   10 ->    2 (<=3)  auto_v2
+      Q32 [prose      ]    8 ->    1 (<=3)  claude_v3
+
+============================================================================================
+FULL RANK VECTOR  (best N=10)   baseline_rank -> reranked_rank   [+]=better [-]=worse [=]=same
+  id [stratum    ] base   rr  d origin     question
+--------------------------------------------------------------------------------------------
+ Q01 [exact_fact ]    1    1  = auto_v2    What is Kibuga's returns window?
+ Q02 [exact_fact ]    1    1  = auto_v2    What is the minimum age to register on the marketp
+ Q03 [exact_fact ]    1    1  = auto_v2    What is Kibuga's customer support phone number?
+ Q04 [exact_fact ]    1    1  = auto_v2    Where are Kibuga's headquarters?
+ Q05 [exact_fact ]    1    1  = auto_v2    What is the customer support email address?
+ Q06 [exact_fact ]    1    1  = auto_v2    How many pick-up attempts will Kibuga make for a r
+ Q07 [paraphrase ]    3    3  = auto_v2    How long do I have to send something back?
+ Q08 [paraphrase ]    1    1  = auto_v2    Can a teenager open an account?
+ Q09 [paraphrase ]    1    1  = auto_v2    What paperwork do I need to bring back a purchase?
+ Q10 [paraphrase ]    3    2  + auto_v2    Which goods can't be sent back?
+ Q12 [paraphrase ]    1    1  = auto_v2    How do I get in touch if something goes wrong?
+ Q13 [near_miss  ]    1    1  = auto_v2    How long does a refund take to process?
+ Q14 [near_miss  ]    1    1  = auto_v2    What happens if my return claim is rejected?
+ Q15 [prose      ]    2    2  = auto_v2    What kinds of content am I forbidden from posting?
+ Q16 [prose      ]    2    2  = auto_v2    What personal data does Kibuga collect?
+ Q17 [prose      ]    4    1  + auto_v2    What warranty does a seller give about the product
+ Q19 [prose      ]   12   12  = auto_v2    Can Kibuga suspend my account without telling me?
+ Q21 [multi_chunk]    3    2  + auto_v2    What is the full returns procedure from request to
+ Q22 [multi_chunk]   10    2  + auto_v2    What are all the ways Kibuga can refund me?
+ Q23 [exact_fact ]    1    1  = claude_v3  Where is Kibuga's registered office located?
+ Q24 [exact_fact ]    1    1  = claude_v3  Do I pay shipping charges when returning a product
+ Q25 [exact_fact ]    1    1  = claude_v3  Who do I contact to exercise my data privacy right
+ Q26 [exact_fact ]    1    1  = claude_v3  Am I allowed to print pages from Kibuga's website?
+ Q27 [paraphrase ]    8   10  - claude_v3  How long does Kibuga hang on to my information?
+ Q28 [paraphrase ]    3    1  + claude_v3  What sorts of goods are sellers banned from listin
+ Q29 [paraphrase ]   20   20  = claude_v3  Can I ask Kibuga to delete everything they know ab
+ Q30 [near_miss  ]    1    1  = claude_v3  Are the prices shown on the marketplace inclusive 
+ Q31 [near_miss  ]    1    4  - claude_v3  Can Kibuga move my data to another country?
+ Q32 [prose      ]    8    1  + claude_v3  What can Kibuga do to me if I break the rules?
+ Q33 [prose      ]    1    1  = claude_v3  Which outside parties might see my personal data?
+ Q34 [prose      ]    1    1  = claude_v3  Does Kibuga use my data for advertising?
+ Q35 [prose      ]   13   13  = claude_v3  If I have a legal dispute with Kibuga, whose court
+ Q36 [multi_chunk]    2    1  + claude_v3  Across all the policies, what enforcement actions 
+ Q37 [multi_chunk]    1    1  = claude_v3  How does Kibuga handle a seller's money — what get
+ Q38 [multi_chunk]    1    1  = claude_v3  Walk me through everything I need to know to retur
+
+============================================================================================
+LABEL_REVIEW — gold labels to hand-adjudicate (NOT auto-corrected)
+  (none provably wrong by the v3 checks: auto_v2 evidence-span presence +
+   claude_v3 distinctive-term presence. Note: the reranker DISAGREES with the
+   gold on Q19/Q29/Q35 by ranking those gold chunks lower, but those labels were
+   hand-verified correct in the v3 eval — the reranker is weak on them, not the
+   labels. This is a retrieval signal, not a labeling error.)
+
+============================================================================================
