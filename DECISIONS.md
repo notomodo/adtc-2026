@@ -258,10 +258,11 @@ directly. Target SME documents are in English.
 
 ## D10 — Reranker
 
-**Status:** **DEFERRED** — blocked on D11
+**Status:** **DEFERRED**, then **RESOLVED** · deferred 11 July 2026 → resolved 15 July 2026
+— see [`docs/DECISION-003-reranker.md`](docs/DECISION-003-reranker.md)
 
-**Why deferred.** The reranker decision depends on a number we do not yet have: the chosen
-embedder's Recall@5.
+**Why deferred (original entry).** The reranker decision depends on a number we did not yet
+have: the chosen embedder's Recall@5.
 
 - **High Recall@5** → the reranker's marginal value shrinks. Possibly skip it entirely and
   save the RAM.
@@ -272,6 +273,14 @@ embedder's Recall@5.
 **Note:** query embedding is cheap (tens of milliseconds), and generation on CPU dominates
 end-to-end latency by orders of magnitude. **We can afford a reranker if we need one** — the
 question is purely whether it earns its memory.
+
+**Resolution (15 July 2026).** The locked hybrid (D2/DECISION-002) measured R@5 89%. A
+reranker only reorders candidates a first-stage retriever already surfaced — it cannot
+recover a chunk retrieval never surfaced, and it cannot aggregate information split across
+multiple chunks. The two failures that survived the locked retriever (Q19: gold chunk absent
+from the candidate set; Q22: multi-chunk paraphrase) are exactly those two shapes. **Rejected
+for v1** — not merely postponed. Full argument, cost analysis, and reopen conditions in
+`docs/DECISION-003-reranker.md`.
 
 ---
 
@@ -314,14 +323,46 @@ or whitespace-aligned tables. They do not have a design agency laying out text o
 
 ---
 
+## D13 — Grounding prompt for the generation layer (v3 locked)
+
+**Status:** Locked · 19 July 2026 · **Measured**
+
+**Decision.** Lock the v3 grounding prompt for `gen_answer.py`: strict grounding, a prominent
+"answer directly" instruction, abstention reduced to the single bare token
+`NOT_IN_DOCUMENTS`, and **no general-knowledge note**.
+
+**Why.** Benchmarked three prompt versions (v1, v2, v3) against the identical 35-question +
+6-probe set, `k=3`, Qwen2.5-3B-Instruct, offline, `temperature=0 seed=42`. v3 scored 25/35
+(71.4%) answerable pass, 0 laundered answers, 6/6 abstention probes correct — strictly
+dominating v1 (16/35, 19 laundered) and v2 (6/35, 23 laundered) on every measured axis.
+Conditioned on retrieval actually supplying the gold chunk, generation is correct on
+27/28 (96%).
+
+**Rejected.** v2's general-knowledge note. Measured to be an attractor: a 3B model treats
+prompt salience as a behavioural prior, and an emphatic abstain branch made abstention the
+default even when the model held the correct answer — 20 of 27 v2 abstentions "laundered" a
+correct answer under a false `NOT_IN_DOCUMENTS` label.
+
+**Recorded because a rejected hypothesis is evidence** (cf. D5). See
+[`docs/DECISION-004-grounding-prompt.md`](docs/DECISION-004-grounding-prompt.md) for the full
+record, including the v2 regression retained deliberately as part of the record.
+
+**Would reverse this:** a re-test showing the general-knowledge note no longer attracts
+abstention when reintroduced against the v3 baseline; or the outstanding hand-read validation
+of the Layer A passes (see DECISION-004 Open Items) showing the 71.4% figure does not hold up
+as an accuracy figure.
+
+---
+
 ## Open risks
 
 | # | Risk | Status |
 |---|---|---|
 | R1 | **Co-resident memory fit is unmeasured.** Qwen2.5-3B + embedder + index + app in 8 GB has been an *assumption* since 6 July. Every number in this project comes from a 2-core Haswell dev floor; **the 8 GB reference machine has produced zero data.** If it does not fit, this invalidates architecture, not tuning. | **Open — highest** |
 | R2 | Accuracy-prompt evaluation mechanics unknown. How the competition's accuracy prompts are scored (pass/fail vs partial credit; human vs automated vs LLM judge) determines what we should optimise. Open since 6 July. | Open |
-| R3 | v3.1 has never been tested against a real SME document. The corpus that justifies every extraction decision is still MTN's investor-relations material. | Open — SME docs pending |
+| R3 | v3.1 has never been tested against a real SME document. The corpus that justifies every extraction decision is still MTN's investor-relations material. | **Resolved** — Kibuga (5 PDFs, 47 chunks) is now the working corpus for retrieval (D2) and generation (D13) |
 | R4 | Model licences. Qwen2.5 and the BGE/GTE/E5 families each carry **their own terms**, distinct from the library licences. A common and avoidable audit failure. | Unverified |
+| R5 | Layer A (D13) is a token-overlap heuristic, not a truth oracle. The 71.4% v3 pass rate has not been hand-validated against the actual answer text. **Blocking** before that figure is quoted as accuracy anywhere. | Open |
 
 ---
 

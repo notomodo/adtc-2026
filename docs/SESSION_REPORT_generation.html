@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADTC 2026 — Session Report: Generation Layer Evaluation</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root{
+    --ink:#1a1a19; --ink2:#52514e; --muted:#8a8880; --line:#e2e1da;
+    --surface:#fcfcfb; --card:#ffffff;
+    --accent:#185fa5; --accentbg:#e7f1fb;
+    --good:#0f6e56; --goodbg:#e2f5ef;
+    --warn:#7f4d0a; --warnbg:#fbefdb;
+    --bad:#9f2c2c; --badbg:#fcecec;
+    --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{font-family:var(--sans);color:var(--ink);background:var(--surface);
+    line-height:1.65;margin:0;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:880px;margin:0 auto;padding:48px 28px 96px}
+  h1{font-size:28px;font-weight:600;line-height:1.24;margin:0 0 8px;letter-spacing:-0.01em}
+  h2{font-size:21px;font-weight:600;margin:46px 0 12px;padding-top:22px;border-top:1px solid var(--line)}
+  h3{font-size:17px;font-weight:600;margin:28px 0 8px}
+  h4{font-size:15px;font-weight:600;margin:20px 0 6px;color:var(--ink2)}
+  p{margin:12px 0}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 4px;letter-spacing:.02em}
+  .meta{color:var(--ink2);font-size:14px;margin:2px 0}
+  .lead{font-size:17px;color:var(--ink2);margin-top:22px}
+  code{font-family:var(--mono);font-size:.87em;background:#f2f0e9;padding:1px 5px;border-radius:4px;color:#3c3489}
+  table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--ink2);font-weight:600;border-bottom:1.5px solid var(--line)}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:13px}
+  tr.hi td{background:var(--goodbg)}
+  tr.lo td{background:var(--badbg)}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 20px 14px;margin:22px 0}
+  .chartwrap{position:relative;width:100%;height:300px}
+  .cap{font-size:13px;color:var(--muted);margin:12px 2px 0;line-height:1.5}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin:8px 0 0;font-size:12px;color:var(--ink2)}
+  .legend span{display:flex;align-items:center;gap:5px}
+  .sw{width:11px;height:11px;border-radius:2px;display:inline-block}
+  .callout{border-left:3px solid var(--accent);background:var(--accentbg);
+    padding:13px 16px;margin:18px 0;border-radius:0 8px 8px 0;font-size:15px}
+  .callout.good{border-color:var(--good);background:var(--goodbg)}
+  .callout.warn{border-color:var(--warn);background:var(--warnbg)}
+  .callout.bad{border-color:var(--bad);background:var(--badbg)}
+  .callout .lbl{font-weight:600;display:block;margin-bottom:3px;font-size:12px;
+    text-transform:uppercase;letter-spacing:.06em}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .kpi .k{font-size:12px;color:var(--muted)}
+  .kpi .v{font-size:23px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:2px}
+  .kpi .d{font-size:12px;color:var(--ink2);margin-top:1px}
+  .kpi.g .v{color:var(--good)} .kpi.b .v{color:var(--bad)} .kpi.a .v{color:var(--accent)}
+  ul,ol{margin:12px 0;padding-left:22px} li{margin:7px 0}
+  .tag{font-family:var(--mono);font-size:11px;padding:1px 6px;border-radius:4px;background:#f2f0e9;color:#5f5e5a}
+  .tag.g{background:var(--goodbg);color:var(--good)} .tag.b{background:var(--badbg);color:var(--bad)}
+  .quote{background:#f7f6f1;border:1px solid var(--line);border-radius:8px;padding:12px 14px;
+    margin:12px 0;font-family:var(--mono);font-size:12.5px;line-height:1.6;white-space:pre-wrap;color:#43423e}
+  .foot{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  @media(max-width:660px){.kpis{grid-template-columns:repeat(2,1fr)}.wrap{padding:32px 18px 64px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<p class="sub">Africa Deep Tech Challenge 2026 · Offline SME RAG Assistant</p>
+<h1>Session Report — Generation Layer Evaluation and the Grounding-Prompt Experiments</h1>
+<p class="meta">Date: 19 July 2026 · Corpus: Kibuga (5 PDFs, 47 chunks) · Model: Qwen2.5-3B-Instruct, local Ollama, CPU-only, fully offline</p>
+<p class="meta">Retriever: BM25 + bge-small-en-v1.5, RRF k=60, k=3 chunks into context (locked, DECISION-002) · Repository: github.com/notomodo/adtc-2026</p>
+
+<p class="lead">This session measured the generation half of the system for the first time — whether the
+local LLM actually <em>uses</em> the chunks retrieval hands it. Three grounding prompts were tested
+against the same 41 questions. The result: one large regression, one diagnosed root cause, and a final
+prompt that answers correctly on <strong>96% of the questions where retrieval succeeds</strong>, while
+never once fabricating a business policy.</p>
+
+<h2>1. Executive summary</h2>
+<div class="kpis">
+  <div class="kpi g"><div class="k">Layer A pass (v3)</div><div class="v">71.4%</div><div class="d">25/35 · v1 was 45.7%</div></div>
+  <div class="kpi a"><div class="k">Given retrieval</div><div class="v">27/28</div><div class="d">96% · true generation rate</div></div>
+  <div class="kpi g"><div class="k">Abstention probes</div><div class="v">6/6</div><div class="d">across all 3 prompts</div></div>
+  <div class="kpi g"><div class="k">Laundered answers</div><div class="v">0</div><div class="d">was 19 (v1) / 23 (v2)</div></div>
+</div>
+
+<ul>
+  <li><strong>The grounding contract holds.</strong> When given the correct chunk, the model uses it
+    correctly 27 times out of 28. When not given it, the model abstains rather than inventing. Both
+    halves of the intended behaviour are now measured rather than assumed.</li>
+  <li><strong>Zero fabrication events.</strong> Across three prompt versions and 18 probe evaluations,
+    the model never once invented a policy for the business when the corpus was silent. This was the
+    single most important safety property to establish, and it held under three materially different
+    prompts.</li>
+  <li><strong>A large regression was caused, diagnosed, and reversed.</strong> The v2 prompt halved
+    performance (45.7% → 17.1%). The root cause — prompt salience acting as a behavioural prior on a
+    small model — is a transferable engineering finding, and the failed run is retained in the record.</li>
+  <li><strong>The remaining shortfall is retrieval, not generation.</strong> Four of the five residual
+    abstentions are <em>correct</em>: the answer was never placed in the context window. All four are
+    prose/legal-inference questions — the same weakness independently measured in the retrieval study.</li>
+</ul>
+
+<h2>2. What was measured, and how</h2>
+<p>The generation layer had been entirely unquantified. Retrieval quality (does the system <em>find</em>
+the right passage) says nothing about whether the LLM then <em>uses</em> it — a chunk can rank first and
+the model can still answer wrongly, or ignore it, or hallucinate over it.</p>
+
+<h4>Benchmark</h4>
+<p><strong>35 answerable questions</strong> from the v3 benchmark set, each with a labelled gold chunk,
+stratified into five kinds: <code>exact_fact</code>, <code>paraphrase</code>, <code>near_miss</code>,
+<code>prose</code> (legal inference), and <code>multi_chunk</code> (requires synthesis across passages).</p>
+<p><strong>Plus 6 purpose-built "unanswerable" probes</strong> (U01–U06) — plausible SME questions the
+corpus genuinely does not answer: international shipping, instalment payments, warranty duration, physical
+stores, loyalty programmes, delivery times. Absence was verified by keyword scan against the corpus. These
+exist because the 35 answerable questions <em>cannot test abstention at all</em> — every one has an answer,
+so the model is never given a chance to correctly refuse.</p>
+
+<div class="callout"><span class="lbl">Why the probes matter most</span>
+For a business document assistant, the dangerous failure is not "I don't know" — it is a fluent, confident,
+wrong answer about the business's own policy. If the corpus says returns close after 2 days and the model
+supplies a generic "usually 14–30 days," that misinforms a business owner about their own terms. The probes
+are the only part of the benchmark that tests this directly.</div>
+
+<h4>Grading</h4>
+<p>Two layers were built. <strong>Layer A</strong> is deterministic and model-free: token-overlap against the
+gold chunk plus abstention detection. <strong>Layer B</strong> is an LLM judge. Layer B was measured in the
+first run and found <strong>unreliable — 46% agreement with Layer A</strong>, because Qwen judging Qwen shares
+its own blind spots and it frequently echoed the abstention token instead of using its verdict labels. It was
+excluded from subsequent runs. All figures in this report come from Layer A applied identically, in a single
+execution, to all three answer sets.</p>
+
+<div class="callout warn"><span class="lbl">Honest limitation on every number here</span>
+Layer A is a <em>heuristic</em>, not a truth oracle. "Pass" means the answer materially overlaps the gold
+chunk — not that it is factually correct and complete. Per the project's standing rule that substring
+grounding is a pre-filter only, a hand-read sample of the passing answers is required before 71.4% is quoted
+as an accuracy figure. That review is outstanding.</div>
+
+<h2>3. The three prompts and what happened</h2>
+
+<h4>v1 — numbered rules, with a general-knowledge note</h4>
+<p>Strict grounding rules 1–5, an abstention token <code>NOT_IN_DOCUMENTS</code>, and permission to add a
+clearly-labelled <code>[GENERAL KNOWLEDGE — not from the documents]</code> note after abstaining.
+Result: <strong>16/35 (45.7%)</strong>. The characteristic bug was self-contradiction — on 9 questions the
+model emitted the abstention token and <em>then answered correctly anyway</em>, with the gold chunk retrieved
+at rank 1.</p>
+
+<h4>v2 — restructured, more explicit — and a large regression</h4>
+<p>A rewrite into a two-step procedure (<code>STEP 1 — DECIDE</code> / <code>STEP 2 — ACT</code>) with two
+output forms, keeping the general-knowledge note. Intended to remove the ambiguity that caused v1's
+self-contradiction. Result: <strong>6/35 (17.1%)</strong> — performance more than halved, with 27 of 35
+answerable questions abstained.</p>
+
+<p>The new failure mode was stranger and more insidious than v1's. Q10 illustrates it — the same question
+under both prompts:</p>
+
+<div class="quote">v1:  Innerwear, swimsuits, gym wear, sleep wear; Perfumes, jewelry,
+     health &amp; wellness products, adult toys          ← correct, grounded
+
+v2:  NOT_IN_DOCUMENTS
+     [GENERAL KNOWLEDGE — not from the documents]:
+     Innerwear, swimsuits, gym wear, sleep wear; Perfumes, jewelry,
+     health &amp; wellness products, adult toys          ← same answer, mislabelled</div>
+
+<p>The model retrieved the right chunk, read it, extracted the right answer — then declared it was
+<em>not</em> in the documents and relabelled its own document-grounded answer as outside knowledge.
+<strong>20 of the 27 v2 abstentions carried the real answer inside the note</strong>, with 100% correct label
+formatting. It had learned the format perfectly and used it to launder correct answers.</p>
+
+<div class="callout bad"><span class="lbl">Root cause — a transferable finding</span>
+In v2 the <em>abstain</em> branch was longer, more detailed and more emphatic than the <em>answer</em> branch.
+For a 3-billion-parameter model, <strong>prompt salience acts as a behavioural prior, not merely as a
+constraint</strong>. Elaborating the rule for the behaviour you do <em>not</em> want makes that behaviour more
+likely; length and emphasis are themselves signals. The attempt to constrain abstention more precisely made
+abstention more attractive.</div>
+
+<h4>v3 — invert the salience, remove the note</h4>
+<p>The v2 failure produced a specific, falsifiable hypothesis: <strong>the general-knowledge note is itself the
+attractor</strong> — it gave the model a sanctioned free-text slot that competed with answering. v3 removed the
+slot entirely and inverted the balance: a long, prominent instruction to answer directly (explicitly licensing
+synthesis across passages, partial answers, and wording mismatches between question and passage), with abstention
+compressed to one line and a bare token.</p>
+<p>The refutation condition was pre-registered before the run: <strong>if pass ≤ 16/35, the hypothesis is
+refuted</strong> and further prompt-tuning on this model is low-yield. Observed: <strong>25/35</strong>.</p>
+
+<h2>4. Results</h2>
+
+<table>
+  <thead><tr><th>Metric</th><th class="num">v1</th><th class="num">v2</th><th class="num">v3</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td>Answerable pass</td><td class="num">16/35 (45.7%)</td><td class="num">6/35 (17.1%)</td><td class="num"><strong>25/35 (71.4%)</strong></td></tr>
+    <tr><td>Wrongly abstained (answerable)</td><td class="num">14</td><td class="num">27</td><td class="num"><strong>5</strong></td></tr>
+    <tr><td>Laundered answers (token + content)</td><td class="num">19</td><td class="num">23</td><td class="num"><strong>0</strong></td></tr>
+    <tr><td>Stray general-knowledge labels</td><td class="num">15</td><td class="num">23</td><td class="num"><strong>0</strong></td></tr>
+    <tr class="hi"><td>Abstention probes correct</td><td class="num">6/6</td><td class="num">6/6</td><td class="num"><strong>6/6</strong></td></tr>
+  </tbody>
+</table>
+
+<div class="chartbox">
+  <div class="chartwrap"><canvas id="c_strata" role="img"
+    aria-label="Grouped bars of Layer A passes by stratum across the three prompts. exact_fact 4, 4, 10. paraphrase 4, 1, 4. near_miss 2, 1, 3. prose 3, 0, 5. multi_chunk 3, 0, 3. v3 matches or exceeds v1 in every stratum."></canvas></div>
+  <div class="legend">
+    <span><span class="sw" style="background:#8a8880"></span>v1</span>
+    <span><span class="sw" style="background:#c0453f"></span>v2 (regression)</span>
+    <span><span class="sw" style="background:#1a8f6f"></span>v3 (locked)</span>
+  </div>
+  <p class="cap">Figure 1 — Layer A passes by question stratum. v3 matches or exceeds v1 in every category, with
+  <code>exact_fact</code> reaching 10/10. v2 collapsed to zero on both hard strata.</p>
+</div>
+
+<p>Per-question churn shows the improvement is uniform rather than a trade: <strong>v1 → v3, nine questions
+improved and none regressed. v2 → v3, nineteen improved and none regressed.</strong> Every flip in both
+comparisons goes the same direction — v3 strictly dominates both predecessors on this benchmark.</p>
+
+<div class="chartbox">
+  <div class="chartwrap"><canvas id="c_head" role="img"
+    aria-label="Bars comparing the three prompts on pass rate and on the number of laundered answers. Pass: 16, 6, 25. Laundered: 19, 23, 0."></canvas></div>
+  <div class="legend">
+    <span><span class="sw" style="background:#1a8f6f"></span>answerable passes (of 35)</span>
+    <span><span class="sw" style="background:#c0453f"></span>laundered answers</span>
+  </div>
+  <p class="cap">Figure 2 — Headline movement. The laundering bug that defined v1 and v2 is entirely absent in v3,
+  which is the direct evidence that the general-knowledge note was the attractor.</p>
+</div>
+
+<h2>5. The corrected denominator — what the headline hides</h2>
+<p>The 25/35 figure conflates two systems. Retrieval delivers three chunks; generation works with what it is
+given. If retrieval never surfaces the gold chunk, generation cannot be charged for the miss.</p>
+<p>Checking the retrieved chunk IDs against the gold labels for every question: <strong>retrieval placed the gold
+chunk into the k=3 context on only 28 of the 35 answerable questions.</strong> On the other seven, the model was
+never shown the answer.</p>
+
+<div class="chartbox">
+  <div class="chartwrap"><canvas id="c_ceiling" role="img"
+    aria-label="Stacked bar dividing the 35 answerable questions into 27 answered correctly with the gold chunk present, 1 generation failure with the gold chunk present, and 7 where retrieval never supplied the gold chunk."></canvas></div>
+  <div class="legend">
+    <span><span class="sw" style="background:#1a8f6f"></span>gold retrieved, answered (27)</span>
+    <span><span class="sw" style="background:#c0453f"></span>gold retrieved, abstained — Q08 (1)</span>
+    <span><span class="sw" style="background:#c98a12"></span>gold never retrieved — not generation's fault (7)</span>
+  </div>
+  <p class="cap">Figure 3 — Attributing the shortfall. Of the 28 questions where retrieval succeeded, generation
+  behaved correctly on 27. The remaining seven are retrieval failures.</p>
+</div>
+
+<div class="callout good"><span class="lbl">The number that characterises generation</span>
+<strong>Conditioned on what retrieval provides, generation is correct on 27 of 28 questions — 96%.</strong>
+Four of the five residual abstentions (Q17, Q27, Q29, Q35) are <em>correct behaviour</em>: the gold chunk was
+absent from the context window and the model said so. Counting them as generation failures understates the
+system. All four are prose/legal-inference questions — the same weakness measured independently in the
+retrieval study (prose Recall@5 = 62%).</div>
+
+<p>The single genuine generation defect is <strong>Q08</strong> ("Can a teenager open an account?"), where the
+gold chunk was retrieved at rank 1 and the model abstained regardless. One failure in 28. It is documented
+rather than fixed — chasing it would cost another 45-minute run and risk a fresh regression.</p>
+
+<h2>6. Safety: the abstention property</h2>
+<p>All six unanswerable probes abstained correctly under <strong>every</strong> prompt version — v1, v2, and v3
+alike. Removing the general-knowledge slot in v3 carried a real risk of over-correction: an instruction to
+"answer directly" could have bled into fabricating facts absent from context. It did not.</p>
+
+<div class="chartbox">
+  <div class="chartwrap"><canvas id="c_safety" role="img"
+    aria-label="Bars showing 6 out of 6 abstention probes correct under each of v1, v2 and v3, with zero fabrication events in all three."></canvas></div>
+  <p class="cap">Figure 4 — The abstention safety property held under three materially different prompts.
+  18 probe evaluations, zero fabrication events.</p>
+</div>
+
+<p>This is the strongest result in the session. A property that survives three substantially different prompts is
+considerably better evidenced than one that passes a single run — the prompts varied enormously in structure,
+length and emphasis, and the behaviour was invariant across all of them.</p>
+
+<h2>7. Method integrity</h2>
+<ul>
+  <li><strong>Committed retriever reused, not reimplemented</strong> — the harness imports the locked
+    <code>HybridRetriever</code> directly; retrieval logic was untouched across all three runs.</li>
+  <li><strong>Fully offline</strong> — local embedder from cache, local Ollama; no network, no API keys.</li>
+  <li><strong>Deterministic decode</strong> — <code>temperature=0, seed=42</code>. Each run was a single
+    continuous warm process (generation is not bit-identical across an Ollama model reload).</li>
+  <li><strong>Fingerprint gate</strong> — corpus fingerprint <code>592a602f845dce20</code> verified on every run.</li>
+  <li><strong>One variable changed at a time</strong> — only the <code>SYSTEM_PROMPT</code> string differed
+    between runs; the question set, retriever, k, model and decode settings were held constant.</li>
+  <li><strong>Falsification pre-registered</strong> — the v3 refutation condition (pass ≤ 16/35) was fixed
+    before the run, not after seeing the result.</li>
+  <li><strong>Common grader</strong> — all three answer sets were graded by the same Layer A code in one
+    execution, so the numbers are directly comparable.</li>
+</ul>
+
+<h2>8. Findings, stated plainly</h2>
+<ol>
+  <li><strong>The general-knowledge note was the attractor.</strong> Removing it eliminated 19 laundered
+    answers and raised the pass rate by 26 points. The hypothesis was pre-registered and supported.</li>
+  <li><strong>Prompt salience is a behavioural prior on small models.</strong> Making the abstain branch longer
+    and more emphatic made abstention more likely, not more precise. This generalises well beyond this project.</li>
+  <li><strong>Generation is not the bottleneck — retrieval is.</strong> At 96% conditioned on retrieval,
+    generation is performing near its ceiling. The prose/legal-inference retrieval gap is the binding constraint.</li>
+  <li><strong>The safety property is robust.</strong> Zero fabrications across 18 probe evaluations spanning
+    three prompts.</li>
+  <li><strong>An LLM judging its own outputs is unreliable here.</strong> 46% agreement with a deterministic
+    checker. The deterministic anchor caught the judge failing — which is precisely why the blended design was
+    chosen over an LLM judge alone.</li>
+</ol>
+
+<h2>9. Decision and open items</h2>
+<p><strong>DECISION-004: lock the v3 grounding prompt.</strong> It strictly dominates v1 and v2 on every measured
+axis, with no metric favouring either predecessor.</p>
+
+<div class="callout warn"><span class="lbl">Accepted trade-off</span>
+v3 has no general-knowledge note. The product now either answers from the documents or abstains with a bare
+token — losing the "abstain, then optionally add a labelled aside" behaviour originally specified. Given direct
+evidence that the note pulls a small model into mislabelling correct answers, a bare unambiguous abstention is
+safer and easier to defend. If the note is ever reintroduced, it must be re-tested against v3 as the baseline.</div>
+
+<h4>Open items</h4>
+<ul>
+  <li><strong>Hand-read ~8–10 of the 25 passing answers</strong>, weighted toward <code>prose</code> and
+    <code>multi_chunk</code>. <em>Blocking</em> before 71.4% is quoted as an accuracy figure anywhere.</li>
+  <li><strong>Selective reranking (DECISION-003)</strong> — the outstanding lever for the prose retrieval gap;
+    fires the cross-encoder only on low-confidence queries so most queries pay no latency.</li>
+  <li><strong>Gold labels</strong> on the 16 newer questions and all 6 probes remain single-annotator and
+    unverified against the source PDFs.</li>
+  <li><strong>Q08</strong> — one unexplained generation failure with the gold chunk present; documented, not fixed.</li>
+  <li><strong>No measurements on the deployment reference machine</strong> — all latency figures
+    (~65–105 s/question) come from the pessimistic i5-4300U floor.</li>
+</ul>
+
+<div class="foot">
+  ADTC 2026 · Session report, 19 July 2026 · Sources: <code>gen_report.md</code>, <code>gen_report_v2.md</code>,
+  <code>gen_report_v3.md</code>, <code>gen_run_notes.md</code>, <code>answers.v1/new/v3.jsonl</code>,
+  <code>layerA_verdicts.v3.json</code>, <code>smoke_test.log</code>. All figures derived from deterministic,
+  fingerprint-gated, offline runs and independently re-verified against the raw answer records. Layer A is a
+  token-overlap heuristic; the hand-read validation of passing answers is outstanding.
+</div>
+
+</div>
+
+<script>
+const MUTED='#8a8880', LINE='#e2e1da';
+new Chart(document.getElementById('c_strata'),{
+  type:'bar',
+  data:{
+    labels:['exact_fact /10','paraphrase /8','near_miss /4','prose /8','multi_chunk /5'],
+    datasets:[
+      {label:'v1',data:[4,4,2,3,3],backgroundColor:'#8a8880',borderRadius:4,barPercentage:.72,categoryPercentage:.75},
+      {label:'v2',data:[4,1,1,0,0],backgroundColor:'#c0453f',borderRadius:4,barPercentage:.72,categoryPercentage:.75},
+      {label:'v3',data:[10,4,3,5,3],backgroundColor:'#1a8f6f',borderRadius:4,barPercentage:.72,categoryPercentage:.75}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,layout:{padding:8},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y+' passing'}}},
+    scales:{
+      y:{beginAtZero:true,max:10,ticks:{color:MUTED,stepSize:2},grid:{color:LINE},
+         title:{display:true,text:'questions passing Layer A',color:MUTED,font:{size:12}}},
+      x:{ticks:{color:MUTED,autoSkip:false,maxRotation:22},grid:{display:false}}
+    }
+  }
+});
+
+new Chart(document.getElementById('c_head'),{
+  type:'bar',
+  data:{
+    labels:['v1','v2','v3'],
+    datasets:[
+      {label:'passes',data:[16,6,25],backgroundColor:'#1a8f6f',borderRadius:4,barPercentage:.75,categoryPercentage:.7},
+      {label:'laundered',data:[19,23,0],backgroundColor:'#c0453f',borderRadius:4,barPercentage:.75,categoryPercentage:.7}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,layout:{padding:8},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y}}},
+    scales:{
+      y:{beginAtZero:true,max:30,ticks:{color:MUTED,stepSize:5},grid:{color:LINE},
+         title:{display:true,text:'questions',color:MUTED,font:{size:12}}},
+      x:{ticks:{color:MUTED},grid:{display:false}}
+    }
+  }
+});
+
+new Chart(document.getElementById('c_ceiling'),{
+  type:'bar',
+  data:{
+    labels:['35 answerable questions'],
+    datasets:[
+      {label:'gold retrieved, answered',data:[27],backgroundColor:'#1a8f6f',borderRadius:4,barThickness:64},
+      {label:'gold retrieved, abstained (Q08)',data:[1],backgroundColor:'#c0453f',borderRadius:4,barThickness:64},
+      {label:'gold never retrieved',data:[7],backgroundColor:'#c98a12',borderRadius:4,barThickness:64}
+    ]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,layout:{padding:8},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.x}}},
+    scales:{
+      x:{stacked:true,max:35,ticks:{color:MUTED,stepSize:5},grid:{color:LINE},
+         title:{display:true,text:'questions',color:MUTED,font:{size:12}}},
+      y:{stacked:true,ticks:{display:false},grid:{display:false}}
+    }
+  }
+});
+
+new Chart(document.getElementById('c_safety'),{
+  type:'bar',
+  data:{
+    labels:['v1','v2','v3'],
+    datasets:[{label:'probes correctly abstained',data:[6,6,6],
+      backgroundColor:'#1a8f6f',borderRadius:4,barPercentage:.5}]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,layout:{padding:8},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+' of 6 probes correct'}}},
+    scales:{
+      y:{beginAtZero:true,max:6,ticks:{color:MUTED,stepSize:1},grid:{color:LINE},
+         title:{display:true,text:'probes correct (of 6)',color:MUTED,font:{size:12}}},
+      x:{ticks:{color:MUTED},grid:{display:false}}
+    }
+  }
+});
+</script>
+</body>
+</html>

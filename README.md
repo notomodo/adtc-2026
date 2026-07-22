@@ -5,7 +5,7 @@ Built for the Africa Deep Tech Challenge 2026.
 
 Small and medium enterprises hold their rules in PDFs — terms, policies, contracts —
 and need plain-language answers grounded in those documents. This system retrieves the
-relevant passages and (soon) has a small local LLM answer from them. It runs **entirely
+relevant passages and has a small local LLM answer from them. It runs **entirely
 offline on an 8 GB CPU-only machine**: no API calls, no network at runtime. Offline
 operation and reproducibility from a clean clone are judged criteria, so they are
 enforced in code, not left to convention.
@@ -13,9 +13,9 @@ enforced in code, not left to convention.
 ## Architecture
 
 ```
-   PDF ──▶ extraction ──▶ chunking ──▶ hybrid retrieval ──▶ [ LLM answer ]
+   PDF ──▶ extraction ──▶ chunking ──▶ hybrid retrieval ──▶ LLM answer
            (pdfplumber)   (structure-   (BM25 + dense,        (Qwen2.5-3B,
-                           aware)         RRF fusion)           grounded — TBD)
+                           aware)         RRF fusion)           grounded, v3 prompt)
 ```
 
 - **Extraction** — `src/ingestion/extract.py`: table-aware extractor for the financial
@@ -27,7 +27,9 @@ enforced in code, not left to convention.
 - **Retrieval** — `src/retriever.py`: hand-rolled Okapi **BM25** (stdlib only) fused with
   a pluggable **dense encoder** via **Reciprocal Rank Fusion** (RRF, k=60). Pure-BM25
   fallback with an identical API (`encoder=None`).
-- **LLM answer layer** — not built yet. Retrieval → Qwen2.5-3B with a grounding prompt.
+- **LLM answer layer** — `src/gen_answer.py`: Qwen2.5-3B-Instruct via local Ollama, grounded
+  on the top-`k=3` retrieved chunks under the locked v3 prompt. See
+  [`docs/DECISION-004-grounding-prompt.md`](docs/DECISION-004-grounding-prompt.md).
 
 ## Retrieval result
 
@@ -55,6 +57,30 @@ per-stratum results and the methodological caveats are in
 
 `n = 19 questions` — thin. The result rests on **consistency across four independently
 trained models**, not the size of any single gap.
+
+## Generation result
+
+Three grounding prompts (v1, v2, v3) benchmarked against 35 answerable questions + 6
+"unanswerable" abstention probes, `k=3`, Qwen2.5-3B-Instruct via local Ollama,
+`temperature=0 seed=42`, fully offline. Graded by a deterministic, model-free checker
+(Layer A) applied identically to all three.
+
+| Metric | v1 | v2 | v3 |
+|---|---|---|---|
+| Answerable pass | 16/35 (45.7%) | 6/35 (17.1%) | **25/35 (71.4%)** |
+| Laundered answers | 19 | 23 | **0** |
+| Abstention probes correct | 6/6 | 6/6 | **6/6** |
+
+**v2 was a large, diagnosed regression** — a prompt structure that made the abstain branch
+more salient than the answer branch made abstention the model's default, and 20 of its 27
+abstentions "laundered" a correct answer under a false refusal label. v3 fixed it by removing
+the general-knowledge note and inverting the salience. Conditioned on retrieval actually
+supplying the gold chunk, v3 generation is correct on **27/28 (96%)**, and the abstention
+safety property held with zero fabrication events across all three prompts (18 probe
+evaluations). **[DECISION-004](docs/DECISION-004-grounding-prompt.md) locks the v3 prompt.**
+Full method, per-stratum breakdown, and stated limitations (Layer A is a heuristic, not a
+truth oracle; hand-read validation of passing answers is outstanding) in
+[`benchmarks/generation/README.md`](benchmarks/generation/README.md).
 
 ## Quickstart
 
@@ -99,11 +125,14 @@ and abstaining gold labels.
 ## Layout
 
 ```
-src/          retriever, chunker, autolabeller, eval harness, extraction/
+src/          retriever, chunker, autolabeller, eval harnesses (retrieval + generation),
+              extraction/
 scripts/      tokenizer vendoring + reproducibility gate
-data/         raw/ (source PDFs) and questions/ (draft + gold sets)
-benchmarks/   chunk dumps, result logs, review files
-docs/         DECISION-002 (retrieval architecture) + CONCEPTS explainer
+data/         raw/ (source PDFs) and questions/ (draft + gold sets, incl. abstention probes)
+benchmarks/   chunk dumps, result logs, review files; generation/ holds the v1-v3
+              generation-eval results
+docs/         DECISION-002 (retrieval), DECISION-003 (reranker), DECISION-004
+              (grounding prompt) + CONCEPTS explainer + session reports
 tests/        extraction regression suite (pytest)
 ```
 

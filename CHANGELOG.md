@@ -9,6 +9,14 @@ source of truth.
 ## [Unreleased]
 
 ### Added
+- **Generation eval harness and results (v1-v3).** First measurement of the generation
+  layer: `src/gen_answer.py` (answer pass), `src/gen_judge.py` (Layer A deterministic
+  grader; Layer B LLM judge measured unreliable, 46% agreement, and dropped),
+  `src/make_unanswerable.py` + `data/questions/questions_unanswerable.json` (6 abstention
+  probes), `src/grade_v3.py` (three-way comparison driver). Results for all three
+  grounding-prompt variants — including the v2 regression, retained deliberately — live in
+  `benchmarks/generation/`. See `docs/DECISION-004-grounding-prompt.md` and
+  `benchmarks/generation/README.md`.
 - **Repository consolidation.** Artifacts previously delivered piecemeal across
   several chat sessions are gathered into one reproducible git repository
   (`adtc-2026`) with a conventional `src/ tests/ benchmarks/ tools/ docs/`
