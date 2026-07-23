@@ -353,9 +353,11 @@ correct answer under a false `NOT_IN_DOCUMENTS` label.
 record, including the v2 regression retained deliberately as part of the record.
 
 **Would reverse this:** a re-test showing the general-knowledge note no longer attracts
-abstention when reintroduced against the v3 baseline; or the outstanding hand-read validation
-of the Layer A passes (see DECISION-004 Open Items) showing the 71.4% figure does not hold up
-as an accuracy figure.
+abstention when reintroduced against the v3 baseline. (The hand-read validation once
+outstanding here is now done — see risk R5 above: 9/10 sampled PASSes confirmed correct, 1
+confirmed ungrounded. That does not itself overturn this decision, since v3 still strictly
+dominates v1/v2 on every measured axis; it does mean 71.4% must carry that caveat wherever
+it is quoted.)
 
 ---
 

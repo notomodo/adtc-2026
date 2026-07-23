@@ -134,7 +134,10 @@ execution, to all three answer sets.</p>
 Layer A is a <em>heuristic</em>, not a truth oracle. "Pass" means the answer materially overlaps the gold
 chunk — not that it is factually correct and complete. Per the project's standing rule that substring
 grounding is a pre-filter only, a hand-read sample of the passing answers is required before 71.4% is quoted
-as an accuracy figure. That review is outstanding.</div>
+as an accuracy figure. That review is outstanding.
+<br><strong>Update — 2026-07-23:</strong> that review is done. Of a 13-item adversarial sample, 9/10 sampled
+PASSes were confirmed correct and 1 confirmed ungrounded (Q19). See <code>R5_validation_result.md</code>.
+71.4% remains Layer A's automated pass rate, not a validated accuracy figure.</div>
 
 <h2>3. The three prompts and what happened</h2>
 
@@ -313,7 +316,9 @@ safer and easier to defend. If the note is ever reintroduced, it must be re-test
 <h4>Open items</h4>
 <ul>
   <li><strong>Hand-read ~8–10 of the 25 passing answers</strong>, weighted toward <code>prose</code> and
-    <code>multi_chunk</code>. <em>Blocking</em> before 71.4% is quoted as an accuracy figure anywhere.</li>
+    <code>multi_chunk</code>. <em>Blocking</em> before 71.4% is quoted as an accuracy figure anywhere.
+    <strong>Done 2026-07-23</strong> — 9/10 sampled PASSes confirmed correct, 1 confirmed ungrounded (Q19).
+    See <code>R5_validation_result.md</code>.</li>
   <li><strong>Selective reranking (DECISION-003)</strong> — the outstanding lever for the prose retrieval gap;
     fires the cross-encoder only on low-confidence queries so most queries pay no latency.</li>
   <li><strong>Gold labels</strong> on the 16 newer questions and all 6 probes remain single-annotator and
@@ -328,7 +333,8 @@ safer and easier to defend. If the note is ever reintroduced, it must be re-test
   <code>gen_report_v3.md</code>, <code>gen_run_notes.md</code>, <code>answers.v1/new/v3.jsonl</code>,
   <code>layerA_verdicts.v3.json</code>, <code>smoke_test.log</code>. All figures derived from deterministic,
   fingerprint-gated, offline runs and independently re-verified against the raw answer records. Layer A is a
-  token-overlap heuristic; the hand-read validation of passing answers is outstanding.
+  token-overlap heuristic; hand-validated 2026-07-23 (9/10 sampled PASSes confirmed correct, 1 confirmed
+  ungrounded) — see <code>R5_validation_result.md</code>.
 </div>
 
 </div>

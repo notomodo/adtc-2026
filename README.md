@@ -82,7 +82,9 @@ supplying the gold chunk, v3 generation is correct on **27/28 (96%)**, and the a
 safety property held with zero fabrication events across all three prompts (18 probe
 evaluations). **[DECISION-004](docs/DECISION-004-grounding-prompt.md) locks the v3 prompt.**
 Full method, per-stratum breakdown, and stated limitations (Layer A is a heuristic, not a
-truth oracle; hand-read validation of passing answers is outstanding) in
+truth oracle; hand-validated 2026-07-23 against a 13-item adversarial sample — 9/10 sampled
+PASSes confirmed correct, 1 confirmed ungrounded — see
+[`R5_validation_result.md`](benchmarks/generation/R5_validation_result.md)) in
 [`benchmarks/generation/README.md`](benchmarks/generation/README.md).
 
 ## Evaluation evidence, at a glance

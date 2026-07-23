@@ -156,9 +156,12 @@ as the baseline — not v1/v2 — specifically for whether it reproduces the att
 ## Known limitations of this evidence
 
 - **Layer A is a token-overlap heuristic, not a truth oracle.** 25/35 means "materially overlaps
-  the gold chunk," not "factually correct and complete." Per the project standard that substring
-  grounding is a pre-filter only, a hand-read sample of the 25 passes — weighted toward `prose`
-  and `multi_chunk` — is required before this number is quoted as accuracy. **Outstanding.**
+  the gold chunk," not "factually correct and complete." Hand-validated 2026-07-23 against a
+  13-item adversarial sample (weighted toward `prose` and `multi_chunk`): 9/10 sampled PASSes
+  confirmed correct, 1 confirmed ungrounded (Q19 — model answered from a non-gold chunk, scored
+  PASS anyway). Implied precision 90%, a lower bound on an adversarial sample. **71.4% must
+  carry this caveat wherever it is quoted as accuracy** — see
+  [`R5_validation_result.md`](../benchmarks/generation/R5_validation_result.md).
 - **Gold labels on the 16 newer questions and all 6 probes are single-annotator, unverified
   against the source PDFs.**
 - **n = 35 + 6.** One question ≈ 2.9pp. The curve is coarse.
@@ -171,8 +174,11 @@ as the baseline — not v1/v2 — specifically for whether it reproduces the att
 
 ## Follow-ups
 
-1. Hand-read ~8–10 of the 25 v3 passes to validate Layer A's verdicts. **Blocking** before the
-   71.4% figure is quoted as accuracy in the report or defense.
+1. **Done 2026-07-23.** Hand-read 13 of the 25 v3 passes (adversarial sample weighted toward
+   `prose`/`multi_chunk`) to validate Layer A's verdicts: 9/10 sampled PASSes confirmed correct,
+   1 confirmed ungrounded (Q19). See
+   [`R5_validation_result.md`](../benchmarks/generation/R5_validation_result.md). 71.4% is
+   Layer A's automated pass rate; it may not be quoted as accuracy without this caveat.
 2. Reranker not shipped in v1 (DECISION-005). Selective reranking — firing the cross-encoder
    only on low-confidence queries — remains the untested lever for the prose retrieval gap
    if it becomes the binding constraint for v2.

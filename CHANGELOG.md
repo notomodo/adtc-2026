@@ -17,7 +17,9 @@ source of truth.
   in `benchmarks/generation/R5_validation_result.md` (produced by `src/r5_tabulate.py`);
   packet integrity now asserted by `tests/test_r5_packet.py`, running in CI. Risk R5 in
   `DECISIONS.md` **stays Open**: 71.4% is Layer A's automated pass rate, not a validated
-  accuracy figure.
+  accuracy figure, and every location quoting it (`README.md`,
+  `docs/DECISION-004-grounding-prompt.md`, `benchmarks/generation/README.md`,
+  `docs/SESSION_REPORT_generation.html`) now says so.
 - **R5 hand-validation review packet.** `benchmarks/generation/R5_review_packet.md` samples
   13 of the 25 v3 Layer A PASSes (weighted toward multi_chunk/prose, the strata where token
   overlap is least reliable, plus 2 exact_fact controls and the 3 WEAK borderline cases),

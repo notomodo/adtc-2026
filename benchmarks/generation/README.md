@@ -77,10 +77,12 @@ comparisons goes the same direction.
 ## Limitations (stated honestly)
 
 - **Layer A is a token-overlap heuristic, not a truth oracle.** "Pass" means the answer
-  materially overlaps the gold chunk — not that it is factually correct and complete. A
-  hand-read validation of the passing answers (weighted toward `prose` and `multi_chunk`) is
-  required before 71.4% is quoted as an accuracy figure anywhere. **This review is
-  outstanding.**
+  materially overlaps the gold chunk — not that it is factually correct and complete.
+  Hand-validated 2026-07-23 against a 13-item adversarial sample (weighted toward `prose` and
+  `multi_chunk`): 9/10 sampled PASSes confirmed correct, 1 confirmed ungrounded (Q19 — see
+  `R5_review_packet.md`). Implied precision 90%, a lower bound on an adversarial sample.
+  **71.4% is Layer A's automated pass rate, not a validated accuracy figure — see
+  `R5_validation_result.md`.**
 - Gold labels on the 16 newer questions and all 6 probes are single-annotator and unverified
   against the source PDFs.
 - `n = 35 + 6` — small; one question is ≈2.9pp.
