@@ -53,6 +53,9 @@ def load_chunks(path: str) -> dict[int, str]:
             body = parts[i + 4]
             chunks[int(parts[i])] = body[:-1] if body.endswith("\n") else body
             i += 5
+        # Parser-fidelity gate (fatal): reproduce the dump's stamped fingerprint.
+        from chunk_dump import verify_fidelity
+        verify_fidelity(list(chunks.values()), path)
         return chunks
 
 

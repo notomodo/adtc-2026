@@ -81,6 +81,10 @@ def load_chunks(path: str) -> dict[int, str]:
         i += 5
     if not chunks:
         sys.exit("FATAL: parsed 0 chunks — dump format changed; fix the parser.")
+    # PARSER-FIDELITY GATE (fatal): the parsed text must reproduce the dump's
+    # stamped corpus_fingerprint. dict values() are in dump order (ids 0..N-1).
+    from chunk_dump import verify_fidelity
+    verify_fidelity(list(chunks.values()), path)
     return chunks
 
 

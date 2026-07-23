@@ -131,6 +131,9 @@ def load_chunks(path: str) -> tuple[list[int], list[str], list[dict]]:
         ids.append(cur)
         texts.append(body_of(buf))
         metas.append(meta)
+    # Parser-fidelity gate (fatal): reproduce the dump's stamped fingerprint.
+    from chunk_dump import verify_fidelity
+    verify_fidelity(texts, path)
     return ids, texts, metas
 
 

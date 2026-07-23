@@ -31,6 +31,7 @@ from datetime import datetime, timezone
 
 import numpy as np
 
+from chunk_dump import verify_fidelity
 from retriever import BM25, HybridRetriever, SentenceTransformerEncoder, rrf_fuse
 
 HEADER_RE = re.compile(
@@ -40,10 +41,16 @@ RULE = "-" * 78
 
 
 def load_chunks(path: str, source: str | None) -> tuple[list[int], list[str], list[dict]]:
-    """Parse the chunk dump. Returns (ids, texts, metas) in dump order."""
-    ids: list[int] = []
-    texts: list[str] = []
-    metas: list[dict] = []
+    """Parse the chunk dump. Returns (ids, texts, metas) in dump order.
+
+    The full dump is parsed and run through the parser-fidelity gate FIRST (the
+    stamped corpus_fingerprint is computed over every chunk in order, so it can
+    only be verified against the whole, unfiltered corpus); the optional
+    `source` filter is applied to the returned rows afterwards.
+    """
+    all_ids: list[int] = []
+    all_texts: list[str] = []
+    all_metas: list[dict] = []
 
     cur_id: int | None = None
     cur_meta: dict = {}
@@ -61,9 +68,9 @@ def load_chunks(path: str, source: str | None) -> tuple[list[int], list[str], li
             # old .strip() silently deleted it, so the parser reproduced text the
             # corpus fingerprint was never computed over. See tests/test_chunk_parser.py.
             body = buf[:-1] if buf and buf[-1] == "" else buf
-            ids.append(cur_id)
-            texts.append("\n".join(body))
-            metas.append(dict(cur_meta))
+            all_ids.append(cur_id)
+            all_texts.append("\n".join(body))
+            all_metas.append(dict(cur_meta))
         cur_id, buf = None, []
 
     for line in open(path, encoding="utf-8"):
@@ -71,14 +78,9 @@ def load_chunks(path: str, source: str | None) -> tuple[list[int], list[str], li
         m = HEADER_RE.match(line)
         if m:
             flush()
-            src = m.group(2)
-            if source and src != source:
-                cur_id = None
-                in_body = False
-                continue
             cur_id = int(m.group(1))
             cur_meta = {
-                "source": src,
+                "source": m.group(2),
                 "type": m.group(3),
                 "page": int(m.group(4)),
                 "tokens": int(m.group(6)),
@@ -92,9 +94,22 @@ def load_chunks(path: str, source: str | None) -> tuple[list[int], list[str], li
             continue
         if in_body:
             buf.append(line)
-
     flush()
-    return ids, texts, metas
+
+    # PARSER-FIDELITY GATE (fatal). Recompute the corpus fingerprint over the
+    # parsed text and assert it matches the dump's stamp, before anyone can use
+    # the result. Runs over the full, unfiltered corpus because that is what the
+    # stamp was computed over. See src/chunk_dump.py.
+    verify_fidelity(all_texts, path)
+
+    if source is None:
+        return all_ids, all_texts, all_metas
+    keep = [i for i, m in enumerate(all_metas) if m["source"] == source]
+    return (
+        [all_ids[i] for i in keep],
+        [all_texts[i] for i in keep],
+        [all_metas[i] for i in keep],
+    )
 
 
 def grade(rankings: dict[str, list[int]], questions: list[dict], ks=(1, 3, 5, 10)) -> dict:
