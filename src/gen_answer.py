@@ -70,7 +70,14 @@ def load_chunks(path: str) -> dict[int, str]:
     chunks: dict[int, str] = {}
     i = 1
     while i + 4 < len(parts):
-        chunks[int(parts[i])] = parts[i + 4].strip()
+        # Byte-faithful: the split leaves exactly one trailing "\n" (the writer's
+        # blank spacer line) after each chunk body. Strip THAT and nothing else —
+        # .strip() would delete the real trailing space on chunks 0 and 22, which
+        # is part of the text the corpus fingerprint was computed over.
+        body = parts[i + 4]
+        if body.endswith("\n"):
+            body = body[:-1]
+        chunks[int(parts[i])] = body
         i += 5
     if not chunks:
         sys.exit("FATAL: parsed 0 chunks — dump format changed; fix the parser.")

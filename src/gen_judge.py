@@ -48,7 +48,11 @@ def load_chunks(path: str) -> dict[int, str]:
             r"\n-+\n\[(\d+)\] source=(\S+) type=\w+ page=(\d+) len=\d+ tokens=(\d+)\n-+\n", txt)
         chunks, i = {}, 1
         while i + 4 < len(parts):
-            chunks[int(parts[i])] = parts[i + 4].strip(); i += 5
+            # Byte-faithful: strip only the one trailing "\n" the split leaves
+            # (the writer's blank spacer), never .strip() -- see gen_answer.py.
+            body = parts[i + 4]
+            chunks[int(parts[i])] = body[:-1] if body.endswith("\n") else body
+            i += 5
         return chunks
 
 

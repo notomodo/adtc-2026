@@ -53,8 +53,16 @@ def load_chunks(path: str, source: str | None) -> tuple[list[int], list[str], li
     def flush() -> None:
         nonlocal cur_id, buf
         if cur_id is not None:
+            # BYTE-FAITHFUL. The writer emits one blank spacer line between
+            # chunks (ingest_sme.py: `..., c.text, ""`); that trailing "" is a
+            # dump artifact, not part of the chunk, so drop exactly it. Do NOT
+            # .strip(): two chunks (ids 0, 22) carry a REAL trailing space that
+            # is part of their text and counted in the header's len= field. The
+            # old .strip() silently deleted it, so the parser reproduced text the
+            # corpus fingerprint was never computed over. See tests/test_chunk_parser.py.
+            body = buf[:-1] if buf and buf[-1] == "" else buf
             ids.append(cur_id)
-            texts.append("\n".join(buf).strip())
+            texts.append("\n".join(body))
             metas.append(dict(cur_meta))
         cur_id, buf = None, []
 

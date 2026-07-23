@@ -52,13 +52,20 @@ HEADER_RE = re.compile(r"^\[(\d+)\] source=(\S+) type=(\S+) page=(\d+)")
 def load_chunks(path: str) -> tuple[list[int], list[str], list[dict]]:
     ids, texts, metas = [], [], []
     cur, meta, buf, in_body = None, {}, [], False
+
+    def body_of(lines: list[str]) -> str:
+        # Byte-faithful: drop only the writer's single trailing blank spacer
+        # line; never .strip(), which would delete the real trailing space on
+        # chunks 0 and 22. See src/eval_retriever.py:load_chunks for the rationale.
+        return "\n".join(lines[:-1] if lines and lines[-1] == "" else lines)
+
     for line in open(path, encoding="utf-8"):
         line = line.rstrip("\n")
         m = HEADER_RE.match(line)
         if m:
             if cur is not None:
                 ids.append(cur)
-                texts.append("\n".join(buf).strip())
+                texts.append(body_of(buf))
                 metas.append(meta)
             cur = int(m.group(1))
             meta = {"source": m.group(2), "type": m.group(3), "page": int(m.group(4))}
@@ -73,7 +80,7 @@ def load_chunks(path: str) -> tuple[list[int], list[str], list[dict]]:
             buf.append(line)
     if cur is not None:
         ids.append(cur)
-        texts.append("\n".join(buf).strip())
+        texts.append(body_of(buf))
         metas.append(meta)
     return ids, texts, metas
 
