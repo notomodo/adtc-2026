@@ -76,10 +76,10 @@ wrong in either direction.
 
 ```
   [ ] CORRECT      — answer is accurate and supported by the passages shown
-  [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
+  [X] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
-  Notes: ______________________________________________
+  Notes: the answer is correct, chunk 46 has text similar to what the query wants.
 ```
 
 ---
@@ -133,7 +133,7 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [x] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
@@ -187,7 +187,7 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [x] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
@@ -256,7 +256,7 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [x] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
@@ -309,7 +309,7 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [x] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
@@ -358,7 +358,7 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [x] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
@@ -407,7 +407,7 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [x] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
@@ -456,7 +456,7 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [x] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
@@ -509,7 +509,7 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [x] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
@@ -558,7 +558,7 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [x] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
@@ -611,7 +611,7 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [x] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
@@ -660,7 +660,7 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [x] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
@@ -729,7 +729,7 @@ wrong in either direction.
 **Human verdict:**
 
 ```
-  [ ] CORRECT      — answer is accurate and supported by the passages shown
+  [x] CORRECT      — answer is accurate and supported by the passages shown
   [ ] UNGROUNDED   — plausible but not supported by the passages the model saw
   [ ] WRONG        — contradicts the passages, or is factually incorrect
   [ ] LABEL ISSUE  — answer is fine, but the gold label is wrong/incomplete
