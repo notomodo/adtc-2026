@@ -247,3 +247,51 @@ def test_happy_path_append_and_search_raises_nothing(tmp_path):
 
     assert idx.has_document("l" * 64) is True
     assert idx.has_document("z" * 64) is False
+
+
+# =============================================================================
+# stats() RSS-delta regression
+# =============================================================================
+
+
+def test_bm25_load_rss_delta_is_actually_measured(tmp_path):
+    """Regression for two real bugs found while benchmarking, in order:
+
+    1. Measuring with resource.getrusage().ru_maxrss (a monotonic
+       high-water mark) always read 0, because Index.open() itself already
+       reads the full chunks.jsonl during _recover()'s consistency check --
+       which peaks RSS higher than loading bm25.json ever does -- before
+       stats() gets a chance to measure anything.
+    2. Switching to /proc/self/status's current-usage VmRSS did not fix
+       it either: Python/glibc's allocator can satisfy the bm25.json load
+       entirely from memory _recover()'s own temporary chunk list *just
+       freed*, so even genuine, real allocation can read as a zero (or
+       negative-clamped-to-zero) delta at the OS level -- confirmed
+       empirically to vary 0x-4x run to run on identical input.
+
+    tracemalloc tracks Python-level allocations directly and sidesteps
+    both: it is immune to what the process did before (unlike #1) and to
+    OS-level allocator reuse (unlike #2). It is also deterministic --
+    asserted here by checking two separate builds give the same nonzero
+    reading, not just "nonzero once".
+    """
+    enc = FakeEncoder()
+    texts = [f"chunk {i} about seller buyer marketplace returns policy topic {i % 7}" for i in range(3000)]
+
+    deltas = []
+    for i in range(2):
+        idx = Index.open(tmp_path / f"idx{i}")
+        idx.append_document(_doc("m" * 64, "big.pdf", texts), enc)
+        deltas.append(idx.stats().bm25_load_rss_delta_bytes)
+
+    for d in deltas:
+        assert d > 100_000, (
+            f"bm25_load_rss_delta_bytes={d} -- expected a real, measurable "
+            f"delta for a ~3000-chunk bm25.json"
+        )
+    # Not exact-equal -- a handful of bytes of incidental allocation (e.g.
+    # path strings) vary run to run -- but tight enough to catch a
+    # regression back to the allocator-noise behaviour that varied 0x-4x.
+    assert abs(deltas[0] - deltas[1]) < 1_000, (
+        f"tracemalloc delta should be near-identical for identical input, got {deltas}"
+    )

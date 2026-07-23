@@ -71,9 +71,9 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import resource
 import sys
 import time
+import tracemalloc
 from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -204,7 +204,7 @@ class IndexStats:
     n_documents: int
     n_chunks: int
     bytes_on_disk: dict[str, int]
-    bm25_load_rss_delta_bytes: int
+    bm25_load_rss_delta_bytes: int  # tracemalloc bytes, not OS RSS -- see stats()
 
 
 # =============================================================================
@@ -243,6 +243,7 @@ def _atomic_write_npy(path: Path, arr: np.ndarray) -> None:
         f.flush()
         os.fsync(f.fileno())
     os.replace(tmp, path)
+
 
 
 def _l2_normalize(vecs: np.ndarray) -> np.ndarray:
@@ -647,15 +648,39 @@ class Index:
             p = self.path / name
             bytes_on_disk[name] = p.stat().st_size if p.exists() else 0
 
-        # ru_maxrss is a HIGH-WATER MARK that never falls within a process, so
-        # this delta is only meaningful measured immediately around the call —
-        # which is exactly what it is here: a rough scaling number, not a
-        # profiler. Linux reports KB; Darwin reports bytes.
-        rss_before = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        self._load_bm25()
-        rss_after = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        unit = 1 if sys.platform == "darwin" else 1024
-        rss_delta = max(0, rss_after - rss_before) * unit
+        # WHY tracemalloc, NOT process RSS (resource.getrusage or /proc/self/status)
+        # ------------------------------------------------------------------------
+        # Two whole-process approaches were tried and both proved unusable, found
+        # while benchmarking this module:
+        #   1. resource.getrusage().ru_maxrss is a monotonic HIGH-WATER MARK that
+        #      never falls within a process. Index.open() itself already reads the
+        #      entire chunks.jsonl during _recover()'s consistency check, which
+        #      peaks RSS higher than loading bm25.json ever does -- so this always
+        #      measured 0, on every corpus size tested. There is no way to open an
+        #      Index without paying that cost first.
+        #   2. /proc/self/status's VmRSS (current usage, not a watermark) still
+        #      isn't reliable: Python/glibc's allocator can satisfy the bm25.json
+        #      load entirely from memory the interpreter *just freed* (e.g. from
+        #      _recover()'s own temporary chunk list), so genuine, real allocation
+        #      can still show as a zero or even negative delta at the OS level --
+        #      confirmed empirically (0 in several fresh-process runs where the
+        #      object was demonstrably built).
+        # tracemalloc tracks Python-level allocations directly, immune to both
+        # problems: it measures only what happens between start and the
+        # get_traced_memory() call, regardless of what the process did before, and
+        # regardless of whether the OS-level allocator reused already-resident
+        # pages. Verified deterministic across repeated runs (unlike either RSS
+        # approach, which varied 0x-4x run to run on identical input).
+        started_here = not tracemalloc.is_tracing()
+        if started_here:
+            tracemalloc.start()
+        before, _ = tracemalloc.get_traced_memory()
+        bm25 = self._load_bm25()  # noqa: F841 -- must stay referenced until measured
+        current, _peak = tracemalloc.get_traced_memory()
+        if started_here:
+            tracemalloc.stop()
+        rss_delta = max(0, current - before)
+        del bm25
 
         return IndexStats(
             n_documents=n_docs,
