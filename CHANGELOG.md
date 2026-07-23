@@ -9,6 +9,15 @@ source of truth.
 ## [Unreleased]
 
 ### Added
+- **R5 hand-validated: risk stays Open.** `benchmarks/generation/R5_review_packet.md` was
+  hand-completed and validated 2026-07-23: of 10 sampled Layer A PASSes, 9 confirmed CORRECT
+  and 1 confirmed **UNGROUNDED** (Q19 — the model answered from a non-gold chunk and Layer A
+  scored it PASS anyway, the exact failure mode R5 exists to catch, now confirmed real, not
+  hypothetical). Implied precision 9/10 (90%), a lower bound on an adversarial sample. Result
+  in `benchmarks/generation/R5_validation_result.md` (produced by `src/r5_tabulate.py`);
+  packet integrity now asserted by `tests/test_r5_packet.py`, running in CI. Risk R5 in
+  `DECISIONS.md` **stays Open**: 71.4% is Layer A's automated pass rate, not a validated
+  accuracy figure.
 - **R5 hand-validation review packet.** `benchmarks/generation/R5_review_packet.md` samples
   13 of the 25 v3 Layer A PASSes (weighted toward multi_chunk/prose, the strata where token
   overlap is least reliable, plus 2 exact_fact controls and the 3 WEAK borderline cases),
