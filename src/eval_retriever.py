@@ -24,92 +24,27 @@ from __future__ import annotations
 import argparse
 import json
 import platform
-import re
 import sys
 import time
 from datetime import datetime, timezone
 
 import numpy as np
 
-from chunk_dump import verify_fidelity
+from chunk_dump import parse_dump
 from retriever import BM25, HybridRetriever, SentenceTransformerEncoder, rrf_fuse
 
-HEADER_RE = re.compile(
-    r"^\[(\d+)\] source=(\S+) type=(\S+) page=(\d+) len=(\d+) tokens=(\d+)"
-)
 RULE = "-" * 78
 
 
 def load_chunks(path: str, source: str | None) -> tuple[list[int], list[str], list[dict]]:
     """Parse the chunk dump. Returns (ids, texts, metas) in dump order.
 
-    The full dump is parsed and run through the parser-fidelity gate FIRST (the
-    stamped corpus_fingerprint is computed over every chunk in order, so it can
-    only be verified against the whole, unfiltered corpus); the optional
-    `source` filter is applied to the returned rows afterwards.
+    Thin wrapper over the one canonical, byte-faithful parser + fidelity gate in
+    chunk_dump.parse_dump. Kept as `eval_retriever.load_chunks` because that is
+    the name the rest of the pipeline imports (eval_reranker, eval_sme_v3,
+    gen_answer, gen_judge).
     """
-    all_ids: list[int] = []
-    all_texts: list[str] = []
-    all_metas: list[dict] = []
-
-    cur_id: int | None = None
-    cur_meta: dict = {}
-    buf: list[str] = []
-    in_body = False
-
-    def flush() -> None:
-        nonlocal cur_id, buf
-        if cur_id is not None:
-            # BYTE-FAITHFUL. The writer emits one blank spacer line between
-            # chunks (ingest_sme.py: `..., c.text, ""`); that trailing "" is a
-            # dump artifact, not part of the chunk, so drop exactly it. Do NOT
-            # .strip(): two chunks (ids 0, 22) carry a REAL trailing space that
-            # is part of their text and counted in the header's len= field. The
-            # old .strip() silently deleted it, so the parser reproduced text the
-            # corpus fingerprint was never computed over. See tests/test_chunk_parser.py.
-            body = buf[:-1] if buf and buf[-1] == "" else buf
-            all_ids.append(cur_id)
-            all_texts.append("\n".join(body))
-            all_metas.append(dict(cur_meta))
-        cur_id, buf = None, []
-
-    for line in open(path, encoding="utf-8"):
-        line = line.rstrip("\n")
-        m = HEADER_RE.match(line)
-        if m:
-            flush()
-            cur_id = int(m.group(1))
-            cur_meta = {
-                "source": m.group(2),
-                "type": m.group(3),
-                "page": int(m.group(4)),
-                "tokens": int(m.group(6)),
-            }
-            in_body = False
-            continue
-        if cur_id is None:
-            continue
-        if line.startswith("---"):
-            in_body = True
-            continue
-        if in_body:
-            buf.append(line)
-    flush()
-
-    # PARSER-FIDELITY GATE (fatal). Recompute the corpus fingerprint over the
-    # parsed text and assert it matches the dump's stamp, before anyone can use
-    # the result. Runs over the full, unfiltered corpus because that is what the
-    # stamp was computed over. See src/chunk_dump.py.
-    verify_fidelity(all_texts, path)
-
-    if source is None:
-        return all_ids, all_texts, all_metas
-    keep = [i for i, m in enumerate(all_metas) if m["source"] == source]
-    return (
-        [all_ids[i] for i in keep],
-        [all_texts[i] for i in keep],
-        [all_metas[i] for i in keep],
-    )
+    return parse_dump(path, source)
 
 
 def grade(rankings: dict[str, list[int]], questions: list[dict], ks=(1, 3, 5, 10)) -> dict:

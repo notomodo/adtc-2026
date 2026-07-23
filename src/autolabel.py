@@ -61,7 +61,8 @@ import re
 import sys
 from pathlib import Path
 
-HEADER_RE = re.compile(r"^\[(\d+)\] source=(\S+) type=(\S+) page=(\d+)")
+from chunk_dump import parse_dump
+
 FINGERPRINT_RE = re.compile(r"^# corpus_fingerprint:\s*(\S+)")
 
 
@@ -100,41 +101,8 @@ STOP = {
 
 
 def load_chunks(path: str) -> tuple[list[int], list[str], list[dict]]:
-    ids, texts, metas = [], [], []
-    cur, meta, buf, in_body = None, {}, [], False
-
-    def body_of(lines: list[str]) -> str:
-        # Byte-faithful: drop only the writer's single trailing blank spacer
-        # line; never .strip() (deletes the real trailing space on chunks 0, 22).
-        return "\n".join(lines[:-1] if lines and lines[-1] == "" else lines)
-
-    for line in open(path, encoding="utf-8"):
-        line = line.rstrip("\n")
-        m = HEADER_RE.match(line)
-        if m:
-            if cur is not None:
-                ids.append(cur)
-                texts.append(body_of(buf))
-                metas.append(meta)
-            cur = int(m.group(1))
-            meta = {"source": m.group(2), "type": m.group(3), "page": int(m.group(4))}
-            buf, in_body = [], False
-            continue
-        if cur is None:
-            continue
-        if line.startswith("---"):
-            in_body = True
-            continue
-        if in_body:
-            buf.append(line)
-    if cur is not None:
-        ids.append(cur)
-        texts.append(body_of(buf))
-        metas.append(meta)
-    # Parser-fidelity gate (fatal): reproduce the dump's stamped fingerprint.
-    from chunk_dump import verify_fidelity
-    verify_fidelity(texts, path)
-    return ids, texts, metas
+    """Byte-faithful parse + parser-fidelity gate (src/chunk_dump.py)."""
+    return parse_dump(path)
 
 
 def norm(s: str) -> str:

@@ -61,31 +61,10 @@ Answer using only the context above, following the rules."""
 
 
 def load_chunks(path: str) -> dict[int, str]:
-    """Parse the fingerprinted chunk dump into {index: body_text}."""
-    txt = Path(path).read_text()
-    parts = re.split(
-        r"\n-+\n\[(\d+)\] source=(\S+) type=\w+ page=(\d+) len=\d+ tokens=(\d+)\n-+\n",
-        txt,
-    )
-    chunks: dict[int, str] = {}
-    i = 1
-    while i + 4 < len(parts):
-        # Byte-faithful: the split leaves exactly one trailing "\n" (the writer's
-        # blank spacer line) after each chunk body. Strip THAT and nothing else —
-        # .strip() would delete the real trailing space on chunks 0 and 22, which
-        # is part of the text the corpus fingerprint was computed over.
-        body = parts[i + 4]
-        if body.endswith("\n"):
-            body = body[:-1]
-        chunks[int(parts[i])] = body
-        i += 5
-    if not chunks:
-        sys.exit("FATAL: parsed 0 chunks — dump format changed; fix the parser.")
-    # PARSER-FIDELITY GATE (fatal): the parsed text must reproduce the dump's
-    # stamped corpus_fingerprint. dict values() are in dump order (ids 0..N-1).
-    from chunk_dump import verify_fidelity
-    verify_fidelity(list(chunks.values()), path)
-    return chunks
+    """Parse the fingerprinted chunk dump into {index: body_text}, byte-faithful
+    and behind the parser-fidelity gate. Canonical parser lives in chunk_dump."""
+    from chunk_dump import load_chunk_map
+    return load_chunk_map(path)
 
 
 def verify_fingerprint(chunks_path: str, questions_meta: dict) -> None:

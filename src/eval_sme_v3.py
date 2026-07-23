@@ -23,6 +23,7 @@ from collections import Counter
 from datetime import datetime, timezone
 
 # --- REUSE THE REAL, COMMITTED CODE (import, do not reimplement) -------------
+import chunk_dump
 from retriever import HybridRetriever, SentenceTransformerEncoder
 from eval_retriever import load_chunks
 
@@ -48,19 +49,17 @@ def file_sha256(path: str) -> str:
 
 def content_fingerprint(ids: list[int], texts: list[str]) -> str:
     """The canonical fingerprint ingest_sme.py defines: sha256 over (pos, text)
-    pairs, first 16 hex. Reconstructed from the PARSED dump so it is stable for
-    anyone re-parsing this dump the same way."""
-    joined = "\n".join(f"{i}\x00{t}" for i, t in enumerate(texts))
-    return hashlib.sha256(joined.encode()).hexdigest()[:16]
+    pairs, first 16 hex, recomputed from the PARSED dump. Delegates to the one
+    implementation in chunk_dump so the parser and its gate cannot drift apart.
+    (`ids` retained in the signature for the callers; the fingerprint is
+    positional, so only `texts` in dump order matters.)"""
+    return chunk_dump.compute_fingerprint(texts)
 
 
 def embedded_fingerprint(dump_path: str) -> str:
-    for line in open(dump_path, encoding="utf-8"):
-        if line.startswith("# corpus_fingerprint:"):
-            return line.split(":", 1)[1].strip()
-        if not line.startswith("#"):
-            break
-    return ""
+    """The '# corpus_fingerprint:' stamp in the dump header (canonical:
+    chunk_dump.embedded_fingerprint)."""
+    return chunk_dump.embedded_fingerprint(dump_path)
 
 
 def label_review(questions: list[dict], texts: list[str], ids: list[int]) -> list[str]:

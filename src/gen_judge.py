@@ -34,29 +34,13 @@ GK_MARKER = "[GENERAL KNOWLEDGE"
 # LAYER A — deterministic checks. Returns a verdict WITHOUT any model.
 # ---------------------------------------------------------------------------
 def load_chunks(path: str) -> dict[int, str]:
-    """Use the COMMITTED loader so chunk ids/text are identical to what the
-    answerer saw. Falls back to a local regex only if the import fails."""
+    """Canonical byte-faithful loader (chunk_dump.load_chunk_map), so chunk
+    ids/text are identical to what the answerer saw and behind the same
+    parser-fidelity gate. Stdlib-only, no retrieval stack needed."""
     import sys as _sys
     _sys.path.insert(0, str(Path(path).resolve().parent))
-    try:
-        from eval_retriever import load_chunks as rl
-        ids, texts, _ = rl(path, None)
-        return {cid: txt for cid, txt in zip(ids, texts)}
-    except Exception:
-        txt = Path(path).read_text()
-        parts = re.split(
-            r"\n-+\n\[(\d+)\] source=(\S+) type=\w+ page=(\d+) len=\d+ tokens=(\d+)\n-+\n", txt)
-        chunks, i = {}, 1
-        while i + 4 < len(parts):
-            # Byte-faithful: strip only the one trailing "\n" the split leaves
-            # (the writer's blank spacer), never .strip() -- see gen_answer.py.
-            body = parts[i + 4]
-            chunks[int(parts[i])] = body[:-1] if body.endswith("\n") else body
-            i += 5
-        # Parser-fidelity gate (fatal): reproduce the dump's stamped fingerprint.
-        from chunk_dump import verify_fidelity
-        verify_fidelity(list(chunks.values()), path)
-        return chunks
+    from chunk_dump import load_chunk_map
+    return load_chunk_map(path)
 
 
 def norm(s: str) -> str:

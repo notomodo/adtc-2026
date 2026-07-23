@@ -25,7 +25,14 @@ stack just to parse a text file.
 from __future__ import annotations
 
 import hashlib
+import re
 from pathlib import Path
+
+# Chunk header stamped by ingest_sme.py, e.g.
+#   [0] source=General_Terms...pdf type=clause page=1 len=74 tokens=20
+_HEADER_RE = re.compile(
+    r"^\[(\d+)\] source=(\S+) type=(\S+) page=(\d+) len=(\d+) tokens=(\d+)"
+)
 
 
 class ParserFidelityError(RuntimeError):
@@ -87,3 +94,79 @@ def verify_fidelity(texts: list[str], path: str | Path) -> str:
             f"number keyed by them would be suspect. Refusing to proceed."
         )
     return stamped
+
+
+def parse_dump(
+    path: str | Path, source: str | None = None
+) -> tuple[list[int], list[str], list[dict]]:
+    """The one canonical, byte-faithful chunk-dump parser.
+
+    Returns (ids, texts, metas) in dump order. The parser-fidelity gate runs
+    over the FULL corpus first (the stamp is computed over every chunk in
+    order, so a source-filtered subset could not be checked against it), THEN
+    the optional `source` filter is applied to the returned rows.
+
+    Byte-faithful: the writer (ingest_sme.py) emits one trailing blank spacer
+    line between chunks; that "" is dropped and NOTHING else. No .strip() — two
+    chunks (ids 0, 22) carry a real trailing space that is part of their text
+    and counted in the header's len= field.
+    """
+    ids: list[int] = []
+    texts: list[str] = []
+    metas: list[dict] = []
+
+    cur_id: int | None = None
+    cur_meta: dict = {}
+    buf: list[str] = []
+    in_body = False
+
+    def flush() -> None:
+        nonlocal cur_id, buf
+        if cur_id is not None:
+            body = buf[:-1] if buf and buf[-1] == "" else buf
+            ids.append(cur_id)
+            texts.append("\n".join(body))
+            metas.append(dict(cur_meta))
+        cur_id, buf = None, []
+
+    with open(path, encoding="utf-8") as fh:
+        for raw in fh:
+            line = raw.rstrip("\n")
+            m = _HEADER_RE.match(line)
+            if m:
+                flush()
+                cur_id = int(m.group(1))
+                cur_meta = {
+                    "source": m.group(2),
+                    "type": m.group(3),
+                    "page": int(m.group(4)),
+                    "tokens": int(m.group(6)),
+                }
+                in_body = False
+                continue
+            if cur_id is None:
+                continue
+            if line.startswith("---"):
+                in_body = True
+                continue
+            if in_body:
+                buf.append(line)
+    flush()
+
+    verify_fidelity(texts, path)
+
+    if source is None:
+        return ids, texts, metas
+    keep = [i for i, meta in enumerate(metas) if meta["source"] == source]
+    return (
+        [ids[i] for i in keep],
+        [texts[i] for i in keep],
+        [metas[i] for i in keep],
+    )
+
+
+def load_chunk_map(path: str | Path) -> dict[int, str]:
+    """{chunk_id: text} in dump order — byte-faithful and gated. The shape the
+    generation/judging harnesses want."""
+    ids, texts, _ = parse_dump(path)
+    return dict(zip(ids, texts))
