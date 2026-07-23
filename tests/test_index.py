@@ -159,6 +159,60 @@ def test_crash_between_embeddings_and_manifest_write_is_recoverable(tmp_path, mo
     assert len(result.hits) == 1
 
 
+def test_crash_on_the_very_first_append_recovers_to_pristine_empty(tmp_path, monkeypatch):
+    """The recovery boundary the test above does NOT cover: a crash during the
+    FIRST-ever append, when there is no committed prior state to fall back to.
+
+    Here _recover() must reconcile chunks.jsonl/embeddings.npy/bm25.json --
+    which the crashed append advanced past the still-empty manifest -- back to
+    a pristine, zero-document index (not just "back to the previous document").
+    This exercises the empty->partial branch of _recover(), distinct from the
+    populated->partial branch above; the two take different paths (e.g. the
+    manifest's embedder_id is still None, and the truncation target is 0 rows,
+    not N). A fresh index must then accept a normal append and be searchable.
+    """
+    import core.index as index_mod
+
+    idx = Index.open(tmp_path)
+    enc = FakeEncoder()
+
+    real_write_text = index_mod._atomic_write_text
+
+    def _boom(path, text):
+        if path.name == "manifest.json":
+            raise RuntimeError("simulated crash before the first manifest commit")
+        return real_write_text(path, text)
+
+    monkeypatch.setattr(index_mod, "_atomic_write_text", _boom)
+
+    with pytest.raises(RuntimeError):
+        idx.append_document(_doc("c" * 64, "doc.pdf", ["only chunk here"]), enc)
+
+    monkeypatch.undo()
+
+    # The crashed instance must not claim the never-committed document.
+    assert idx.has_document("c" * 64) is False
+
+    # A fresh open must self-heal to a pristine, empty index -- no orphaned
+    # chunks, no embedder identity locked in from the failed attempt.
+    reopened = Index.open(tmp_path)
+    assert len(reopened.manifest["documents"]) == 0
+    assert reopened._expected_n_chunks() == 0
+    assert reopened._read_all_chunks() == []
+    assert reopened.manifest["embedder_id"] is None
+
+    # searching an empty index is well-defined (no hits, zeroed timings).
+    empty = reopened.search("anything", k=3, encoder=enc)
+    assert empty.hits == []
+    assert set(empty.timings) == {"bm25_ms", "dense_ms", "fuse_ms", "total_ms"}
+
+    # and the recovered index must still accept a normal append and serve it.
+    res = reopened.append_document(_doc("d" * 64, "doc.pdf", ["real one", "real two"]), enc)
+    assert res.already_indexed is False
+    assert res.n_chunks_added == 2
+    assert len(reopened.search("real", k=2, encoder=enc).hits) == 2
+
+
 # =============================================================================
 # Embedder/tokenizer mismatch — known-bad control
 # =============================================================================
