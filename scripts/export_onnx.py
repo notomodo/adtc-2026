@@ -133,9 +133,11 @@ def export(out_path: Path, opset: int) -> None:
             dynamic_axes=dynamic_axes,
             opset_version=opset,
             do_constant_folding=True,
-            # Pin the legacy TorchScript exporter: it needs no onnxscript, emits a
-            # single stable graph, and gives exact control over the named I/O above.
-            # The dynamo exporter (torch>=2.x default) is an unnecessary build dep here.
+            # dynamo=False pins the legacy TorchScript exporter ON PURPOSE: the
+            # torch>=2.x default (dynamo) requires the extra `onnxscript` build dep,
+            # which we will not add. The resulting DeprecationWarning is expected and
+            # accepted, not an oversight. The legacy path also gives exact control
+            # over the named I/O above and emits a single stable graph.
             dynamo=False,
         )
 

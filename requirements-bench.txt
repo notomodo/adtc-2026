@@ -1,3 +1,9 @@
 -r requirements.txt
 # Benchmarking only. Ships nothing. The production encoder is ONNX (see docs/CONCEPTS.md).
 sentence-transformers==3.3.1
+
+# ONNX EXPORT (scripts/export_onnx.py) — build-time only, never shipped.
+# `onnx` is the serialization backend torch.onnx.export writes through; nothing
+# pulls it transitively, so without this line the export dies at write time with
+# "Module onnx is not installed!". Pinned for a reproducible graph.
+onnx==1.22.0
