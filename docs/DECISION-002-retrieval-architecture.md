@@ -346,3 +346,38 @@ to catch.
 is the priority. int8 is a separate size/latency optimisation to evaluate later,
 on its own parity budget; it is **not** a prerequisite for shipping correct
 vectors. The §8 "~90 MB int8" cost line is therefore aspirational, not measured.
+
+### 10.4 Reproducing the export, and why the sha is stack-dependent
+
+`onnx` is the serialization backend `torch.onnx.export` writes through; nothing
+pulls it transitively, so it is now declared in `requirements-bench.txt`
+(`onnx==1.22.0`) — without it the export dies at write time with "Module onnx is
+not installed!". Reproduce with **declared requirements only**:
+
+```
+pip install -r requirements-bench.txt   # torch, transformers, onnx (build-time)
+python scripts/export_onnx.py
+```
+
+**Canonical artifact** (declared stack: sentence-transformers 3.3.1 →
+transformers 4.55.4, torch 2.13.0+cpu, onnx 1.22.0, opset 17):
+`sha256 b7513a6a171d6694895fd9c4da6a169d13f13bc8656069be7c9213e86c781f67`,
+133,048,336 bytes. Re-running the export in the same environment is **byte-identical**.
+
+**The .onnx sha is a function of the exporting `transformers` version, not just the
+weights.** A first pass exported under an off-spec transformers 5.14.1 (which
+sentence-transformers 3.3.1's `transformers<5` pin cannot even install) and produced
+a *different* sha (`1a6ff430…`) — because 4.x and 5.x build the attention mask via
+different code paths, which serialise to different constant nodes though the graph is
+numerically identical. **The reproducibility contract is therefore the parity gate
+(`tests/test_onnx_parity.py`, cosine ≥ 0.9999 vs sentence-transformers), not the
+blob's sha.** The sha is recorded here for verification against the *pinned* stack
+only; if `transformers`/`torch`/`onnx` float, expect the sha to move and the parity
+gate to still hold.
+
+Parity was verified not only on short probes but across sequence lengths and padding
+patterns (single-token, full 394-token budget, real corpus chunks, and a ~6-token
+string padded ~65× inside a batch with a full-budget one) — worst case min cosine
+1.000000, max abs diff 1.9e-07, both q_prefix and p_prefix. This empirically
+defuses the export's tracer warnings (opset-11 `aten::index`; "value baked in as a
+constant might not generalise"): the graph generalises across padding.
