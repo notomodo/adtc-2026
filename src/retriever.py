@@ -278,9 +278,19 @@ def _load_vendored_tokenizer(tokenizer_path: str | Path | None = None):
 class OnnxEncoder:
     """Shipping encoder. onnxruntime + tokenizers only — no torch.
 
-    Mean-pools the last hidden state over the attention mask, then L2-normalises.
-    That is what sentence-transformers does for every model in the shortlist;
-    reproducing it here is what lets us drop torch entirely.
+    Pools the last hidden state with **CLS pooling** (`hidden[:, 0]`), then
+    L2-normalises. This must match whatever pooling sentence-transformers applied
+    during the bake-off, because that is what the benchmarked numbers describe —
+    a different pooling here is a silent retrieval-quality regression.
+
+    Pooling is per-model, NOT uniform across the shortlist:
+      - bge-small-en-v1.5  -> CLS   (1_Pooling/config.json: pooling_mode_cls_token=true)
+      - e5-small-v2, gte-small, all-MiniLM-L6-v2 -> mean
+    We ship bge (DECISION-002), so this encoder does CLS. Verified: CLS reproduces
+    the SentenceTransformerEncoder vectors to <1e-6 max abs diff on the probe set;
+    mean pooling diverged to cosine ~0.93 (tests/test_onnx_parity.py locks this).
+    A prior version mean-pooled unconditionally and claimed "that is what
+    sentence-transformers does for every model in the shortlist" — false for bge.
 
     OFFLINE by contract: the tokenizer is loaded from the vendored
     `tokenizer.json`, never `from_pretrained()` (which hits the Hub). See
@@ -321,8 +331,10 @@ class OnnxEncoder:
 
         hidden = self.session.run(None, feed)[0]  # (B, T, H)
 
-        m = mask[..., None].astype(np.float32)
-        pooled = (hidden * m).sum(axis=1) / np.clip(m.sum(axis=1), 1e-9, None)
+        # CLS pooling: bge represents the sequence in position 0 (the [CLS] token),
+        # not the mean over tokens. The attention mask is still needed above to
+        # build the model input, but plays no part in pooling for a CLS model.
+        pooled = hidden[:, 0]
         norms = np.linalg.norm(pooled, axis=1, keepdims=True)
         return (pooled / np.clip(norms, 1e-9, None)).astype(np.float32)
 
