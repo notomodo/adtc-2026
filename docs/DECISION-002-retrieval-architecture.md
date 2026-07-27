@@ -258,13 +258,21 @@ closes the only real hole in the result. ~30 minutes.
 | | BM25 only | HYBRID + bge |
 |---|---|---|
 | Retrieval latency | 1.1 ms | ~40 ms |
-| Additional RAM | 0 | ~90 MB (33M params, int8 ONNX) |
+| Additional RAM / model size | 0 | **~127 MB fp32 ONNX** (33M params) — see note |
 | Additional dependencies | none (stdlib) | `onnxruntime`, `tokenizers` (~50 MB) |
 | R@1 | 53% | **58%** |
 | MRR | 0.664 | **0.703** |
 
-Against Qwen2.5-3B's ~2.1 GB resident and multi-second generation latency, **90 MB and
-40 ms is noise.** The decision is cheap.
+**fp32 vs int8 — a deliberate tradeoff (reconciled 2026-07-27).** Earlier drafts of
+this row assumed "~90 MB int8". The **shipped** artifact is **fp32, ~127 MB**
+(`b7513a6a…`, §10.4). This is a deliberate choice, not a miss: fp32 is what
+reproduces the bake-off vectors to 1e-7 and passes the parity gate (§10.1–10.3);
+int8 quantisation cannot hold 0.9999 cosine parity (error ~1e-2), so shipping it now
+would mean shipping a *different* encoder than the one benchmarked. **int8 is deferred
+as a future size optimisation, to be evaluated on its own parity budget** — not a
+prerequisite for correct vectors. Against Qwen2.5-3B's ~2.1 GB resident and
+multi-second generation latency, **127 MB and 40 ms is still noise.** The decision is
+cheap either way.
 
 **Fallback:** `HybridRetriever(chunks, encoder=None)` gives pure BM25 with an identical
 API. If the dense half fails on the deployment machine, the application layer does not
