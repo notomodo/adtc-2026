@@ -5,3 +5,8 @@ __pycache__/
 venv/
 *.egg-info/
 .pytest_cache/
+
+# Exported model artifacts. Large binary blobs — NOT committed. scripts/export_onnx.py
+# is the reproducible source; see DECISION-002 §9.4. Regenerate with:
+#   python scripts/export_onnx.py
+models/*.onnx
