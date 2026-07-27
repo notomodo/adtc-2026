@@ -34,6 +34,11 @@ _HEADER_RE = re.compile(
     r"^\[(\d+)\] source=(\S+) type=(\S+) page=(\d+) len=(\d+) tokens=(\d+)"
 )
 
+#: Public alias. Tools that need the chunk-header regex (e.g. migrate_chunk_ids.py)
+#: import THIS, not a copy — the pattern lives in exactly one place. It used to be
+#: re-exported from eval_retriever; that copy was removed in the parser consolidation.
+HEADER_RE = _HEADER_RE
+
 
 class ParserFidelityError(RuntimeError):
     """The parser did not reproduce the dump's stamped corpus fingerprint."""

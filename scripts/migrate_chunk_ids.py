@@ -54,7 +54,7 @@ SRC = Path(__file__).resolve().parent.parent / "src"
 sys.path.insert(0, str(SRC))
 
 import ingest_sme  # noqa: E402 -- reuse extract_lines/chunk_document, do not reimplement
-from eval_retriever import HEADER_RE  # noqa: E402 -- reuse the existing header regex
+from chunk_dump import HEADER_RE  # noqa: E402 -- canonical header regex (was eval_retriever)
 from core.index import EncoderHandle, ExtractedChunk, ExtractedDoc, Index  # noqa: E402
 
 
