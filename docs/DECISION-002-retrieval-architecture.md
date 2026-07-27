@@ -278,8 +278,71 @@ change.
 2. **Label the 3 abstentions** (Q11 → the "acceptance of returned products" chunk;
    Q18 → the "Law and jurisdiction" chunk; Q20 → skip, the question is vague).
 3. **Hand-label 10 held-out questions** to neutralise the verbatim-matching bias.
-4. **Export bge-small to ONNX int8** and verify vectors match sentence-transformers
-   to ~1e-5. Benchmark numbers must describe the *shipped* system.
+4. ~~**Export bge-small to ONNX** and verify vectors match sentence-transformers
+   to ~1e-5.~~ **DONE 2026-07-27 — see §10.** Also fixed a pooling bug found while
+   doing it.
 5. **Build the application layer.** Retrieval is good enough. The system does not exist yet.
 6. **Re-run on the teammate's 8 GB reference machine** — all latency figures to date are
    from the development machine.
+
+---
+
+## 10. ONNX export — measured, and it matches the bake-off (added 2026-07-27)
+
+Next-action §9.4 is done: `scripts/export_onnx.py` reproducibly exports
+`bge-small-en-v1.5` to ONNX (raw `last_hidden_state`; pooling + L2-norm stay in
+`retriever.OnnxEncoder`). The blob is gitignored (127 MB); the script is the
+source. **The numbers in §1 are unchanged and not revised — this section adds the
+ONNX-measured column alongside them and confirms they agree.**
+
+### 10.1 A pooling bug was found first — and it was silent 🔴
+
+`OnnxEncoder` **mean-pooled** the last hidden state and its docstring claimed
+"that is what sentence-transformers does for every model in the shortlist."
+**False for bge.** bge uses **CLS pooling** (`1_Pooling/config.json:
+pooling_mode_cls_token=true`), which is what `SentenceTransformerEncoder` applied
+for every dense/hybrid number in §1. So the shipping encoder would have pooled
+*differently from the benchmarked one* — a silent retrieval-quality regression.
+
+It had never surfaced because no `.onnx` existed: every prior dense number ran on
+`SentenceTransformerEncoder` (benchmarks) or a stub. The bug lived only on the
+never-exercised shipping path. Fixed: `OnnxEncoder` now CLS-pools; the docstring
+now states pooling is per-model (bge→CLS; e5/gte/MiniLM→mean).
+
+**Parity (12-probe set, both q_prefix and p_prefix):**
+
+| ONNX pooling | min cosine vs ST | max abs diff | verdict |
+|---|---|---|---|
+| **CLS** (fixed) | **1.000000** | 2.5e-07 | matches (target was ~1e-5) |
+| mean (the bug) | 0.927 | 2.6e-01 | large silent divergence |
+
+Locked by `tests/test_onnx_parity.py` — a known-good CLS control **and** a
+known-BAD mean control that must fail the same gate.
+
+### 10.2 The corrected ONNX encoder reproduces §1 exactly
+
+Same dump (`chunks_sme.txt`), same n=19 set (`questions_sme_auto.json`), same
+`grade()`:
+
+| bge, n=19 | R@1 | R@3 | R@5 | R@10 | MRR |
+|---|---|---|---|---|---|
+| **dense** — ST bake-off (§1) | 47% | 74% | 89% | 95% | 0.636 |
+| **dense** — ONNX CLS (shipped) | 47% | 74% | 89% | 95% | **0.636** |
+| **hybrid** — ST bake-off (§1) | 58% | 84% | 89% | 95% | 0.703 |
+| **hybrid** — ONNX CLS (shipped) | 58% | 84% | 89% | 95% | **0.703** |
+
+Identical to the third decimal; dense top-10 rankings differ on **0/19**
+questions. The shipped system now provably *is* the benchmarked system.
+
+For contrast, the **mean-pool bug** would have shipped a different, plausible-but-
+wrong table (dense R@10 95%→89%, hybrid R@5 89%→84%, dense R@1 *up* to 53% — a
+different model, not a better one). That is exactly the trap a parity gate exists
+to catch.
+
+### 10.3 Note on "int8"
+
+§8/§9.4 wrote "ONNX int8". The export is **fp32** — int8 quantisation cannot hit
+0.9999 cosine parity (quantisation error is ~1e-2), and parity with the bake-off
+is the priority. int8 is a separate size/latency optimisation to evaluate later,
+on its own parity budget; it is **not** a prerequisite for shipping correct
+vectors. The §8 "~90 MB int8" cost line is therefore aspirational, not measured.
