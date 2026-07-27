@@ -45,6 +45,7 @@ from retriever import OnnxEncoder, SentenceTransformerEncoder  # noqa: E402
 
 MODEL = "BAAI/bge-small-en-v1.5"
 ONNX_PATH = ROOT / "models" / "bge-small-en-v1.5.onnx"
+DUMP = ROOT / "benchmarks" / "chunks_sme.txt"
 
 # ~1e-5 is DECISION-002's target; the measured max abs diff is ~2.5e-7, so this
 # tolerance is generous by ~40x and still an order below the target.
@@ -90,15 +91,41 @@ def onnx_path() -> Path:
 
 
 @pytest.fixture(scope="module")
-def ground_truth() -> dict:
-    """SentenceTransformerEncoder vectors = the benchmarked ground truth."""
+def st_encoder():
+    """The benchmarked encoder. One instance shared across every parity case."""
     try:
-        st = SentenceTransformerEncoder(MODEL)
+        return SentenceTransformerEncoder(MODEL)
     except Exception as e:  # pragma: no cover - offline cache miss
         pytest.skip(f"sentence-transformers/bge unavailable offline: {e}")
+
+
+@pytest.fixture(scope="module")
+def ground_truth(st_encoder) -> dict:
+    """SentenceTransformerEncoder vectors for PROBES = the benchmarked ground truth."""
     return {
-        True: st.encode(PROBES, is_query=True),
-        False: st.encode(PROBES, is_query=False),
+        True: st_encoder.encode(PROBES, is_query=True),
+        False: st_encoder.encode(PROBES, is_query=False),
+    }
+
+
+@pytest.fixture(scope="module")
+def wide_probes() -> dict:
+    """Probe cases that stress the trace beyond the short synthetic set, to defuse the
+    exporter's tracer warnings EMPIRICALLY (opset-11 aten::index on negative indices;
+    "value baked in as a constant might not generalize to other inputs"). Real chunk
+    bodies, a full-budget (~400-token) input, a single token, and a padding-variance
+    batch (a ~4-token string batched with the full-budget one, so it is padded ~100x)."""
+    from chunk_dump import parse_dump
+
+    _, texts, _ = parse_dump(str(DUMP))
+    by_len = sorted(texts, key=len)
+    full_budget = by_len[-1]  # longest real chunk — sits at the 400-token ingest budget
+    real_sample = [by_len[0], by_len[len(by_len) // 2], by_len[-2], full_budget]
+    return {
+        "single_token": ["Kibuga"],
+        "full_budget": [full_budget],
+        "real_chunks": real_sample,
+        "padded_batch": ["cash on delivery please", full_budget],
     }
 
 
@@ -155,6 +182,42 @@ def test_mean_pooling_is_rejected_by_the_gate(onnx_path, ground_truth, is_query)
     assert max_abs >= TOL_MAX_ABS
     # And concretely it is the ~0.93 divergence measured this session, not a hair.
     assert min_cos < 0.99
+
+
+# --- WIDENED: parity must hold across lengths and padding, not just short probes --
+
+@pytest.mark.parametrize("is_query", [True, False], ids=["q_prefix", "p_prefix"])
+@pytest.mark.parametrize("case", ["single_token", "full_budget", "real_chunks", "padded_batch"])
+def test_parity_across_lengths_and_padding(onnx_path, st_encoder, wide_probes, case, is_query):
+    """The 12 short synthetic probes do not prove parity across sequence lengths and
+    padding patterns — which is exactly what the export tracer warned about. Re-assert
+    the SAME gate (cosine >= 0.9999, max abs < 1e-5) on real chunks, a full-budget
+    input, a single token, and a padded mixed batch, both prefix paths."""
+    probes = wide_probes[case]
+    enc = OnnxEncoder(onnx_path=str(onnx_path), tokenizer_name=MODEL, model_name=MODEL)
+    vecs = enc.encode(probes, is_query=is_query)
+    gt = st_encoder.encode(probes, is_query=is_query)
+    min_cos, max_abs = _parity(vecs, gt)
+    assert min_cos >= MIN_COSINE, f"[{case}] min cosine {min_cos:.6f} < {MIN_COSINE}"
+    assert max_abs < TOL_MAX_ABS, f"[{case}] max abs diff {max_abs:.2e} >= {TOL_MAX_ABS:.0e}"
+
+
+@pytest.mark.parametrize("is_query", [True, False], ids=["q_prefix", "p_prefix"])
+def test_padding_does_not_leak_into_the_short_vector(onnx_path, st_encoder, wide_probes, is_query):
+    """The sharpest form of the tracer's warning: if attention-mask/length handling
+    baked in as a constant, a heavily PADDED input would attend to its padding and its
+    CLS vector would drift. Encode a ~4-token string ALONE and inside a batch where it
+    is padded ~100x to the full-budget length: the two must be identical AND both must
+    match SentenceTransformer. If this fails, the graph does not generalize across
+    padding and MUST NOT ship."""
+    short, full = wide_probes["padded_batch"]
+    enc = OnnxEncoder(onnx_path=str(onnx_path), tokenizer_name=MODEL, model_name=MODEL)
+    alone = enc.encode([short], is_query=is_query)[0]
+    in_batch = enc.encode([short, full], is_query=is_query)[0]  # short is index 0, padded
+    gt = st_encoder.encode([short], is_query=is_query)[0]
+    assert float((alone * in_batch).sum()) >= MIN_COSINE, "padding changed the short vector"
+    assert float((in_batch * gt).sum()) >= MIN_COSINE, "padded short vector diverged from ST"
+    assert float(np.abs(in_batch - gt).max()) < TOL_MAX_ABS
 
 
 def test_parity_covers_both_prefix_paths():
