@@ -6,6 +6,11 @@ venv/
 *.egg-info/
 .pytest_cache/
 
+# End-to-end runbook artifacts (run_e2e.sh): a throwaway clean runtime venv and
+# the run log handed back as feedback. Neither belongs in version control.
+.venv-runtime/
+e2e_run.log
+
 # Exported model artifacts. Large binary blobs — NOT committed. scripts/export_onnx.py
 # is the reproducible source; see DECISION-002 §9.4. Regenerate with:
 #   python scripts/export_onnx.py
