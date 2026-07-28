@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "adtc-rag"
+version = "0.1.0"
+description = "Offline RAG over the Kibuga SME corpus: hybrid BM25 + bge-small (ONNX) retrieval, grounded local generation."
+requires-python = ">=3.10"
+# Runtime deps only. torch / sentence-transformers / onnx are build/bench-time
+# (requirements-bench.txt); pytest is dev (requirements-dev.txt). onnxruntime is
+# the shipping dense encoder's backend — see STATUS.md for why it is tracked as
+# an open declaration gap in requirements.txt as well.
+dependencies = [
+    "numpy==2.2.1",
+    "pdfplumber==0.11.9",
+    "tokenizers==0.21.0",
+    "onnxruntime",
+]
+
+[project.scripts]
+# `adtc-rag ingest ...` / `adtc-rag ask "..."` after `pip install -e .`.
+# Editable install is intended: the ExtractedDoc bridge lives in scripts/ and
+# the gitignored .onnx model lives in models/, so the CLI resolves both from the
+# repo checkout (cli.py bootstraps sys.path from its own __file__).
+adtc-rag = "app.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+# The flat top-level modules the app imports directly.
+py-modules = ["retriever", "ingest_sme", "gen_answer", "chunk_dump"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["app*", "core*"]
