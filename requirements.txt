@@ -5,5 +5,10 @@ pdfplumber==0.11.9
 tokenizers==0.21.0
 numpy==2.2.1
 
+# The shipping dense-encoder backend (OnnxEncoder). Runtime, not build-time:
+# without it `pip install -r requirements.txt` yields a system that cannot embed.
+# Unpinned to match pyproject.toml's runtime deps.
+onnxruntime
+
 # Benchmark ONLY -- pulls in PyTorch (~800MB+). NOT a runtime dependency.
 # Install with: pip install -r requirements-bench.txt
