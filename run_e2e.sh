@@ -40,8 +40,8 @@ echo "########################################################"
 echo; echo "===== 0. ENVIRONMENT ====="
 python3 --version
 echo "CPU:  $(nproc) cores"
-echo "RAM:  $(free -h | awk '/Mem:/{print $2\" total, \"$7\" available\"}')"
-echo "disk: $(df -h . | awk 'NR==2{print $4\" free\"}')"
+echo "RAM:  $(free -h | awk '/Mem:/{print $2" total, "$7" available"}')"
+echo "disk: $(df -h . | awk 'NR==2{print $4" free"}')"
 
 echo; echo "----- Ollama reachable? -----"
 if curl -s --max-time 3 http://localhost:11434/api/tags >/dev/null 2>&1; then
