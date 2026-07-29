@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import sys
 import time
+import urllib.error
 from pathlib import Path
 
 # Make the sibling flat modules (retriever, gen_answer, …), the core package,
@@ -136,8 +137,17 @@ def _cmd_ask(args: argparse.Namespace) -> int:
     except ModelNotFoundError as e:
         print(f"FATAL: {e}", file=sys.stderr)
         return 2
-    except ConnectionError as e:
-        print(f"FATAL: cannot reach Ollama at {args.host}: {e}", file=sys.stderr)
+    except urllib.error.HTTPError as e:
+        # Ollama IS reachable but rejected the request. A 404 here means the model
+        # isn't pulled — the socket-down message below would be misleading, so
+        # handle it separately (HTTPError is an OSError subclass, so this must
+        # precede the OSError clause). Give the exact fix.
+        if e.code == 404:
+            print(f"FATAL: Ollama has no model '{args.model}'. Pull it:  "
+                  f"ollama pull {args.model}", file=sys.stderr)
+        else:
+            print(f"FATAL: Ollama returned HTTP {e.code} ({e.reason}) for model "
+                  f"'{args.model}'", file=sys.stderr)
         return 4
     except OSError as e:
         # urllib raises URLError (an OSError subclass) when the Ollama socket is down.
@@ -202,18 +212,28 @@ def _unique_sources(hits) -> list[tuple[str, int]]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="adtc-rag", description=__doc__,
+    # --index-dir lives on a shared parent added to BOTH the top-level parser and
+    # each subparser, so `adtc-rag --index-dir X ingest …` and the more natural
+    # `adtc-rag ingest … --index-dir X` both work. (A global option on the
+    # top-level parser alone is rejected as "unrecognized" when placed after the
+    # subcommand — the exact bug the first e2e run hit.)
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--index-dir", default=None,
+                        help="index location (default: ~/.adtc/index); "
+                             "may appear before or after the subcommand")
+
+    p = argparse.ArgumentParser(prog="adtc-rag", description=__doc__, parents=[common],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--index-dir", default=None,
-                   help="index location (default: ~/.adtc/index)")
     sub = p.add_subparsers(dest="command", required=True)
 
-    ing = sub.add_parser("ingest", help="extract, chunk, embed and persist PDFs")
+    ing = sub.add_parser("ingest", parents=[common],
+                         help="extract, chunk, embed and persist PDFs")
     ing.add_argument("paths", nargs="+", help="PDF files and/or directories (recursed for *.pdf)")
     ing.add_argument("--budget", type=int, default=400, help="token budget per chunk")
     ing.set_defaults(func=_cmd_ingest)
 
-    ask = sub.add_parser("ask", help="retrieve top-k passages and stream a grounded answer")
+    ask = sub.add_parser("ask", parents=[common],
+                         help="retrieve top-k passages and stream a grounded answer")
     ask.add_argument("question", help="the question to answer")
     ask.add_argument("-k", type=int, default=3, help="passages to put in context")
     ask.add_argument("--model", default="qwen2.5:3b-instruct", help="Ollama model")
