@@ -133,6 +133,13 @@ class AnswerResult:
     encoder_init_s: float
     retrieval_s: float
     generation_s: float
+    # Ollama's own generation metrics from the terminal "done" object:
+    # prompt_eval_count / prompt_eval_duration (ns) / eval_count / eval_duration (ns)
+    # (+ total_duration, load_duration when present). None if the stream ended
+    # without a done object. These are the model's self-timed counters — the
+    # basis for tokens/sec, which wall-clock (encoder init, HTTP, streaming
+    # overhead) would distort. See _stream_generate.
+    gen_stats: dict | None = None
 
 
 # Progress callbacks. Ingest emits ("extracting", name) / ("embedding", name, n)
@@ -342,7 +349,7 @@ class Pipeline:
         context = "\n\n".join(f"[{i}] {h.text}" for i, h in enumerate(sr.hits, 1))
         user = USER_TEMPLATE.format(context=context, question=question)
         t1 = time.perf_counter()
-        text = self._stream_generate(user, on_token)
+        text, gen_stats = self._stream_generate(user, on_token)
         generation_s = time.perf_counter() - t1
 
         return AnswerResult(
@@ -355,13 +362,21 @@ class Pipeline:
             encoder_init_s=self._encoder_init_s,
             retrieval_s=retrieval_s,
             generation_s=generation_s,
+            gen_stats=gen_stats,
         )
 
-    def _stream_generate(self, user: str, on_token: OnToken | None) -> str:
+    def _stream_generate(self, user: str, on_token: OnToken | None) -> tuple[str, dict | None]:
         """Stream tokens from local Ollama. Options are byte-identical to
         gen_answer.call_ollama (temperature 0, seed 42, num_ctx 4096) so the CLI
         reproduces the benchmarked generation exactly — only stream:true differs.
-        Stdlib urllib, the same transport gen_answer already uses."""
+        Stdlib urllib, the same transport gen_answer already uses.
+
+        Returns (text, gen_stats). gen_stats is the model's self-reported metrics
+        harvested from the terminal "done" object — prompt_eval_count /
+        prompt_eval_duration / eval_count / eval_duration (+ total/load_duration).
+        The benchmark harness turns these into tokens/sec; wall-clock can't,
+        because it folds in HTTP and streaming overhead. Metrics only — the
+        payload is unchanged, so this streams byte-identically to before."""
         import urllib.request
 
         payload = {
@@ -379,8 +394,15 @@ class Pipeline:
             headers={"Content-Type": "application/json"},
         )
         parts: list[str] = []
+        gen_stats: dict | None = None
         # Ollama streams newline-delimited JSON objects, one per token-ish chunk,
-        # terminated by an object with "done": true.
+        # terminated by an object with "done": true — which also carries the
+        # generation counters. We keep that final object's metric fields.
+        _METRIC_KEYS = (
+            "total_duration", "load_duration",
+            "prompt_eval_count", "prompt_eval_duration",
+            "eval_count", "eval_duration",
+        )
         with urllib.request.urlopen(req, timeout=600) as resp:
             for raw in resp:
                 raw = raw.strip()
@@ -393,8 +415,9 @@ class Pipeline:
                     if on_token:
                         on_token(tok)
                 if obj.get("done"):
+                    gen_stats = {k: obj[k] for k in _METRIC_KEYS if k in obj}
                     break
-        return "".join(parts)
+        return "".join(parts), gen_stats
 
 
 def _emit(cb: OnIngestEvent | None, event: IngestEvent) -> None:

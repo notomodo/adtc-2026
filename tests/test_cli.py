@@ -202,6 +202,27 @@ def test_ask_with_mismatched_embedder_raises(tmp_path, monkeypatch):
         pipe_b.answer("some indexed passage")
 
 
+def test_answer_surfaces_ollama_generation_stats(tmp_path, monkeypatch):
+    """The benchmark harness reads tokens/sec from Ollama's own counters, so
+    answer() must carry the terminal 'done' object's stats through to
+    AnswerResult.gen_stats. Stub the transport (no Ollama) and assert they
+    survive; the raw counters, not wall clock, are what the harness divides."""
+    idx_dir = tmp_path / "idx"
+    pdf = tmp_path / "doc.pdf"
+    _make_pdf(pdf)
+    pipe = Pipeline(index_dir=idx_dir, encoder=FakeEncoder())
+    _ingest_fake(pipe, monkeypatch, pdf, ["a passage about returns and refunds"])
+
+    fake_stats = {"eval_count": 120, "eval_duration": 10_000_000_000,
+                  "prompt_eval_count": 1200, "prompt_eval_duration": 6_000_000_000}
+    monkeypatch.setattr(Pipeline, "_stream_generate",
+                        lambda self, user, on_token: ("The return window is two days.", fake_stats))
+
+    result = pipe.answer("what is the return window", k=1)
+    assert result.gen_stats == fake_stats
+    assert not result.abstained
+
+
 # ---------------------------------------------------------------------------
 # presentation: citations vs abstention-shows-its-work (offline, no Ollama)
 # ---------------------------------------------------------------------------
