@@ -19,9 +19,11 @@ Run:  pytest -v
 from __future__ import annotations
 
 import hashlib
+import json
 import socket
 import sys
 import urllib.parse
+import urllib.request
 from pathlib import Path
 
 import numpy as np
@@ -32,6 +34,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from app import cli  # noqa: E402
 from app.pipeline import (  # noqa: E402
+    DEFAULT_OLLAMA_MODEL,
     DEFAULT_ONNX_PATH,
     AnswerResult,
     EmptyIndexError,
@@ -166,6 +169,19 @@ def test_cli_ask_empty_index_exits_nonzero_with_guidance(tmp_path, capsys):
     assert "adtc-rag ingest" in err
 
 
+def test_cli_index_dir_accepted_after_subcommand(tmp_path, capsys):
+    """Regression for the bug the first e2e run hit: --index-dir was a top-level
+    option only, so `adtc-rag ask <q> --index-dir X` (the natural form the runbook
+    uses) died with "unrecognized arguments". It must work in BOTH positions."""
+    idx = str(tmp_path / "idx")
+    # after the subcommand (the form that used to fail)
+    assert cli.main(["ask", "anything", "--index-dir", idx]) == 3
+    assert "No documents indexed" in capsys.readouterr().err
+    # and still before it
+    assert cli.main(["--index-dir", idx, "ask", "anything"]) == 3
+    assert "No documents indexed" in capsys.readouterr().err
+
+
 # ---------------------------------------------------------------------------
 # ask: encoder-identity mismatch is FATAL (known-bad control)
 # ---------------------------------------------------------------------------
@@ -253,8 +269,23 @@ def _ollama_up(host: str = "http://localhost:11434") -> bool:
         return False
 
 
+def _ollama_has_model(model: str = DEFAULT_OLLAMA_MODEL,
+                      host: str = "http://localhost:11434") -> bool:
+    """True only if Ollama is up AND the model is actually pulled. The first e2e
+    run had Ollama serving with zero models, so a reachability-only guard let the
+    test run and 404 at generation instead of skipping — guard on the model too."""
+    if not _ollama_up(host):
+        return False
+    try:
+        with urllib.request.urlopen(f"{host}/api/tags", timeout=1.0) as r:
+            names = [m.get("name", "") for m in json.load(r).get("models", [])]
+    except OSError:
+        return False
+    return any(n == model or n.startswith(model.split(":")[0]) for n in names)
+
+
 @pytest.mark.skipif(not DEFAULT_ONNX_PATH.exists(), reason="shipping .onnx model not built")
-@pytest.mark.skipif(not _ollama_up(), reason="Ollama not reachable")
+@pytest.mark.skipif(not _ollama_has_model(), reason="Ollama up but model not pulled")
 def test_ingest_then_ask_end_to_end(tmp_path, monkeypatch):
     """Full pipeline on the real OnnxEncoder + live Ollama. Uses the committed
     corpus chunks as ExtractedDocs so no PDF/pdfplumber is needed, but drives the
