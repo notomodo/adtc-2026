@@ -1,0 +1,187 @@
+########################################################
+# adtc-rag end-to-end benchmark (perf + accuracy)
+# date:   2026-07-29T06:56:44Z
+# host:   debian
+# commit: d1b1322  (6 files dirty)
+########################################################
+
+===== 0. ENVIRONMENT =====
+Python 3.13.5
+CPU:  4 cores
+RAM:  7.7Gi total, 4.2Gi available
+disk: 192G free
+
+⚠️  This run pins the CPU for ~60–100 min (41 questions × 60–150 s of
+    CPU-only generation each). Leave it unattended.
+
+----- guard: runtime venv present? -----
+OK: .venv-runtime present.
+
+----- guard: Ollama up + model pulled? -----
+OK: Ollama up and 'qwen2.5:3b-instruct' pulled.
+
+----- guard: ONNX encoder present? -----
+OK: models/bge-small-en-v1.5.onnx present.
+
+===== 1. FRESH INDEX (isolated) =====
+index dir: /tmp/tmp.EeqC9iTukr/bench_index  (fresh, so the run is self-contained and reproducible)
+corpus:    data/raw (5 PDFs)
+Char offsets are reconstructed from the per-document text stream (faithful; ingestion aborts on any chunk that can't be located).
+  General_Terms_for_Sellers_and_Buyers.pdf: extracting…
+  General_Terms_for_Sellers_and_Buyers.pdf: embedding 22 chunk(s)…
+  General_Terms_for_Sellers_and_Buyers.pdf: appended 22 chunk(s), 11 page(s)
+  Privacy_Policy.pdf: extracting…
+  Privacy_Policy.pdf: embedding 14 chunk(s)…
+  Privacy_Policy.pdf: appended 14 chunk(s), 3 page(s)
+  Return_Policy.pdf: extracting…
+  Return_Policy.pdf: embedding 3 chunk(s)…
+  Return_Policy.pdf: appended 3 chunk(s), 2 page(s)
+  Seek_Support.pdf: extracting…
+  Seek_Support.pdf: embedding 1 chunk(s)…
+  Seek_Support.pdf: appended 1 chunk(s), 1 page(s)
+  Sellers_Terms_and_Conditions.pdf: extracting…
+  Sellers_Terms_and_Conditions.pdf: embedding 7 chunk(s)…
+  Sellers_Terms_and_Conditions.pdf: appended 7 chunk(s), 5 page(s)
+
+Index: 5 document(s), 47 chunk(s), 222.1 KB on disk
+  encoder init 0.5s · total 25.3s
+
+===== 2. BENCHMARK SWEEP (unattended; ~60–100 min) =====
+results (incremental, resumable): results/benchmark_20260729T065644Z.jsonl
+[ram] evicting qwen2.5:3b-instruct so the first question pays the load cost…
+[ram] baseline system used: 1418 MB (ollama resident: 50 MB)
+
+[ 1/41] Q01 (exact_fact): What is Kibuga's returns window?
+      A=PASS  abstained=False gold=hit  gen=78.2s (5.1 tok/s)
+
+[ 2/41] Q02 (exact_fact): What is the minimum age to register on the marketplace?
+      A=PASS  abstained=False gold=hit  gen=83.9s (4.9 tok/s)
+
+[ 3/41] Q03 (exact_fact): What is Kibuga's customer support phone number?
+      A=PASS  abstained=False gold=hit  gen=51.5s (5.0 tok/s)
+
+[ 4/41] Q04 (exact_fact): Where are Kibuga's headquarters?
+      A=PASS  abstained=False gold=hit  gen=32.2s (5.1 tok/s)
+
+[ 5/41] Q05 (exact_fact): What is the customer support email address?
+      A=PASS  abstained=False gold=hit  gen=25.5s (5.4 tok/s)
+
+[ 6/41] Q06 (exact_fact): How many pick-up attempts will Kibuga make for a return?
+      A=PASS  abstained=False gold=hit  gen=69.8s (5.0 tok/s)
+
+[ 7/41] Q07 (paraphrase): How long do I have to send something back?
+      A=PASS  abstained=False gold=hit  gen=53.9s (4.9 tok/s)
+
+[ 8/41] Q08 (paraphrase): Can a teenager open an account?
+      A=FAIL  abstained=True  gold=hit  gen=20.0s (6.1 tok/s)
+
+[ 9/41] Q09 (paraphrase): What paperwork do I need to bring back a purchase?
+      A=PASS  abstained=False gold=hit  gen=45.4s (5.0 tok/s)
+
+[10/41] Q10 (paraphrase): Which goods can't be sent back?
+      A=PASS  abstained=False gold=hit  gen=68.8s (5.0 tok/s)
+
+[11/41] Q12 (paraphrase): How do I get in touch if something goes wrong?
+      A=PASS  abstained=False gold=hit  gen=51.8s (4.8 tok/s)
+
+[12/41] Q13 (near_miss): How long does a refund take to process?
+      A=PASS  abstained=False gold=hit  gen=6.4s (5.0 tok/s)
+
+[13/41] Q14 (near_miss): What happens if my return claim is rejected?
+      A=WEAK  abstained=False gold=hit  gen=28.8s (4.8 tok/s)
+
+[14/41] Q15 (prose): What kinds of content am I forbidden from posting?
+      A=PASS  abstained=False gold=hit  gen=87.9s (4.8 tok/s)
+
+[15/41] Q16 (prose): What personal data does Kibuga collect?
+      A=FAIL  abstained=False gold=hit  gen=43.7s (5.1 tok/s)
+
+[16/41] Q17 (prose): What warranty does a seller give about the products?
+      A=FAIL  abstained=True  gold=MISS gen=31.3s (5.8 tok/s)
+
+[17/41] Q19 (prose): Can Kibuga suspend my account without telling me?
+      A=PASS  abstained=False gold=MISS gen=76.5s (4.8 tok/s)
+
+[18/41] Q21 (multi_chunk): What is the full returns procedure from request to refund?
+      A=WEAK  abstained=False gold=hit  gen=138.7s (4.6 tok/s)
+
+[19/41] Q22 (multi_chunk): What are all the ways Kibuga can refund me?
+      A=FAIL  abstained=False gold=MISS gen=54.0s (4.9 tok/s)
+
+[20/41] Q23 (exact_fact): Where is Kibuga's registered office located?
+      A=PASS  abstained=False gold=hit  gen=30.3s (5.3 tok/s)
+
+[21/41] Q24 (exact_fact): Do I pay shipping charges when returning a product to Kibuga?
+      A=PASS  abstained=False gold=hit  gen=67.5s (5.1 tok/s)
+
+[22/41] Q25 (exact_fact): Who do I contact to exercise my data privacy rights?
+      A=PASS  abstained=False gold=hit  gen=26.4s (5.3 tok/s)
+
+[23/41] Q26 (exact_fact): Am I allowed to print pages from Kibuga's website?
+      A=PASS  abstained=False gold=hit  gen=74.7s (4.9 tok/s)
+
+[24/41] Q27 (paraphrase): How long does Kibuga hang on to my information?
+      A=FAIL  abstained=True  gold=MISS gen=15.3s (6.1 tok/s)
+
+[25/41] Q28 (paraphrase): What sorts of goods are sellers banned from listing?
+      A=PASS  abstained=False gold=hit  gen=107.3s (4.7 tok/s)
+
+[26/41] Q29 (paraphrase): Can I ask Kibuga to delete everything they know about me?
+      A=FAIL  abstained=True  gold=MISS gen=52.3s (6.1 tok/s)
+
+[27/41] Q30 (near_miss): Are the prices shown on the marketplace inclusive of VAT?
+      A=PASS  abstained=False gold=hit  gen=84.1s (4.8 tok/s)
+
+[28/41] Q31 (near_miss): Can Kibuga move my data to another country?
+      A=PASS  abstained=False gold=hit  gen=57.1s (5.0 tok/s)
+
+[29/41] Q32 (prose): What can Kibuga do to me if I break the rules?
+      A=PASS  abstained=False gold=MISS gen=60.8s (5.0 tok/s)
+
+[30/41] Q33 (prose): Which outside parties might see my personal data?
+      A=PASS  abstained=False gold=hit  gen=39.3s (5.0 tok/s)
+
+[31/41] Q34 (prose): Does Kibuga use my data for advertising?
+      A=PASS  abstained=False gold=hit  gen=54.9s (4.8 tok/s)
+
+[32/41] Q35 (prose): If I have a legal dispute with Kibuga, whose courts decide it?
+      A=FAIL  abstained=True  gold=MISS gen=67.5s (5.9 tok/s)
+
+[33/41] Q36 (multi_chunk): Across all the policies, what enforcement actions can Kibuga take agai
+      A=PASS  abstained=False gold=hit  gen=84.2s (4.8 tok/s)
+
+[34/41] Q37 (multi_chunk): How does Kibuga handle a seller's money — what gets deducted and what'
+      A=PASS  abstained=False gold=hit  gen=73.5s (4.7 tok/s)
+
+[35/41] Q38 (multi_chunk): Walk me through everything I need to know to return an item and get my
+      A=PASS  abstained=False gold=hit  gen=116.3s (4.7 tok/s)
+
+[36/41] U01 (unanswerable): Does Kibuga ship internationally to Kenya, and what are the rates?
+      A=PASS  abstained=True  gold=-    gen=43.1s (6.1 tok/s)
+
+[37/41] U02 (unanswerable): Can I pay for my order in instalments or with cash on delivery?
+      A=PASS  abstained=True  gold=-    gen=62.2s (6.0 tok/s)
+
+[38/41] U03 (unanswerable): What is the warranty period in months on electronics bought from Kibug
+      A=PASS  abstained=True  gold=-    gen=39.7s (5.9 tok/s)
+
+[39/41] U04 (unanswerable): Does Kibuga have a physical store I can visit in Kampala?
+      A=PASS  abstained=True  gold=-    gen=34.2s (6.0 tok/s)
+
+[40/41] U05 (unanswerable): What loyalty points or discount codes does Kibuga offer repeat buyers?
+      A=PASS  abstained=True  gold=-    gen=83.8s (5.8 tok/s)
+
+[41/41] U06 (unanswerable): How many days does delivery take after I place an order?
+      A=PASS  abstained=True  gold=-    gen=3.8s (6.0 tok/s)
+
+[done] 41 question(s) in 2329s (0 failed). Peak system RAM 4584 MB (+3166 over baseline), ollama RSS 64 MB.
+[done] per-question:  results/benchmark_20260729T065644Z.jsonl
+[done] summary:       results/benchmark_20260729T065644Z_summary.md
+
+########################################################
+# DONE.
+#   per-question: results/benchmark_20260729T065644Z.jsonl
+#   summary:      results/benchmark_20260729T065644Z_summary.md
+#   log:          results/benchmark_20260729T065644Z.log
+# Commit results/ and hand the summary back.
+########################################################

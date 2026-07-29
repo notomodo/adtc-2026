@@ -1,7 +1,7 @@
 # STATUS — adtc-2026
 
 **Single source of truth. Overwritten each session.**
-Last updated: 2026-07-28 · Branch: `main`
+Last updated: 2026-07-29 · Branch: `main`
 
 ---
 
@@ -40,28 +40,44 @@ adtc-rag ask "<q>"      → hybrid retrieve (BM25 + dense, RRF) → v3 grounding
   logic (idempotency, empty-index/mismatch guards, citations/abstention formatting) is
   covered offline by `tests/test_cli.py` with a `FakeEncoder`.
 
-**Full test suite: 87 passed, 2 skipped** under the runtime+test stack (numpy, pdfplumber,
+**Full test suite: 88 passed, 2 skipped** under the runtime+test stack (numpy, pdfplumber,
 tokenizers, pytest — no torch/onnxruntime/Ollama). The 2 skips: the torch-dependent ONNX
 parity/export module, and the opt-in `ingest→ask` e2e (needs the `.onnx` model + a live
-Ollama). Under the full benchmark stack the parity tests run and pass (was 90 passed).
+Ollama). New this session: `test_answer_surfaces_ollama_generation_stats` locks the
+`AnswerResult.gen_stats` contract the benchmark harness depends on.
 
 ---
 
+## Floor-hardware benchmark — DONE (2026-07-29)
+
+Full 41-question end-to-end sweep on the dev **floor** box (4-core i5-4300U-class,
+7.7 GB, CPU-only Ollama), harness `scripts/run_benchmark.py` + `run_benchmark.sh`,
+committed under `results/benchmark_20260729T065644Z.*`. 0 failures, ~39 min.
+
+- **RAG end-to-end accuracy: 26/35 = 74.3%** (Layer-A pass rate — a **known
+  overestimate**; token-overlap grader with confirmed false positives R5/Q19).
+  This is NOT S_acc and NOT DECISION-002 R@k.
+- **Abstention: 6/6 correct** on unanswerable probes; **5 false abstentions** on
+  answerable (Q08/Q17/Q27/Q29/Q35) — the top accuracy lever.
+- **Generation: ~5 tok/s** (median 4.98; CPU-only 3B), ~55 s/question median.
+  Retrieval ~25 ms — generation is the entire cost.
+- **Peak RAM: 4584 MB (+3166 over a 1418 MB idle baseline)**; model runner
+  (`llama-server`) resident ~2054 MB. System-footprint RAM, distinct from S_eff.
+- Report: `docs/SESSION_REPORT_2026-07-29_floor-benchmark.md`.
+
 ## Next action
 
-**Reference-machine performance run.** The app surfaces real per-run wall-clock
-(encoder init / retrieval / generation) but has not been measured on the target
-HDD laptop against the live model. Do a formal `ingest`+`ask` timing pass there
-(minutes-long embed on HDD; 65–105 s/question generation expected). Not a code
-task — a machine-time measurement session.
+**Reference-machine benchmark run.** The number above is the dev **floor** (i5-4300U),
+not the teammate's reference i5. Re-run `run_benchmark.sh` on the reference machine for
+that row. Not a code task — a machine-time measurement session (harness is done and proven).
 
 ---
 
 ## Blocked / open items (none blocking the above)
 
-- **`onnxruntime` is now declared in `pyproject.toml` runtime deps** (the app needs it),
-  but **still absent from `requirements.txt`** — reconcile the two dependency manifests
-  in a follow-up so the pip-install path matches the packaged one.
+- ✅ **`onnxruntime` manifests reconciled** — now declared in BOTH `pyproject.toml` and
+  `requirements.txt` (`fix(deps)`, commit `7d0ebc5`). The runtime-deps `run_benchmark.sh`
+  venv install (numpy/onnxruntime/pdfplumber/tokenizers, no torch) proves the two agree.
 - **int8 quantisation deferred.** Shipped ONNX is fp32 (~127 MB) for bake-off parity;
   int8 is a future size optimisation on its own parity budget (DECISION-002 §8, §10.3).
 - **`.onnx` sha is stack-dependent**, not weight-only: canonical `b7513a6a…` holds only
@@ -75,12 +91,15 @@ task — a machine-time measurement session.
 
 ## Repo state
 
-- **This session (application layer):** `feat(app)` pipeline glue → `feat(app)` adtc-rag
-  CLI + pyproject → `test(app)` CLI/guards + extend import smoke to `src/app/` → this
-  STATUS. Built on `2e8766c` (prior session tip).
-- **Uncommitted (by design):** earlier-session leftovers
-  (`benchmarks/CHUNK_ID_MIGRATION_REPORT.md`, `benchmarks/chunk_id_migration_map.json`,
-  `docs/SESSION_REPORT_2026-07-23.md`).
+- **This session (floor benchmark):** three prior-session e2e fixes (`fix(app)` /
+  `test(app)` / `fix(dev)`, pushed) → `feat(app)` surface Ollama gen stats →
+  `feat(bench)` harness + runbook → `fix(bench)` RAM sampler catches `llama-server` →
+  `docs(bench)` results + this STATUS. Built on `01b13c3`.
+- **Now tracked:** `benchmarks/chunk_id_migration_map.json` (+ its
+  `CHUNK_ID_MIGRATION_REPORT.md`) — the verified positional→stable map is a live
+  dependency of the benchmark harness (`gold_chunk_hit`), so it belongs in the repo.
+- **Still untracked (older handoffs, left for review):** `docs/SESSION_REPORT_2026-07-23.md`,
+  `docs/SESSION_REPORT_2026-07-28_application-layer.md`, `docs/SESSION_REPORT_2026-07-28_e2e-run.md`.
 - **`models/bge-small-en-v1.5.onnx`** is gitignored; `scripts/export_onnx.py` is the source.
 
 ---
