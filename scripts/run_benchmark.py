@@ -199,18 +199,24 @@ class RamSampler(threading.Thread):
             info[k] = float(rest.strip().split()[0])  # kB
         return (info["MemTotal"] - info["MemAvailable"]) / 1024.0
 
-    @staticmethod
-    def ollama_rss_mb() -> float:
-        """Sum VmRSS over every process whose comm mentions ollama (server +
-        model runner). Pure /proc, no psutil."""
+    # The model does NOT run inside an `ollama`-named process: `ollama serve` is
+    # only the ~60 MB API broker. It spawns a separate `llama-server` subprocess
+    # (comm "llama-server", launched with --no-mmap) that holds the whole ~2 GB
+    # model in real RSS. Matching only "ollama" undercounts by ~30x — sum both.
+    _RUNNER_COMM_MARKERS = ("ollama", "llama-server", "llama_server")
+
+    @classmethod
+    def ollama_rss_mb(cls) -> float:
+        """Sum VmRSS over the ollama broker AND its llama-server model runner —
+        the process where the model actually lives. Pure /proc, no psutil."""
         total_kb = 0.0
         proc = Path("/proc")
         for entry in proc.iterdir():
             if not entry.name.isdigit():
                 continue
             try:
-                comm = (entry / "comm").read_text().strip()
-                if "ollama" not in comm.lower():
+                comm = (entry / "comm").read_text().strip().lower()
+                if not any(m in comm for m in cls._RUNNER_COMM_MARKERS):
                     continue
                 for line in (entry / "status").read_text().splitlines():
                     if line.startswith("VmRSS:"):
