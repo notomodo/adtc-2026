@@ -269,7 +269,9 @@ def run_benchmark(args) -> Path:
         print(f"[resume] {len(done)} question(s) already in {results_path.name}; "
               f"skipping those.", flush=True)
 
-    pipe = Pipeline(index_dir=Path(args.index_dir), model=args.model, host=args.host)
+    think = {"true": True, "false": False}.get(args.think) if args.think else None
+    pipe = Pipeline(index_dir=Path(args.index_dir), model=args.model, host=args.host,
+                    think=think)
 
     # --- baseline RAM: evict the model first so the first question pays load ---
     # The plan wants this run to capture the model LOAD, so start from a state
@@ -594,6 +596,11 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--results", default=str(_ROOT / "results" / f"benchmark_{ts}.jsonl"),
                     help="incremental per-question jsonl (resumable)")
     ap.add_argument("--model", default="qwen2.5:3b-instruct", help="Ollama model")
+    ap.add_argument("--think", choices=("true", "false"), default=None,
+                    help="hybrid-model thinking control (Qwen3): 'false' disables the "
+                         "reasoning trace for an apples-to-apples comparison with the "
+                         "non-thinking Qwen2.5 models. Omit to leave the field out "
+                         "entirely (byte-identical payload for the 2.5 baselines).")
     ap.add_argument("--host", default="http://localhost:11434", help="Ollama host")
     ap.add_argument("-k", type=int, default=3, help="passages retrieved per question")
     return ap

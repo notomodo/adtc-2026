@@ -223,6 +223,23 @@ def test_answer_surfaces_ollama_generation_stats(tmp_path, monkeypatch):
     assert not result.abstained
 
 
+def test_think_field_omitted_by_default_and_set_only_when_requested():
+    """The Qwen3 comparison run needs think:false, but the Qwen2.5 baselines
+    must stay byte-identical. Guard that invariant at the payload level: no
+    `think` key unless explicitly constructed with one, and options/prompt are
+    never touched by it."""
+    base = Pipeline(index_dir=None)._build_payload("ctx")
+    assert "think" not in base                      # 2.5 runs: field absent
+    assert base["options"] == {"temperature": 0, "seed": 42, "num_ctx": 4096}
+
+    off = Pipeline(index_dir=None, think=False)._build_payload("ctx")
+    assert off["think"] is False                    # Qwen3 run: reasoning disabled
+    assert off["options"] == base["options"]        # nothing else changed
+
+    on = Pipeline(index_dir=None, think=True)._build_payload("ctx")
+    assert on["think"] is True
+
+
 # ---------------------------------------------------------------------------
 # presentation: citations vs abstention-shows-its-work (offline, no Ollama)
 # ---------------------------------------------------------------------------

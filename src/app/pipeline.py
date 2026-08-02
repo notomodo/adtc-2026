@@ -170,6 +170,7 @@ class Pipeline:
         budget: int = DEFAULT_BUDGET,
         model: str = DEFAULT_OLLAMA_MODEL,
         host: str = DEFAULT_OLLAMA_HOST,
+        think: bool | None = None,
     ) -> None:
         self.index_dir = Path(index_dir).expanduser() if index_dir is not None else None
         self.onnx_path = Path(onnx_path) if onnx_path is not None else DEFAULT_ONNX_PATH
@@ -177,6 +178,12 @@ class Pipeline:
         self.budget = budget
         self.model = model
         self.host = host
+        # Thinking-mode control for hybrid models (Qwen3): None => omit the field
+        # entirely, so the payload is byte-identical to what the non-thinking
+        # Qwen2.5 models were benchmarked with. Set False to disable a hybrid
+        # model's reasoning trace (keeps it in the same "answer directly from
+        # context" regime as the 2.5 instruct models); True to enable it.
+        self.think = think
 
         # An injected encoder (tests) short-circuits the real ONNX build and its
         # init cost is reported as zero. The real handle is built lazily on first
@@ -365,6 +372,25 @@ class Pipeline:
             gen_stats=gen_stats,
         )
 
+    def _build_payload(self, user: str) -> dict:
+        """The exact /api/chat body. Options are byte-identical to
+        gen_answer.call_ollama (temperature 0, seed 42, num_ctx 4096); only
+        stream:true differs. `think` is added ONLY when explicitly set, so a
+        Pipeline constructed without it (every Qwen2.5 run) produces a payload
+        indistinguishable from the originally benchmarked one."""
+        payload: dict = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user},
+            ],
+            "stream": True,
+            "options": {"temperature": 0, "seed": 42, "num_ctx": 4096},
+        }
+        if self.think is not None:
+            payload["think"] = self.think
+        return payload
+
     def _stream_generate(self, user: str, on_token: OnToken | None) -> tuple[str, dict | None]:
         """Stream tokens from local Ollama. Options are byte-identical to
         gen_answer.call_ollama (temperature 0, seed 42, num_ctx 4096) so the CLI
@@ -379,15 +405,7 @@ class Pipeline:
         payload is unchanged, so this streams byte-identically to before."""
         import urllib.request
 
-        payload = {
-            "model": self.model,
-            "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user},
-            ],
-            "stream": True,
-            "options": {"temperature": 0, "seed": 42, "num_ctx": 4096},
-        }
+        payload = self._build_payload(user)
         req = urllib.request.Request(
             f"{self.host}/api/chat",
             data=json.dumps(payload).encode(),
