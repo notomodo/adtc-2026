@@ -65,44 +65,47 @@ committed under `results/benchmark_20260729T065644Z.*`. 0 failures, ~39 min.
   (`llama-server`) resident ~2054 MB. System-footprint RAM, distinct from S_eff.
 - Report: `docs/SESSION_REPORT_2026-07-29_floor-benchmark.md`.
 
-## Model comparison: 3B vs 1.5B — accuracy DONE, perf DEFERRED (2026-08-02)
+## Model comparison: 3B vs 1.5B vs Qwen3-4B (2026-08-02)
 
-Controlled rerun of the **same** harness with **only the generation model changed**
-(`qwen2.5:1.5b-instruct-q4_K_M`, Q4_K_M — matches the 3B quant), evaluating the
-1.5B as a possible submission model (it is **Apache-2.0** vs the 3B's **research /
-non-commercial** license). Artifacts: `results/benchmark_20260802T090940Z_1p5b.*`.
-Full side-by-side: `docs/model_comparison_3b_vs_1p5b.md`.
+Controlled reruns of the **same** harness with **only the generation model changed**,
+evaluating two alternatives to the 3B. Both alternatives are **Apache-2.0** vs the 3B's
+Qwen **Research** (non-commercial) license. Full three-way side-by-side:
+`docs/model_comparison.md`. Artifacts: `results/benchmark_20260802T090940Z_1p5b.*`
+(1.5B) and `results/benchmark_20260802T095051Z_qwen3-4b.*` (Qwen3-4B). Harness gained a
+parameterized `--think` knob (`feat(app)` 104c58c) so Qwen3 runs with thinking disabled
+while the 2.5 runs stay byte-identical.
 
-- **Controlled-comparison integrity proven:** retrieval held fixed — `gold_chunk_hit`
-  **28/28 identical** and retrieved-id order byte-identical across both runs. Every
-  accuracy delta is generation-only.
-- **Layer-A pass rate: 3B 26/35 (74.3%) → 1.5B 22/35 (62.9%)**, −4 PASSes,
-  concentrated in `prose`. BUT the per-question diff shows **most of that gap is the
-  grader's answer-length bias, not faithfulness** — the 1.5B paraphrases tersely and
-  loses token-overlap on several *correct* answers (e.g. Q25 = `support@kibuga.com`,
-  correct, graded FAIL). Real deltas: **+Q08** (1.5B genuine win) and **−Q27** (1.5B
-  confidently answered from the wrong chunk where the 3B safely abstained).
-- **Abstention: both 6/6 correct** on probes; 1.5B has **fewer** false abstentions
-  (3 vs 5) — it abstains less, which helps coverage (Q08) but risks confident wrong
-  answers (Q27).
-- **Performance DEFERRED** — this box was **contended** (firefox/desktop active, load
-  ~1.1, baseline RAM 2937 MB vs the 3B run's 1418 MB idle floor). No clean perf
-  comparison is claimed; 1.5B floor perf goes to the reference-machine run.
+- **Integrity proven (all 3 runs):** retrieval held fixed — `gold_chunk_hit` **28/28
+  identical** and retrieved-id order byte-identical. Every accuracy delta is generation-only.
+- **Layer-A pass rate: 3B 74.3% (26/35) > Qwen3-4B 65.7% (23/35) > 1.5B 62.9% (22/35).**
+  BUT the per-question diffs show the gaps are **substantially the grader's answer-length
+  bias, not faithfulness** — the 1.5B and Qwen3-4B paraphrase tersely and lose token-overlap
+  on *correct* answers. On substance the 3B and Qwen3-4B are close; Qwen3-4B recovers
+  exact_fact (10/10) and leads multi_chunk (4/5).
+- **Abstention / coverage trade-off:** 3B is most conservative (6/6 probes, but over-abstains
+  on 5 answerable). The 1.5B and Qwen3-4B answer more but each has **one confident
+  hallucination** the 3B avoided — 1.5B on **Q27** (wrong chunk), Qwen3-4B on **U04** (answered
+  an unanswerable probe; its grader-correct abstention is **5/6**, not the auto-summary's
+  flag-based "3/6" — Qwen3 wraps the sentinel in prose so `startswith` undercounts).
+- **Efficiency — Qwen3-4B is the SLOWEST and HEAVIEST (idle, clean measurement):** ~2.83 tok/s
+  (vs 3B 4.98, 1.5B 9.29≥) and **~5.7 GB runner RSS / peak 7437 MB — nearly saturating the
+  7.7 GB box** (~2.8× the 3B). The 1.5B row is a lower bound (it ran contended). So Qwen3-4B
+  **trades the 3B's license risk for a real perf/memory cost** — not a strict improvement.
 
-**Decided by this run:** retrieval is model-independent and stable; the Layer-A gap
-overstates the true accuracy difference. **Pending (decided elsewhere):** true
-faithfulness gap (needs a Layer-B/human grade — highest-value follow-up), clean
-reference-machine perf for both models, and the license axis. **No model
-recommendation is made from this data.**
+**Decided by these runs:** retrieval is model-independent/stable; the Layer-A gaps overstate
+the true accuracy differences; Qwen3-4B is license-clean but the slowest/heaviest option on
+CPU. **Pending (decided elsewhere):** true faithfulness ranking (Layer-B/human grade — top
+follow-up), matched-idle perf for the 1.5B/3B, and whether the 3B's non-commercial license is
+competition-eligible (a rules question). **No model recommendation is made from this data.**
 
 ## Next action
 
-1. **Layer-B / human grade** of both runs to pin the real 3B-vs-1.5B faithfulness
-   gap under the length-biased Layer-A ceiling — the highest-value follow-up before
-   any model switch.
-2. **Reference-machine benchmark run.** Both floor rows (3B and 1.5B) were on the dev
-   box (the 1.5B row contended); re-run `run_benchmark.sh` for BOTH models on the
-   teammate's idle reference i5. Not a code task — a machine-time measurement session.
+1. **Layer-B / human grade** of the three runs to pin the real faithfulness ranking under the
+   length-biased Layer-A ceiling — the highest-value follow-up before any model switch.
+2. **Confirm license eligibility** against the competition rules — the only axis on which the
+   3B (Qwen Research, non-commercial) differs from the Apache-2.0 alternatives.
+3. **Optional: matched-idle perf** for the 1.5B (and a fresh 3B) so the perf table's 1.5B row
+   stops being a lower bound. Qwen3-4B and the 3B floor are already ~idle and comparable.
 
 ---
 

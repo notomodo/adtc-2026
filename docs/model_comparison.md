@@ -1,35 +1,42 @@
-# Model comparison — Qwen2.5-3B vs Qwen2.5-1.5B on the adtc-rag pipeline
+# Model comparison — Qwen2.5-3B vs 1.5B vs Qwen3-4B on the adtc-rag pipeline
 
-**Date:** 2026-08-02 · **Branch:** `main` · **Commit:** `2fc1cbe`
-**Purpose:** a *controlled* end-to-end comparison of two candidate generation
-models on the **same** RAG pipeline, to inform (not decide) a possible switch
-from the 3B to the 1.5B.
+**Updated:** 2026-08-02 · **Branch:** `main` · **Commit:** `104c58c`
+**Purpose:** a *controlled* end-to-end comparison of candidate generation models on
+the **same** RAG pipeline, to inform (not decide) which model to submit.
 
-| | 3B baseline | 1.5B candidate |
-|---|---|---|
-| Ollama model | `qwen2.5:3b-instruct` | `qwen2.5:1.5b-instruct-q4_K_M` |
-| Params / quant | 3.1B · **Q4_K_M** | 1.5B · **Q4_K_M** |
-| Run artifacts | `results/benchmark_20260729T065644Z_*` | `results/benchmark_20260802T090940Z_1p5b_*` |
-| License | Qwen **RESEARCH** (non-commercial) | **Apache-2.0** |
+| | 3B baseline | 1.5B candidate | Qwen3-4B candidate |
+|---|---|---|---|
+| Ollama model | `qwen2.5:3b-instruct` | `qwen2.5:1.5b-instruct-q4_K_M` | `qwen3:4b-q4_K_M` |
+| Params / quant | 3.1B · Q4_K_M | 1.5B · Q4_K_M | 4.0B (dense) · Q4_K_M |
+| Thinking | n/a | n/a | **disabled** (`--think false`) |
+| Run artifacts | `results/…065644Z_*` | `results/…090940Z_1p5b_*` | `results/…095051Z_qwen3-4b_*` |
+| License | Qwen **Research** (non-commercial) | **Apache-2.0** | **Apache-2.0** |
+| Machine state during run | floor (~idle) | **contended** | **idle** |
 
-Both runs: retrieval k=3, the v3 grounding prompt, temp 0 / seed 42 / num_ctx
-4096, the same 5-PDF / 47-chunk corpus, the same 41 questions (35 answerable +
-6 unanswerable probes), graded by the same `gen_judge.layer_a`. **The only
-variable is the generation model.**
+All runs: retrieval k=3, the v3 grounding prompt, temp 0 / seed 42 / num_ctx 4096,
+the same 5-PDF / 47-chunk corpus, the same 41 questions (35 answerable + 6
+unanswerable probes), graded by the same `gen_judge.layer_a`. **The only variable
+is the generation model** (Qwen3 additionally needs thinking disabled to sit in the
+same non-thinking regime; that knob leaves the 2.5 runs byte-identical).
+
+> **Note on Qwen3-4B:** it is a **dense** model, not MoE — there is no sparse-MoE
+> Qwen3 at 4B (the smallest Qwen3 MoE is 30B-A3B, ~18 GB @ Q4, which does not fit
+> this 7.7 GB box). Thinking was disabled for an apples-to-apples comparison with
+> the non-thinking Qwen2.5 instruct models; verified no reasoning leaked into any
+> answer and generation token counts stayed in the normal (non-thinking) range.
 
 ---
 
-## 0. Controlled-comparison integrity (this is what makes the numbers mean anything)
+## 0. Controlled-comparison integrity
 
 Retrieval, the prompt, k, chunking, the index and the grader were held fixed and
-verified identical between runs:
+verified identical across **all three** runs:
 
-- **`gold_chunk_hit`: 28/35 in BOTH runs, question-for-question identical** (the
-  seven misses — Q17, Q19, Q22, Q27, Q29, Q32, Q35 — are the same in both).
-- **Retrieved chunk ids and their order: byte-identical for all 41 questions.**
+- **`gold_chunk_hit`: 28/35, question-for-question identical in all three runs**
+  (same seven misses: Q17, Q19, Q22, Q27, Q29, Q32, Q35).
+- **Retrieved chunk ids and order: byte-identical for all 41 questions, all runs.**
 
-If retrieval had drifted, the comparison would be worthless; it did not. Every
-accuracy difference below is attributable to generation alone.
+Every accuracy difference below is attributable to generation alone.
 
 ---
 
@@ -37,95 +44,111 @@ accuracy difference below is attributable to generation alone.
 
 > **What this number is — and its two biases.** RAG **end-to-end** accuracy
 > (retrieval × grounding × synthesis), scored by the **Layer-A token-overlap
-> heuristic**. It is **not** S_acc (the profiler's lm_eval MCQ on the bare GGUF)
-> and not DECISION-002 R@k. Two grader biases matter here:
-> 1. **Known overestimate (both models):** Layer-A has confirmed false positives
->    (the R5 / Q19 finding) — it can PASS an answer built on the wrong chunk.
-> 2. **Length bias (hurts the terser model):** token-overlap rewards verbatim
->    quoting. The 1.5B paraphrases more concisely, so several *correct* 1.5B
->    answers lose overlap and score WEAK/FAIL. **This makes the raw 3B−1.5B gap
->    an overstatement of the true faithfulness difference** (see §3).
+> heuristic**. Not S_acc, not DECISION-002 R@k. Two grader biases:
+> 1. **Known overestimate (all models):** Layer-A has confirmed false positives
+>    (R5 / Q19) — it can PASS an answer built on the wrong chunk.
+> 2. **Length bias (hurts terser models):** token-overlap rewards verbatim quoting;
+>    both the 1.5B and Qwen3-4B paraphrase more concisely than the 3B, so several
+>    *correct* answers score WEAK/FAIL on overlap alone. **The raw gaps below
+>    overstate the true faithfulness differences.**
 >
-> Treat the pass rate as a biased proxy, not ground truth. A Layer-B / human
-> grade would move both numbers, and would likely *narrow* the gap.
+> Treat the pass rate as a biased proxy, not ground truth. A Layer-B / human grade
+> is required to rank faithfulness for real — it is the top follow-up.
 
-### Overall and per stratum
+### Overall and per stratum (PASS / total)
 
-| stratum | 3B PASS/total | 3B rate | 1.5B PASS/total | 1.5B rate | Δ |
-|---------|---------------|---------|-----------------|-----------|---|
-| exact_fact | 10/10 | 100.0% | 9/10 | 90.0% | −1 |
-| paraphrase | 5/8 | 62.5% | 6/8 | 75.0% | **+1** |
-| near_miss | 3/4 | 75.0% | 2/4 | 50.0% | −1 |
-| multi_chunk | 3/5 | 60.0% | 3/5 | 60.0% | 0 |
-| prose | 5/8 | 62.5% | 2/8 | 25.0% | −3 |
-| **overall** | **26/35** | **74.3%** | **22/35** | **62.9%** | **−4 (−11.4 pts)** |
+| stratum | 3B | 1.5B | Qwen3-4B |
+|---------|----|----|----|
+| exact_fact | 10/10 | 9/10 | **10/10** |
+| paraphrase | 5/8 | 6/8 | 5/8 |
+| near_miss | 3/4 | 2/4 | 2/4 |
+| multi_chunk | 3/5 | 3/5 | **4/5** |
+| prose | 5/8 | 2/8 | 2/8 |
+| **overall** | **26/35 (74.3%)** | **22/35 (62.9%)** | **23/35 (65.7%)** |
 
-Both figures carry the R5/Q19 known-overestimate caveat. The headline gap is
-**−4 PASSes**, concentrated in **prose** — but §3 shows most of that is the
-grader's length bias, not a real faithfulness loss.
+All three carry the R5/Q19 known-overestimate caveat. On the raw proxy Qwen3-4B
+lands **between** the 1.5B and the 3B — recovering the 1.5B's lost exact_fact
+(10/10) and posting the best multi_chunk (4/5), but sharing the 1.5B's prose drop
+(2/8), most of which is the length bias (see §3), not faithfulness.
 
 ---
 
 ## 2. Abstention
 
-| | 3B | 1.5B |
+| | 3B | 1.5B | Qwen3-4B |
+|---|---|---|---|
+| Correct abstentions (of 6 probes) | **6/6** | **6/6** | **5/6** — U04 failed |
+| Unanswerable probe FAILURE | none | none | **U04** (hallucinated a physical store) |
+| False abstentions (answerable, wrongly abstained) | 5 (Q08, Q17, Q27, Q29, Q35) | 3 (Q17, Q29, Q35) | 3 (Q17, Q27, Q35) |
+
+> **Measurement note for Qwen3-4B.** Its auto-generated summary shows "3/6" correct
+> abstentions and "2" false — those count the pipeline's `abstained` boolean
+> (`answer.startswith("NOT_IN_DOCUMENTS")`). Qwen3 wraps the sentinel in a rationale,
+> so `startswith` misses it; the **grader** (substring match, the real measure) gives
+> the **5/6 / 3** numbers above. The one genuine probe failure, **U04**, is real: Qwen3
+> answered "Yes, Kibuga has a physical store in Kampala…" on an unanswerable question.
+
+The 3B is the most conservative (abstains on every probe, but also over-abstains on 5
+answerable). The 1.5B and Qwen3-4B abstain less — better coverage on answerable
+questions, but each has **one confident hallucination** the 3B avoided: the 1.5B on
+**Q27** (answered from the wrong chunk), Qwen3-4B on **U04** (answered an unanswerable
+probe outright). This is the recurring trade-off: **more coverage ↔ more hallucination
+risk**, and the 3B sits at the conservative end.
+
+---
+
+## 3. Per-question verdict changes, 3B → Qwen3-4B (8 of 41)
+
+| id | stratum | 3B → Qwen3-4B | gold hit | what happened |
+|----|---------|---------------|----------|---------------|
+| Q08 | paraphrase | FAIL → **PASS** | ✓ | **Genuine win.** 3B wrongly abstained; Qwen3 answered correctly. |
+| Q21 | multi_chunk | WEAK → **PASS** | ✓ | **Genuine win.** Better multi-chunk synthesis cleared the overlap bar. |
+| Q19 | prose | PASS → **FAIL** | ✗ | Q19 is *the* confirmed Layer-A false positive (3B's PASS was on the wrong chunk). Qwen3's FAIL here is arguably **more honest**, not worse. |
+| U04 | unanswerable | PASS → **FAIL** | — | **Genuine loss.** Qwen3 hallucinated a physical-store answer instead of abstaining. |
+| Q07 | paraphrase | PASS → WEAK | ✓ | Length bias — tighter paraphrase, less overlap. |
+| Q30 | near_miss | PASS → WEAK | ✓ | Length bias — "Yes, prices include VAT" (correct, terse). |
+| Q32 | prose | PASS → WEAK | ✗ | Length bias — concise paraphrase of the penalties list. |
+| Q33 | prose | PASS → WEAK | ✓ | Length bias — tighter third-party list. |
+
+**Reading it:** 2 genuine wins (Q08, Q21), 1 genuine loss (U04 hallucination), 1 case
+where Qwen3 is *more* honest than the 3B's false-positive (Q19), and 4 length-bias
+WEAK downgrades of answers that are correct on their face. As with the 1.5B, **the raw
+−4-PASS gap vs the 3B overstates the real faithfulness difference** — on substance
+Qwen3-4B is roughly 3B-class, with a different failure signature (occasional over-answering).
+
+---
+
+## 4. Performance & memory
+
+Machine state differs by run — read the caveats. **Qwen3-4B ran on a clean idle box
+(directly comparable to the 3B floor); the 1.5B ran contended (its speed is a lower
+bound).**
+
+| metric (from Ollama's own counters) | 3B (floor~idle) | 1.5B (contended) | **Qwen3-4B (idle)** |
+|---|---|---|---|
+| generation tok/s — median | 4.98 | 9.29 (≥, lower bound) | **2.83** |
+| generation tok/s — range | 4.61–6.12 | 7.8–11.69 | 2.43–3.95 |
+| generation wall-clock — median | 54.0 s | 25.7 s | **94.1 s** |
+| prompt-processing tok/s — median | 23.5 | 49.2 | 17.5 |
+| total run wall-clock (41 Q) | ~39 min | ~18 min | **~66 min** |
+| retrieval — median | 25.3 ms | 25.6 ms | 27.0 ms |
+
+### Memory footprint
+
+| | 3B (floor) | Qwen3-4B (idle, clean measurement) |
 |---|---|---|
-| Correct abstentions (of 6 unanswerable probes) | **6/6** | **6/6** |
-| False abstentions (answerable, wrongly abstained) | **5** — Q08, Q17, Q27, Q29, Q35 | **3** — Q17, Q29, Q35 |
+| idle baseline (model evicted) | 1418 MB | 1418 MB (identical) |
+| peak system used (Δ over baseline) | 4584 MB (+3166) | **7437 MB (+6019)** |
+| model-runner (`llama-server`) RSS | ~2054 MB | **~5.7 GB** |
+| `ollama ps` model-size accounting | — | 3.3 GB (lower; model+KV only) |
 
-Both models abstain correctly on **every** unanswerable probe — the DECISION-004
-abstention policy holds for both. The difference is that **the 1.5B abstains
-less** on answerable questions (3 false abstentions vs 5). That cuts both ways —
-see Q08 and Q27 in §3.
-
----
-
-## 3. Per-question verdict changes (7 of 41) — and what actually drives them
-
-| id | stratum | 3B → 1.5B | gold hit | what happened |
-|----|---------|-----------|----------|---------------|
-| Q08 | paraphrase | FAIL → **PASS** | ✓ | **Genuine 1.5B win.** 3B wrongly abstained; 1.5B answered correctly ("No, under 18 cannot register"). |
-| Q25 | exact_fact | PASS → **FAIL** | ✓ | **Grader false negative.** 1.5B answered `support@kibuga.com` — *correct* but too terse for token-overlap ≥0.5, so graded FAIL. |
-| Q19 | prose | PASS → WEAK | ✗ | Both answers ungrounded-ish (gold not retrieved; Q19 is *the* confirmed Layer-A false positive). 1.5B's terser phrasing scores WEAK instead of a false PASS. |
-| Q30 | near_miss | PASS → WEAK | ✓ | **Length bias.** 1.5B: "Yes, prices are inclusive of VAT" — correct; 3B quoted the passage verbatim → more overlap → PASS. |
-| Q32 | prose | PASS → WEAK | ✗ | **Length bias.** 1.5B gives a tight paraphrase of the penalties list; fewer overlapping tokens → WEAK. |
-| Q33 | prose | PASS → WEAK | ✓ | **Length bias.** Same third-party list, more concisely worded → WEAK. |
-| Q27 | paraphrase | FAIL → FAIL | ✗ | **Genuine 1.5B risk.** Neither retrieved the gold chunk. 3B abstained (safe); 1.5B *confidently answered from the wrong chunk* (returns-retention instead of data-retention) — a hallucination the abstention policy caught in the 3B. |
-
-**Reading this table:**
-
-- **1 genuine accuracy win for the 1.5B** (Q08).
-- **1 genuine accuracy loss** in the sense the grader can't see: **Q27**, where the
-  1.5B's lower abstention rate produced a confident wrong answer instead of a safe
-  abstention. This is the real cost of the abstention difference in §2.
-- **The other 5 changes (Q25, Q19, Q30, Q32, Q33) are grader artifacts of answer
-  length, not faithfulness.** Four of them (Q25, Q30, Q32, Q33) are answers that
-  are *correct on their face*; they lost points only because the 1.5B quotes less
-  verbatim text. **This is why the raw −11.4-pt gap overstates the real
-  difference.** Under a faithfulness-aware (Layer-B / human) grade, the prose
-  stratum in particular would recover much of its apparent loss.
-
-The honest summary: on *faithfulness*, the two models are much closer than
-74.3% vs 62.9% suggests. The clearest real behavioral difference is the
-abstention/coverage trade-off — the 1.5B answers more (helping Q08) at the cost
-of occasionally answering when it should decline (hurting Q27).
-
----
-
-## 4. Performance — DEFERRED (machine was not idle)
-
-Per the evaluation plan, floor performance for the 1.5B is **deferred to the
-clean reference-machine run** and is **not** presented here as a comparison. This
-1.5B run executed on a **contended** desktop (firefox, Xorg, okular active; load
-average ~1.1 on 4 cores; baseline RAM 2937 MB vs the 3B run's 1418 MB idle
-floor). Contention only *slows* the 1.5B, so any speed advantage it shows is a
-**lower bound**, not a number to bank.
-
-Directionally (and only directionally): even contended, the 1.5B decoded roughly
-**~1.9× faster** and used **less** runner RAM than the 3B floor run — the
-expected shape for a smaller model. The magnitude is not trustworthy until both
-models are measured on the same idle reference box. The raw per-question perf
-counters are in the run's `_summary.md` and `.jsonl`, flagged there as deferred.
+**The headline efficiency finding:** on CPU, Qwen3-4B is the **slowest** of the three
+(2.83 tok/s median, ~1.75× slower than the 3B, ~3.3× slower than the 1.5B) and by far
+the **heaviest** (~5.7 GB runner RSS, **nearly saturating the 7.7 GB machine** at a
+7437 MB peak — ~2.8× the 3B's footprint). The RAM figure is a clean, verified
+single-model measurement (one `llama-server` process), not contamination. Ollama's own
+`ollama ps` reports 3.3 GB; the higher process-RSS / system-delta is the true
+whole-machine footprint and is what determines "does it fit" — and it *barely* does.
 
 ---
 
@@ -133,29 +156,35 @@ counters are in the run's `_summary.md` and `.jsonl`, flagged there as deferred.
 
 **It tells us (informative now):**
 
-- **Retrieval is model-independent and stable** — proven identical across the two
-  runs, so this is a clean generation-only comparison.
-- **On the length-biased Layer-A proxy, the 3B scores higher (74.3% vs 62.9%),**
-  but the per-question analysis shows **most of that gap is answer-length
-  artifact, not faithfulness** — the two models are closer than the headline.
-- **Both models nail abstention on unanswerable probes (6/6).** The real
-  behavioral difference is that **the 1.5B abstains less on answerable questions**
-  — a coverage/safety trade-off (helps Q08, hurts Q27).
+- **Retrieval is model-independent and stable** across all three runs — a clean
+  generation-only comparison.
+- **On the length-biased Layer-A proxy:** 3B 74.3% > Qwen3-4B 65.7% > 1.5B 62.9% — but
+  the per-question analysis shows the gaps are **substantially answer-length artifact**;
+  on substance the 3B and Qwen3-4B are close, and the 1.5B is not far behind.
+- **Abstention/coverage trade-off:** the 3B is the most conservative (6/6 probes, but
+  over-abstains on 5 answerable); the 1.5B and Qwen3-4B answer more but each has one
+  confident hallucination (1.5B Q27, Qwen3-4B U04) the 3B avoided.
+- **Efficiency (clean this run):** Qwen3-4B is the **slowest and heaviest** — ~2.8 tok/s
+  and ~5.7 GB, nearly filling this 7.7 GB box. Its license advantage (Apache-2.0) comes
+  with a real CPU-inference cost. The 1.5B is the fastest/lightest; the 3B sits in
+  between on both.
 
 **It does NOT tell us (decide elsewhere):**
 
-- **True faithfulness ranking.** Layer-A is a biased proxy (overestimate for both;
-  length-penalizes the terser 1.5B). A **Layer-B / human grade** is required to
-  pin the real accuracy gap — it is the single highest-value follow-up before any
-  switch.
-- **Floor / reference performance.** Deferred — this box was contended. The 1.5B's
-  perf case (its main draw) must be measured on the **idle reference machine**
-  alongside a fresh 3B row.
-- **The license question.** The 1.5B being **Apache-2.0** vs the 3B's **research
-  (non-commercial)** license is a separate, non-benchmark axis. It is noted here
-  as context but is a decision for humans, not something this data settles.
+- **True faithfulness ranking.** Layer-A is a biased proxy (overestimate for all;
+  length-penalizes the terser 1.5B and Qwen3-4B). A **Layer-B / human grade** of the
+  three runs is the single highest-value follow-up before any switch.
+- **Clean 1.5B / 3B perf on this box.** The 1.5B row was contended (speed is a lower
+  bound); a matched idle re-run would tighten the perf table. Qwen3-4B and the 3B are
+  both ~idle and directly comparable.
+- **License eligibility.** The 3B's Qwen **Research** (non-commercial) license vs the
+  Apache-2.0 of the 1.5B and Qwen3-4B is a **rules question** — whether a non-commercial
+  license disqualifies a submission depends on the competition's eligibility terms, not
+  on anything this benchmark measures. Confirm against the rules doc.
 
-**No recommendation is made here.** The model choice belongs to a human weighing:
-(1) the true accuracy gap from a Layer-B/human grade, (2) clean reference-machine
-performance, and (3) the license constraint. This document supplies only the
-controlled accuracy comparison.
+**No recommendation is made here.** The choice belongs to a human weighing: (1) the true
+accuracy gap from a Layer-B/human grade, (2) the efficiency numbers (where Qwen3-4B is
+notably slower/heavier), and (3) the license constraint (where the 3B is the only one at
+risk). This document supplies only the controlled comparison. One observation worth
+surfacing for that decision: **Qwen3-4B trades the 3B's license risk for a real
+performance/memory cost** — the opposite trade-off, not a strict improvement.
