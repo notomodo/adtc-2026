@@ -1,0 +1,135 @@
+### 1.5B benchmark run — 2026-08-02T09:10:27Z
+### model: qwen2.5:1.5b-instruct-q4_K_M (Q4_K_M) · commit 2fc1cbe · host debian
+### NOTE: machine NOT idle (firefox/desktop active, load ~1.1) — Phase B perf DEFERRED; accuracy is deterministic and valid.
+awk: cmd. line:1: /Mem:/{print $2\" total, \"$7\" avail\"}
+awk: cmd. line:1:                ^ backslash not last character on line
+### CPU: 4 cores · RAM: 
+[ram] evicting qwen2.5:1.5b-instruct-q4_K_M so the first question pays the load cost…
+[ram] baseline system used: 2937 MB (ollama resident: 93 MB)
+
+[ 1/41] Q01 (exact_fact): What is Kibuga's returns window?
+      A=PASS  abstained=False gold=hit  gen=48.7s (9.1 tok/s)
+
+[ 2/41] Q02 (exact_fact): What is the minimum age to register on the marketplace?
+      A=PASS  abstained=False gold=hit  gen=44.1s (7.8 tok/s)
+
+[ 3/41] Q03 (exact_fact): What is Kibuga's customer support phone number?
+      A=PASS  abstained=False gold=hit  gen=25.7s (8.4 tok/s)
+
+[ 4/41] Q04 (exact_fact): Where are Kibuga's headquarters?
+      A=PASS  abstained=False gold=hit  gen=16.5s (9.3 tok/s)
+
+[ 5/41] Q05 (exact_fact): What is the customer support email address?
+      A=PASS  abstained=False gold=hit  gen=11.8s (11.1 tok/s)
+
+[ 6/41] Q06 (exact_fact): How many pick-up attempts will Kibuga make for a return?
+      A=PASS  abstained=False gold=hit  gen=35.0s (9.2 tok/s)
+
+[ 7/41] Q07 (paraphrase): How long do I have to send something back?
+      A=PASS  abstained=False gold=hit  gen=21.5s (9.2 tok/s)
+
+[ 8/41] Q08 (paraphrase): Can a teenager open an account?
+      A=PASS  abstained=False gold=hit  gen=12.1s (9.3 tok/s)
+
+[ 9/41] Q09 (paraphrase): What paperwork do I need to bring back a purchase?
+      A=PASS  abstained=False gold=hit  gen=21.3s (9.0 tok/s)
+
+[10/41] Q10 (paraphrase): Which goods can't be sent back?
+      A=PASS  abstained=False gold=hit  gen=36.3s (8.9 tok/s)
+
+[11/41] Q12 (paraphrase): How do I get in touch if something goes wrong?
+      A=PASS  abstained=False gold=hit  gen=23.9s (9.1 tok/s)
+
+[12/41] Q13 (near_miss): How long does a refund take to process?
+      A=PASS  abstained=False gold=hit  gen=3.4s (9.4 tok/s)
+
+[13/41] Q14 (near_miss): What happens if my return claim is rejected?
+      A=WEAK  abstained=False gold=hit  gen=15.7s (8.8 tok/s)
+
+[14/41] Q15 (prose): What kinds of content am I forbidden from posting?
+      A=PASS  abstained=False gold=hit  gen=37.5s (9.0 tok/s)
+
+[15/41] Q16 (prose): What personal data does Kibuga collect?
+      A=FAIL  abstained=False gold=hit  gen=28.1s (9.4 tok/s)
+
+[16/41] Q17 (prose): What warranty does a seller give about the products?
+      A=FAIL  abstained=True  gold=MISS gen=15.5s (10.7 tok/s)
+
+[17/41] Q19 (prose): Can Kibuga suspend my account without telling me?
+      A=WEAK  abstained=False gold=MISS gen=33.0s (9.5 tok/s)
+
+[18/41] Q21 (multi_chunk): What is the full returns procedure from request to refund?
+      A=WEAK  abstained=False gold=hit  gen=54.3s (8.5 tok/s)
+
+[19/41] Q22 (multi_chunk): What are all the ways Kibuga can refund me?
+      A=FAIL  abstained=False gold=MISS gen=22.4s (9.1 tok/s)
+
+[20/41] Q23 (exact_fact): Where is Kibuga's registered office located?
+      A=PASS  abstained=False gold=hit  gen=14.3s (10.1 tok/s)
+
+[21/41] Q24 (exact_fact): Do I pay shipping charges when returning a product to Kibuga?
+      A=PASS  abstained=False gold=hit  gen=33.7s (9.5 tok/s)
+
+[22/41] Q25 (exact_fact): Who do I contact to exercise my data privacy rights?
+      A=FAIL  abstained=False gold=hit  gen=11.5s (11.2 tok/s)
+
+[23/41] Q26 (exact_fact): Am I allowed to print pages from Kibuga's website?
+      A=PASS  abstained=False gold=hit  gen=36.7s (9.2 tok/s)
+
+[24/41] Q27 (paraphrase): How long does Kibuga hang on to my information?
+      A=FAIL  abstained=False gold=MISS gen=12.2s (9.3 tok/s)
+
+[25/41] Q28 (paraphrase): What sorts of goods are sellers banned from listing?
+      A=PASS  abstained=False gold=hit  gen=46.4s (8.6 tok/s)
+
+[26/41] Q29 (paraphrase): Can I ask Kibuga to delete everything they know about me?
+      A=FAIL  abstained=True  gold=MISS gen=25.2s (11.5 tok/s)
+
+[27/41] Q30 (near_miss): Are the prices shown on the marketplace inclusive of VAT?
+      A=WEAK  abstained=False gold=hit  gen=39.0s (9.1 tok/s)
+
+[28/41] Q31 (near_miss): Can Kibuga move my data to another country?
+      A=PASS  abstained=False gold=hit  gen=28.7s (9.3 tok/s)
+
+[29/41] Q32 (prose): What can Kibuga do to me if I break the rules?
+      A=WEAK  abstained=False gold=MISS gen=24.1s (9.4 tok/s)
+
+[30/41] Q33 (prose): Which outside parties might see my personal data?
+      A=WEAK  abstained=False gold=hit  gen=20.7s (9.5 tok/s)
+
+[31/41] Q34 (prose): Does Kibuga use my data for advertising?
+      A=PASS  abstained=False gold=hit  gen=26.1s (8.8 tok/s)
+
+[32/41] Q35 (prose): If I have a legal dispute with Kibuga, whose courts decide it?
+      A=FAIL  abstained=True  gold=MISS gen=32.8s (11.3 tok/s)
+
+[33/41] Q36 (multi_chunk): Across all the policies, what enforcement actions can Kibuga take agai
+      A=PASS  abstained=False gold=hit  gen=36.4s (9.0 tok/s)
+
+[34/41] Q37 (multi_chunk): How does Kibuga handle a seller's money — what gets deducted and what'
+      A=PASS  abstained=False gold=hit  gen=33.0s (8.7 tok/s)
+
+[35/41] Q38 (multi_chunk): Walk me through everything I need to know to return an item and get my
+      A=PASS  abstained=False gold=hit  gen=38.5s (8.4 tok/s)
+
+[36/41] U01 (unanswerable): Does Kibuga ship internationally to Kenya, and what are the rates?
+      A=PASS  abstained=True  gold=-    gen=21.4s (10.1 tok/s)
+
+[37/41] U02 (unanswerable): Can I pay for my order in instalments or with cash on delivery?
+      A=PASS  abstained=True  gold=-    gen=30.7s (11.4 tok/s)
+
+[38/41] U03 (unanswerable): What is the warranty period in months on electronics bought from Kibug
+      A=PASS  abstained=True  gold=-    gen=19.2s (11.2 tok/s)
+
+[39/41] U04 (unanswerable): Does Kibuga have a physical store I can visit in Kampala?
+      A=PASS  abstained=True  gold=-    gen=16.4s (11.7 tok/s)
+
+[40/41] U05 (unanswerable): What loyalty points or discount codes does Kibuga offer repeat buyers?
+      A=PASS  abstained=True  gold=-    gen=40.8s (10.7 tok/s)
+
+[41/41] U06 (unanswerable): How many days does delivery take after I place an order?
+      A=PASS  abstained=True  gold=-    gen=2.1s (11.2 tok/s)
+
+[done] 41 question(s) in 1099s (0 failed). Peak system RAM 4248 MB (+1311 over baseline), ollama RSS 1896 MB.
+[done] per-question:  results/benchmark_20260802T090940Z_1p5b.jsonl
+[done] summary:       results/benchmark_20260802T090940Z_1p5b_summary.md
