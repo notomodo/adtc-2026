@@ -65,11 +65,44 @@ committed under `results/benchmark_20260729T065644Z.*`. 0 failures, ~39 min.
   (`llama-server`) resident ~2054 MB. System-footprint RAM, distinct from S_eff.
 - Report: `docs/SESSION_REPORT_2026-07-29_floor-benchmark.md`.
 
+## Model comparison: 3B vs 1.5B — accuracy DONE, perf DEFERRED (2026-08-02)
+
+Controlled rerun of the **same** harness with **only the generation model changed**
+(`qwen2.5:1.5b-instruct-q4_K_M`, Q4_K_M — matches the 3B quant), evaluating the
+1.5B as a possible submission model (it is **Apache-2.0** vs the 3B's **research /
+non-commercial** license). Artifacts: `results/benchmark_20260802T090940Z_1p5b.*`.
+Full side-by-side: `docs/model_comparison_3b_vs_1p5b.md`.
+
+- **Controlled-comparison integrity proven:** retrieval held fixed — `gold_chunk_hit`
+  **28/28 identical** and retrieved-id order byte-identical across both runs. Every
+  accuracy delta is generation-only.
+- **Layer-A pass rate: 3B 26/35 (74.3%) → 1.5B 22/35 (62.9%)**, −4 PASSes,
+  concentrated in `prose`. BUT the per-question diff shows **most of that gap is the
+  grader's answer-length bias, not faithfulness** — the 1.5B paraphrases tersely and
+  loses token-overlap on several *correct* answers (e.g. Q25 = `support@kibuga.com`,
+  correct, graded FAIL). Real deltas: **+Q08** (1.5B genuine win) and **−Q27** (1.5B
+  confidently answered from the wrong chunk where the 3B safely abstained).
+- **Abstention: both 6/6 correct** on probes; 1.5B has **fewer** false abstentions
+  (3 vs 5) — it abstains less, which helps coverage (Q08) but risks confident wrong
+  answers (Q27).
+- **Performance DEFERRED** — this box was **contended** (firefox/desktop active, load
+  ~1.1, baseline RAM 2937 MB vs the 3B run's 1418 MB idle floor). No clean perf
+  comparison is claimed; 1.5B floor perf goes to the reference-machine run.
+
+**Decided by this run:** retrieval is model-independent and stable; the Layer-A gap
+overstates the true accuracy difference. **Pending (decided elsewhere):** true
+faithfulness gap (needs a Layer-B/human grade — highest-value follow-up), clean
+reference-machine perf for both models, and the license axis. **No model
+recommendation is made from this data.**
+
 ## Next action
 
-**Reference-machine benchmark run.** The number above is the dev **floor** (i5-4300U),
-not the teammate's reference i5. Re-run `run_benchmark.sh` on the reference machine for
-that row. Not a code task — a machine-time measurement session (harness is done and proven).
+1. **Layer-B / human grade** of both runs to pin the real 3B-vs-1.5B faithfulness
+   gap under the length-biased Layer-A ceiling — the highest-value follow-up before
+   any model switch.
+2. **Reference-machine benchmark run.** Both floor rows (3B and 1.5B) were on the dev
+   box (the 1.5B row contended); re-run `run_benchmark.sh` for BOTH models on the
+   teammate's idle reference i5. Not a code task — a machine-time measurement session.
 
 ---
 
