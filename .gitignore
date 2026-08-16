@@ -6,6 +6,9 @@ venv/
 *.egg-info/
 .pytest_cache/
 
+# Local ADTC profiler venv (dev tool, not shipped)
+.venv-profiler/
+
 # End-to-end runbook artifacts (run_e2e.sh): a throwaway clean runtime venv and
 # the run log handed back as feedback. Neither belongs in version control.
 .venv-runtime/
@@ -15,3 +18,11 @@ e2e_run.log
 # is the reproducible source; see DECISION-002 §9.4. Regenerate with:
 #   python scripts/export_onnx.py
 models/*.onnx
+
+# ADTC 2026 submission weights (GGUF) — downloaded by download_model.sh, never committed
+model/
+*.gguf
+
+# ADTC profiler output (participant/audit reports)
+submission.json
+audit.json

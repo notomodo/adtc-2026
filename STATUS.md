@@ -1,7 +1,7 @@
 # STATUS — adtc-2026
 
 **Single source of truth. Overwritten each session.**
-Last updated: 2026-07-29 · Branch: `main`
+Last updated: 2026-08-14 · Branch: `main`
 
 ---
 
@@ -40,11 +40,12 @@ adtc-rag ask "<q>"      → hybrid retrieve (BM25 + dense, RRF) → v3 grounding
   logic (idempotency, empty-index/mismatch guards, citations/abstention formatting) is
   covered offline by `tests/test_cli.py` with a `FakeEncoder`.
 
-**Full test suite: 88 passed, 2 skipped** under the runtime+test stack (numpy, pdfplumber,
-tokenizers, pytest — no torch/onnxruntime/Ollama). The 2 skips: the torch-dependent ONNX
-parity/export module, and the opt-in `ingest→ask` e2e (needs the `.onnx` model + a live
-Ollama). New this session: `test_answer_surfaces_ollama_generation_stats` locks the
-`AnswerResult.gen_stats` contract the benchmark harness depends on.
+**Full test suite: 92 passed, 2 skipped** (re-verified 2026-08-14 takeover: 9.76 s) under
+the runtime+test stack (numpy, pdfplumber, tokenizers, pytest — no torch/onnxruntime/Ollama).
+The 2 skips: the torch-dependent ONNX parity/export module, and the opt-in `ingest→ask` e2e
+(needs the `.onnx` model + a live Ollama; Ollama is currently NOT running on this box —
+`sudo systemctl start ollama` to enable). New this session: `test_answer_surfaces_ollama_generation_stats`
+locks the `AnswerResult.gen_stats` contract the benchmark harness depends on.
 
 ---
 
@@ -94,17 +95,54 @@ while the 2.5 runs stay byte-identical.
 
 **Decided by these runs:** retrieval is model-independent/stable; the Layer-A gaps overstate
 the true accuracy differences; Qwen3-4B is license-clean but the slowest/heaviest option on
-CPU. **Pending (decided elsewhere):** true faithfulness ranking (Layer-B/human grade — top
-follow-up), matched-idle perf for the 1.5B/3B, and whether the 3B's non-commercial license is
-competition-eligible (a rules question). **No model recommendation is made from this data.**
+CPU. **Model decision made 2026-08-14 (human + primary rules read): Qwen2.5-3B is the chosen
+submission model** — top performer on the evidence AND not license-disqualified under the
+published rules (see "Next action" below). **✅ Layer-B faithfulness grade DONE (2026-08-14):
+3B remains the right choice** — Qwen3-4B is at parity on faithfulness-when-given-the-chunk
+(28/28 vs 27/28) but fails one probe and near-saturates 8 GB; the 1.5B is clearly weakest
+(`docs/LAYER_B_GRADE_2026-08-14.md`). Still pending: matched-idle perf for the 1.5B/3B, and
+the reference-machine run (R1).
 
 ## Next action
 
-1. **Layer-B / human grade** of the three runs to pin the real faithfulness ranking under the
-   length-biased Layer-A ceiling — the highest-value follow-up before any model switch.
-2. **Confirm license eligibility** against the competition rules — the only axis on which the
-   3B (Qwen Research, non-commercial) differs from the Apache-2.0 alternatives.
-3. **Optional: matched-idle perf** for the 1.5B (and a fresh 3B) so the perf table's 1.5B row
+**License: RESOLVED (2026-08-14).** Primary rules read directly — official Devpost rules
+(`adtc-2026.devpost.com/rules`) + the Challenge Participation Agreement: **no model-license
+eligibility constraint**. The open-source requirement applies to the submission's own GitHub
+repo (public, MIT — ✓) and tools must be cited clearly. The 3B's Qwen **Research**
+(non-commercial) license is **not disqualifying** under the published rules. Judging
+(published): 50% accuracy/quality, 30% throughput, 20% RAM efficiency, +10 African-use-case,
+−10 thermal, **OOM/sandbox crash = disqualification**. Gate 1 deadline: **2026-08-25**.
+
+1. **Reference-machine benchmark (R1) — now deadline-critical.** Run `run_benchmark.sh` on
+   the actual 8 GB ADTC Standard Laptop (i5 10th–12th gen / Ryzen 5, Ubuntu 22.04). The floor
+   numbers come from an older 2-core Haswell box; co-resident fit on the real target is still
+   unmeasured, and OOM is a disqualifier.
+2. **✅ Layer-B / human grade — DONE (2026-08-14).** LLM-judge faithfulness grade of all 41
+   questions × 3 models from `docs/grading_pack.md` (verdicts appended there + full report
+   `docs/LAYER_B_GRADE_2026-08-14.md`). Faithfulness 3B 29/35, Qwen3-4B 30/35, 1.5B 28/35;
+   gold-hit faithfulness 27/28, 28/28, 26/28; substantive unique hallucinations 0, 2, 2;
+   probes 6/6, 5/6, 6/6. **The 3B's Layer-A lead is largely length-bias artifact; its real
+   edge is safety + efficiency. Choice unchanged: 3B.** Human spot-check of the shaded rows
+   recommended before quoting externally.
+3. **🟡 Gate-1 submission pack — DRAFTED + WEIGHTS TESTED (2026-08-14).** Official template
+   followed (`Africa-Deep-Tech-Foundation/adtc-2026-submission-template`): `metadata.json`
+   (domain `corporate_enterprise`, 2 test prompts, model Qwen2.5-3B-Instruct-Q4_K_M,
+   llama.cpp/GGUF — **schema-validated** against the official profiler schema),
+   `download_model.sh` (**tested end-to-end**: 2.0 GB GGUF downloaded from the official
+   Qwen HF repo, sha256 `626b4a66…5c62d` verified, valid GGUF header), `REPORT.md`
+   (technical writeup incl. the official scoring formula
+   S_total = 0.50·S_acc + 0.30·S_perf + 0.20·S_eff − P_thermal), `.gitignore`,
+   `docs/GATE1_SUBMISSION.md` (checklist + video script), `docs/GATE1_RUNBOOK.md`,
+   `docs/screenshots/` (real ingest capture: 5 docs → 47 chunks, 40 s). **✅ Profiler
+   participant run DONE (dev floor): S_acc 0.80 arc_easy (n=50), 4.32 tok/s, peak RSS
+   3456 MB (S_eff 50.6), **thermal throttled at 94 °C (10-pt penalty on this old dev
+   CPU — R1 must check the reference machine)**; score preview ≈48.8 on the floor box
+   (`results/profiler_participant_20260814.md`).** Remaining: confirm 3 metadata fields
+   (team_id, submitter email/name, african_alpha_claim) + test-prompt wording; record the
+   ≤2-min video; capture the ask-demo with Ollama up; R1 reference-machine run.
+   Submission framing: the scored artifact is the GGUF model via llama.cpp (profiler),
+   the RAG system is the showcased product layer. Gate 1: **2026-08-25**.
+4. **Optional: matched-idle perf** for the 1.5B (and a fresh 3B) so the perf table's 1.5B row
    stops being a lower bound. Qwen3-4B and the 3B floor are already ~idle and comparable.
 
 ---
@@ -125,6 +163,54 @@ competition-eligible (a rules question). **No model recommendation is made from 
 
 ---
 
+## Takeover verification (2026-08-14)
+
+Independently verified against the working tree + a fresh `git fetch origin` (plain fetch
+fails here: the system `/etc/ssh/ssh_config.d/20-systemd-ssh-proxy.conf` has bad owner/
+permissions; `GIT_SSH_COMMAND='ssh -F /dev/null'` works). **No drift: 0 ahead / 0 behind
+`origin/main`; single branch `main`, no tags/stashes/worktrees.**
+
+**Matches the handoff doc (verified by running/reading, not assumed):**
+- Architecture: `app/pipeline.py` glue (one encoder identity), `app/cli.py` `adtc-rag`
+  console script (smoke-tested `--help`), `core/index.py` append-only + crash-recovery
+  tests, `retriever.py` BM25+RRF (NOT the empty `src/retrieval/` stub), `gen_answer.py`
+  v3 prompt (temp 0 / seed 42 / num_ctx 4096 payload confirmed in `_build_payload`).
+- Pinned torch-free runtime deps (numpy 2.2.1 / pdfplumber 0.11.9 / tokenizers 0.21.0 /
+  onnxruntime) agree across `pyproject.toml` + `requirements.txt`.
+- Corpus: 5 PDFs → 47 chunks; fingerprint `c7f23f29b738b08d` gate PASSES
+  (`scripts/verify_reproducibility.py` → OK) and is CI-enforced (ci.yml asserts 47 chunks).
+- **Tests: 92 passed, 2 skipped** (torch absent; Ollama e2e gate). Earlier "88" in this
+  file was stale.
+- Retrieval n=35: R@1 60 / R@5 83 / MRR 0.704 / prose R@5 62% (retrieval_n35/README).
+- Reranker: n=19 rejected (D003), n=35 decided not shipped (D005, Q31+Q27 regressions);
+  `src/eval_reranker.py` standalone.
+- Floor benchmark: 74.3% (26/35) Layer-A, 6/6 abstention, ~5 tok/s, peak 4584 MB —
+  committed summary + R5 record (9/10 PASSes correct, Q19 UNGROUNDED — proxy, never
+  accuracy).
+- Three-way comparison: 3B 74.3% > Qwen3-4B 65.7% (23/35) > 1.5B 62.9% (22/35),
+  retrieval byte-identical (28/28), Qwen3-4B slowest/heaviest (2.83 tok/s, peak 7437 MB,
+  runner RSS 6046 MB), licenses Qwen Research (non-commercial) vs Apache-2.0, **no
+  recommendation made**.
+- DECISIONS.md D4 is stale relative to the 2 Aug comparison (still "Locked 7 July") —
+  flagged, deliberately NOT edited (human call). `grade_v3.py` stale `chunks_sme.fp.txt`
+  (line 9, file absent). Dead stubs `src/retrieval/` + `src/llm/` (empty `__init__.py`).
+  `eval_retriever.py` lacks `--onnx-path`. int8 deferred. `gen_answer.v_prev.py` kept.
+
+**Discrepancies / nuances found:**
+- "Repo clean" was imprecise: 4 untracked items — `adtc_pipeline_walkthrough.ipynb`
+  (17-cell demo notebook **exists locally but is NOT committed** — commit decision
+  pending), `Untitled.ipynb` (empty), `.ipynb_checkpoints/`, `test-run.log`.
+- DECISION-002's "only configuration non-negative on every metric" is imprecise:
+  gte-small is also non-negative vs BM25 on R@1/R@3/R@5/R@10/MRR; bge strictly dominates
+  it (R@3 +5pp, MRR 0.703 vs 0.687) so the selection stands — documentation wording only.
+- STATUS previously listed three docs session reports as untracked; they are now committed
+  (2fc1cbe). Qwen3-4B runner RSS: 6046 MB vs "~5.7 GB" in STATUS/HANDOFF — rounding only.
+
+**Could not verify here (external):** 8 GB reference machine results (R1 — zero data in
+repo, highest-severity open risk); license eligibility vs ADTC 2026 rules (rules doc not
+in repo); Layer-B/human grade (grading_pack.md is the ready substrate); ONNX parity to
+1e-7 not re-run (torch not installed; committed DECISION-002 §10 + gated test stand).
+
 ## Repo state
 
 - **This session (floor benchmark):** three prior-session e2e fixes (`fix(app)` /
@@ -134,8 +220,10 @@ competition-eligible (a rules question). **No model recommendation is made from 
 - **Now tracked:** `benchmarks/chunk_id_migration_map.json` (+ its
   `CHUNK_ID_MIGRATION_REPORT.md`) — the verified positional→stable map is a live
   dependency of the benchmark harness (`gold_chunk_hit`), so it belongs in the repo.
-- **Still untracked (older handoffs, left for review):** `docs/SESSION_REPORT_2026-07-23.md`,
-  `docs/SESSION_REPORT_2026-07-28_application-layer.md`, `docs/SESSION_REPORT_2026-07-28_e2e-run.md`.
+- **Untracked as of 2026-08-14:** `adtc_pipeline_walkthrough.ipynb` (demo notebook —
+  exists locally, NOT committed; decide whether to add), `Untitled.ipynb` (empty),
+  `.ipynb_checkpoints/`, `test-run.log`. The three docs session reports previously listed
+  here are now committed (2fc1cbe).
 - **`models/bge-small-en-v1.5.onnx`** is gitignored; `scripts/export_onnx.py` is the source.
 
 ---

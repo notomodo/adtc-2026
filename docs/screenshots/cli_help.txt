@@ -1,0 +1,37 @@
+usage: adtc-rag [-h] [--index-dir INDEX_DIR] {ingest,ask} ...
+
+adtc-rag — the thin CLI over the pipeline glue.
+
+ALL presentation lives here: every print, every format, every exit code. The
+pipeline (app/pipeline.py) does the work and returns structured results; this
+file decides how they look on a terminal. Two commands:
+
+    adtc-rag ingest <path>...     extract + chunk + embed + persist PDFs
+    adtc-rag ask "<question>"     retrieve top-k, stream a grounded answer
+
+Runs offline except for the local Ollama socket. See the module docstrings in
+app/pipeline.py and core/index.py for the architecture.
+
+positional arguments:
+  {ingest,ask}
+    ingest              extract, chunk, embed and persist PDFs
+    ask                 retrieve top-k passages and stream a grounded answer
+
+options:
+  -h, --help            show this help message and exit
+  --index-dir INDEX_DIR
+                        index location (default: ~/.adtc/index); may appear
+                        before or after the subcommand
+---
+usage: adtc-rag ingest [-h] [--index-dir INDEX_DIR] [--budget BUDGET]
+                       paths [paths ...]
+
+positional arguments:
+  paths                 PDF files and/or directories (recursed for *.pdf)
+
+options:
+  -h, --help            show this help message and exit
+  --index-dir INDEX_DIR
+                        index location (default: ~/.adtc/index); may appear
+                        before or after the subcommand
+  --budget BUDGET       token budget per chunk
