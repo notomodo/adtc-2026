@@ -73,7 +73,8 @@ of Ugandan SME documents. **Shipping a broken feature scores worse than not ship
 
 ## D4 — LLM: Qwen2.5-3B-Instruct (fallback: Qwen2.5-1.5B-Instruct)
 
-**Status:** Locked · 7 July 2026 · **Measured**
+**Status:** Locked · 7 July 2026 · **Measured** · **re-confirmed 14 Aug 2026** (three-way
+controlled comparison + primary rules read — see below)
 
 **Decision.** Qwen2.5-3B-Instruct, ~2.1 GB true resident RAM.
 
@@ -84,6 +85,22 @@ which is the exact failure this architecture exists to prevent.
 **Fallback documented.** 1.5B is retained as the fallback if co-resident memory (LLM +
 embedder + index + app) does not fit in 8 GB. **This has not yet been measured on the
 reference machine** — see Open Risks.
+
+**Re-confirmed 2026-08-14 — three-way comparison + license rules read.** The controlled
+three-way run (2026-08-02, retrieval byte-identical, `docs/model_comparison.md`) keeps the
+3B first: Layer-A pass rate 74.3% > Qwen3-4B 65.7% > 1.5B 62.9%, and the 3B is the only
+model with zero confident hallucinations (each alternative has one). The Layer-A gaps are
+partly grader length-bias, so a Layer-B/human faithfulness grade remains pending
+(`docs/grading_pack.md` is the substrate). **License: the primary rules source was read
+directly** — the official Devpost rules (`adtc-2026.devpost.com/rules`) and the Challenge
+Participation Agreement contain **no model-weight license eligibility constraint**: the
+open-source requirement applies to the submission's own GitHub repo (public, MIT, LICENSE
+present) and tools must be cited clearly (done in README/DECISIONS). The Qwen **Research**
+(non-commercial) license is therefore **not disqualifying under the published rules**.
+Judging is 50% accuracy/quality, 30% throughput, 20% RAM efficiency, +10 African-use-case
+bonus, and **OOM/sandbox crash = disqualification** — the 3B is the safest option on the
+RAM/disqualification axis (Qwen3-4B peaked at 7437 MB on a 7.7 GB box, a real
+disqualification risk on the 8 GB reference machine). Gate 1 deadline: **2026-08-25**.
 
 ---
 

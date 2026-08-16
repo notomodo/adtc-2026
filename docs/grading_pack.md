@@ -1071,3 +1071,61 @@ This is the **self-contained substrate for a Layer-B (human/LLM-as-judge) faithf
 | Qwen3-4B | PASS | The context provided does not mention the delivery time after placing an order. Therefore, the answer is NOT_IN_DOCUMENTS. | |
 
 ---
+
+---
+
+## Layer-B verdicts — FILLED 2026-08-14
+
+Grader: LLM-as-judge (in-session). Full analysis, methodology, Layer-A disagreement
+quantification and severity annotations: [`LAYER_B_GRADE_2026-08-14.md`](LAYER_B_GRADE_2026-08-14.md).
+Legend: **F** = FAITHFUL, **U** = UNFAITHFUL (s = substantive, m = minor),
+**WA** = WRONG_ABSTENTION, **CA** = CORRECT_ABSTENTION (retrieval-miss or probe).
+"Gold?" = was the gold chunk retrieved (identical for all three models).
+
+| Q | Gold? | 3B | 1.5B | Qwen3-4B |
+|---|---|---|---|---|
+| Q01 | Y | F | F | F |
+| Q02 | Y | F | F | F |
+| Q03 | Y | F | F | F |
+| Q04 | Y | F | F | F |
+| Q05 | Y | F | F | F |
+| Q06 | Y | F | F | F |
+| Q07 | Y | F | F | F |
+| Q08 | Y | **WA** | F | F |
+| Q09 | Y | F | F | F |
+| Q10 | Y | F | F | F |
+| Q12 | Y | F | F | F |
+| Q13 | Y | F | F | F |
+| Q14 | Y | F | F | F |
+| Q15 | Y | F | F | F |
+| Q16 | Y | F | F | F |
+| Q17 | N | CA | CA | CA |
+| Q19 | N | **U-s** | **U-s** | **U-s** |
+| Q21 | Y | F | F | F |
+| Q22 | N | F | F | F |
+| Q23 | Y | F | F | F |
+| Q24 | Y | F | F | F |
+| Q25 | Y | F | F | F |
+| Q26 | Y | F | F | F |
+| Q27 | N | CA | **U-s** | CA |
+| Q28 | Y | F | F | F |
+| Q29 | N | CA | CA | **U-s** |
+| Q30 | Y | F | F | F |
+| Q31 | Y | F | F | F |
+| Q32 | N | F | F | F |
+| Q33 | Y | F | **U-s** | F |
+| Q34 | Y | F | F | F |
+| Q35 | N | CA | CA | CA |
+| Q36 | Y | F | F | F |
+| Q37 | Y | F | F | F |
+| Q38 | Y | F | **U-m** | F |
+| U01 | — | CA | CA | CA |
+| U02 | — | CA | CA | CA |
+| U03 | — | CA | CA | CA |
+| U04 | — | CA | CA | **U-s** |
+| U05 | — | CA | CA | CA |
+| U06 | — | CA | CA | CA |
+
+Headline: faithfulness 29/35 (3B), 28/35 (1.5B), 30/35 (Qwen3-4B); gold-hit faithfulness
+27/28, 26/28, 28/28; substantive unique hallucinations 0, 2, 2; probe abstention 6/6, 6/6,
+5/6. **Model choice unchanged: 3B** (safety + efficiency + top-tier faithfulness).
